@@ -1,0 +1,109 @@
+@import 'tailwindcss';
+
+/* الوضع الداكن بالصنف .dark على <html> (next-themes) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Design tokens — PRD §12. ألوان العلامة منفصلة عن ألوان الحالة.
+ * افتراض: الدرجات المشتقة (الفاتحة والداكنة) محسوبة هنا؛ النموذج التفاعلي المرجعي غير متاح في المستودع.
+ */
+:root {
+  --brand: #0b5c4b; /* أخضر زيتوني — أساسي */
+  --brand-foreground: #ffffff;
+  --brand-soft: #e6f0ed;
+  --accent: #a87d1f; /* ذهبي — ثانوي */
+  --accent-foreground: #ffffff;
+  --alert: #9e2b25; /* أحمر تطريز — للتنبيه */
+  --alert-foreground: #ffffff;
+
+  --success: #1f7a3d;
+  --success-soft: #e7f4ec;
+  --warning: #9a6300;
+  --warning-soft: #fdf3e0;
+  --info: #1d5f99;
+  --info-soft: #e6f0fa;
+  --danger: #b42318;
+  --danger-soft: #fdecea;
+
+  --background: #fbfaf7;
+  --surface: #ffffff;
+  --foreground: #1b1f1d;
+  --muted: #f1efe9;
+  --muted-foreground: #5d6560;
+  --border: #e2ded4;
+  --ring: #0b5c4b;
+}
+
+.dark {
+  --brand: #3fa58c;
+  --brand-foreground: #06201a;
+  --brand-soft: #12342c;
+  --accent: #d4a94a;
+  --accent-foreground: #221803;
+  --alert: #e0645c;
+  --alert-foreground: #230604;
+
+  --success: #5cc27f;
+  --success-soft: #133222;
+  --warning: #e6b049;
+  --warning-soft: #33260b;
+  --info: #6aa8e6;
+  --info-soft: #102538;
+  --danger: #f07b70;
+  --danger-soft: #3a1512;
+
+  --background: #0f1412;
+  --surface: #161d1a;
+  --foreground: #e8ece9;
+  --muted: #1f2824;
+  --muted-foreground: #a0aba5;
+  --border: #2b3631;
+  --ring: #3fa58c;
+}
+
+@theme inline {
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-soft: var(--brand-soft);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-alert: var(--alert);
+  --color-alert-foreground: var(--alert-foreground);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-arabic), system-ui, sans-serif;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+/* الأيقونات الاتجاهية تنعكس في RTL (PRD §12) */
+[dir='rtl'] .flip-rtl {
+  transform: scaleX(-1);
+}

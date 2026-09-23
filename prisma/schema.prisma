@@ -1,0 +1,1726 @@
+// نبض رفح — المخطط الكامل (Prisma 7.10)
+// المرجع: PRD.md §4. أي اختلاف بين هذا الملف والوثيقة يُبلَّغ ولا يُحلّ بالاجتهاد.
+// كل حقل أو قيمة enum غير منصوصة في PRD معلَّمة بتعليق «افتراض:» وتنتظر الاعتماد.
+// القيود التي لا يعبّر عنها Prisma في sql/constraints.sql.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+// Prisma 7: رابط الاتصال في prisma.config.ts لا هنا.
+datasource db {
+  provider = "postgresql"
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Enums
+// ═══════════════════════════════════════════════════════════════
+
+// §3.1
+enum PermissionScope {
+  OWN
+  COMMITTEE
+  ALL
+}
+
+// §5.1 — المسار بحالاته العشر
+enum ComplaintStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  ASSIGNED
+  COMMITTEE_REVIEW
+  REFERRED
+  WAITING_RESPONSE
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+  DISMISSED
+}
+
+// افتراض: قيم القناة المفضلة غير محددة في PRD
+enum ContactChannel {
+  PHONE
+  EMAIL
+  WHATSAPP
+}
+
+// افتراض: §5.1 يذكر «بلدية، مؤسسة…» فقط
+enum ReferralTarget {
+  MUNICIPALITY
+  ORGANIZATION
+  GOVERNMENT
+  LEGAL
+  OTHER
+}
+
+// SUBMITTED و SCREENING و COMMITTEE_REVIEW من AC-07/08 · الباقي من مخطط §5.2
+enum IdeaStatus {
+  SUBMITTED
+  SCREENING
+  COMMITTEE_REVIEW
+  CHANGES_REQUESTED
+  APPROVED
+  REJECTED
+  MERGED
+}
+
+// DRAFT منصوص · افتراض: بقية القيم
+enum ConceptNoteStatus {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+  REJECTED
+  SENT
+}
+
+// افتراض: مصدر توليد المسودة (قالب النظام أو اقتراح AI في م٢)
+enum ConceptNoteSource {
+  SYSTEM
+  AI
+}
+
+// افتراض: §5.3 يذكر الاعتماد قبل النشر العام ولا يسمّي الحالات
+enum InitiativeStatus {
+  DRAFT
+  PENDING_APPROVAL
+  PUBLISHED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+// §1.5: «مدرّب، مكان، معدات، خبرة» والتمويل · افتراض: MATERIALS و OTHER
+// يُستخدم لنوع الاحتياج ولأنواع عرض الدعم معًا
+enum SupportType {
+  FUNDING
+  TRAINER
+  VENUE
+  EQUIPMENT
+  EXPERTISE
+  MATERIALS
+  OTHER
+}
+
+// OPEN منصوص (AC-09) · «مغطّى» من AC-09 ③ · افتراض: الباقي
+enum NeedStatus {
+  OPEN
+  PARTIALLY_COVERED
+  COVERED
+  CANCELLED
+}
+
+// SUBMITTED منصوص (AC-10) · افتراض: الباقي
+enum OfferStatus {
+  SUBMITTED
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum FundingDirection {
+  INCOMING
+  OUTGOING
+}
+
+// افتراض: أنواع المؤسسات غير محددة
+enum OrganizationType {
+  LOCAL_NGO
+  INTERNATIONAL_NGO
+  UN_AGENCY
+  GOVERNMENT
+  PRIVATE_SECTOR
+  ACADEMIC
+  DONOR
+  OTHER
+}
+
+// افتراض: مراحل الشراكة غير محددة
+enum PartnershipStage {
+  PROSPECT
+  CONTACTED
+  PROPOSAL_SENT
+  NEGOTIATION
+  ACTIVE
+  DORMANT
+}
+
+// §4.8: «اتصال، اجتماع، إرسال مقترح…» · افتراض: EMAIL و VISIT و OTHER
+enum InteractionType {
+  CALL
+  MEETING
+  PROPOSAL_SENT
+  EMAIL
+  VISIT
+  OTHER
+}
+
+// §4.9: «وظيفة، تدريب، منحة، مساعدة…» · افتراض: VOLUNTEER و OTHER
+enum OpportunityType {
+  JOB
+  TRAINING
+  GRANT
+  AID
+  VOLUNTEER
+  OTHER
+}
+
+// §5.4
+enum ApplyMode {
+  INTERNAL
+  EXTERNAL
+}
+
+// PENDING_REVIEW و PUBLISHED منصوصتان · افتراض: الباقي
+enum OpportunityStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+  REJECTED
+  CLOSED
+}
+
+// افتراض: حالات طلب الفرصة غير محددة
+enum ApplicationStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+// WORKSHOP منصوص · افتراض: الباقي
+enum ActivityKind {
+  ACTIVITY
+  WORKSHOP
+  EVENT
+  CAMPAIGN
+}
+
+// DRAFT منصوص (§5.5) · افتراض: الباقي
+enum ActivityStatus {
+  DRAFT
+  PUBLISHED
+  COMPLETED
+  CANCELLED
+}
+
+// REGISTERED و WAITLISTED و ATTENDED و NO_SHOW منصوصة · افتراض: CANCELLED
+enum RegistrationStatus {
+  REGISTERED
+  WAITLISTED
+  ATTENDED
+  NO_SHOW
+  CANCELLED
+}
+
+// م٢ · «لا تُحتسب قبل اعتمادها»
+enum VolunteerHourStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// م٢ · افتراض
+enum CertificateKind {
+  VOLUNTEER
+  PARTICIPATION
+  TRAINING
+}
+
+// م٢ · افتراض
+enum MeetingStatus {
+  SCHEDULED
+  HELD
+  CANCELLED
+}
+
+// §4.10: «الحضور والغياب والاعتذار»
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  EXCUSED
+}
+
+// AC-06 و KanbanBoard §12
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  REVIEW
+  DONE
+}
+
+// افتراض: درجات الأولوية
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+// §4.10: «الخبر أو البيان» · افتراض: ANNOUNCEMENT
+enum MediaPostType {
+  NEWS
+  STATEMENT
+  ANNOUNCEMENT
+}
+
+// §9 — تُستخدم أيضًا لمرحلة MediaReview
+enum MediaStatus {
+  DRAFT
+  INTERNAL_REVIEW
+  MEDIA_APPROVAL
+  PRESIDENT_APPROVAL
+  PUBLISHED
+  REJECTED
+}
+
+// افتراض: قرار المراجع في MediaReview
+enum ReviewDecision {
+  APPROVED
+  REJECTED
+  CHANGES_REQUESTED
+}
+
+// PENDING و CLEAN منصوصتان (§6.5) · افتراض: الباقي
+enum FileScanStatus {
+  PENDING
+  CLEAN
+  INFECTED
+  FAILED
+}
+
+// §8.1 — قنوات MVP
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+}
+
+// افتراض
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+}
+
+// أحداث مصفوفة §8.2
+enum NotificationType {
+  COMPLAINT_RECEIVED
+  COMPLAINT_ASSIGNED
+  COMPLAINT_STATUS_CHANGED
+  COMPLAINT_RESOLVED
+  TASK_ASSIGNED
+  TASK_DUE_SOON
+  IDEA_DECIDED
+  OFFER_RECEIVED
+  OFFER_DECIDED
+  OPPORTUNITY_PUBLISHED
+  APPLICATION_STATUS_CHANGED
+  INQUIRY_UNANSWERED
+  INQUIRY_ANSWERED
+}
+
+// §8.2 «تقارير دورية» و M8 «شهري» · افتراض: الباقي
+enum ReportPeriod {
+  MONTHLY
+  QUARTERLY
+  ANNUAL
+  CUSTOM
+}
+
+// §10.1 — المهام الثماني المسموحة
+enum AiSuggestionKind {
+  CATEGORY
+  COMMITTEE
+  SUMMARY
+  DUPLICATE
+  PARTNER
+  CONCEPT_NOTE
+  MEETING_SUMMARY
+  SURVEY_ANALYSIS
+}
+
+// §10.3: PENDING منصوص · افتراض: الباقي
+enum AiSuggestionStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+// §13.3
+enum InquiryStatus {
+  NEW
+  IN_PROGRESS
+  ANSWERED
+  CLOSED
+}
+
+// افتراض: مستويات المهارة
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+// افتراض: المستويات التعليمية
+enum EducationLevel {
+  NONE
+  PRIMARY
+  SECONDARY
+  VOCATIONAL
+  DIPLOMA
+  BACHELOR
+  POSTGRADUATE
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §4.2 الهوية والصلاحيات والدورات
+// ═══════════════════════════════════════════════════════════════
+
+model User {
+  id        String    @id @default(uuid()) @db.Uuid
+  authId    String    @unique @db.Uuid
+  email     String?   @unique
+  phone     String?   @unique
+  fullName  String
+  locale    String    @default("ar")
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  roleAssignments         RoleAssignment[]         @relation("AssignmentUser")
+  roleAssignmentsGiven    RoleAssignment[]         @relation("AssignmentAssignedBy")
+  roleAssignmentsRevoked  RoleAssignment[]         @relation("AssignmentRevokedBy")
+  youthProfile            YouthProfile?
+  youthSkills             YouthSkill[]
+  complaintsSubmitted     Complaint[]              @relation("ComplaintSubmitter")
+  complaintsAssigned      Complaint[]              @relation("ComplaintAssignee")
+  complaintEvents         ComplaintEvent[]
+  complaintReferrals      ComplaintReferral[]
+  ideas                   Idea[]                   @relation("IdeaSubmitter")
+  ideasDecided            Idea[]                   @relation("IdeaDecidedBy")
+  ideaVotes               IdeaVote[]
+  demandPollsCreated      DemandPoll[]
+  demandVotes             DemandVote[]
+  conceptNotesReviewed    ConceptNote[]            @relation("ConceptNoteReviewer")
+  conceptNotesApproved    ConceptNote[]            @relation("ConceptNoteApprover")
+  initiativesCreated      Initiative[]             @relation("InitiativeCreator")
+  initiativesApproved     Initiative[]             @relation("InitiativeApprover")
+  initiativeUpdates       InitiativeUpdate[]
+  offersSubmitted         SupportOffer[]           @relation("OfferSubmitter")
+  offersDecided           SupportOffer[]           @relation("OfferDecider")
+  fundingRecorded         FundingRecord[]          @relation("FundingRecorder")
+  fundingApproved         FundingRecord[]          @relation("FundingApprover")
+  organizationsOwned      Organization[]
+  interactions            Interaction[]
+  partnerMemberships      PartnerMembership[]
+  opportunitiesCreated    Opportunity[]            @relation("OpportunityCreator")
+  opportunitiesReviewed   Opportunity[]            @relation("OpportunityReviewer")
+  applications            OpportunityApplication[]
+  activitiesCreated       Activity[]
+  activityRegistrations   ActivityRegistration[]   @relation("RegistrationUser")
+  attendanceMarked        ActivityRegistration[]   @relation("AttendanceMarkedBy")
+  volunteerHours          VolunteerHour[]          @relation("VolunteerHourUser")
+  volunteerHoursApproved  VolunteerHour[]          @relation("VolunteerHourApprover")
+  certificates            Certificate[]            @relation("CertificateHolder")
+  certificatesIssued      Certificate[]            @relation("CertificateIssuer")
+  meetingAttendance       MeetingAttendance[]
+  decisionsCreated        Decision[]
+  tasksAssigned           Task[]                   @relation("TaskAssignee")
+  tasksCreated            Task[]                   @relation("TaskCreator")
+  tasksApproved           Task[]                   @relation("TaskApprover")
+  taskComments            TaskComment[]
+  mediaPostsAuthored      MediaPost[]              @relation("MediaAuthor")
+  mediaPostsPublished     MediaPost[]              @relation("MediaPublisher")
+  mediaReviews            MediaReview[]
+  filesUploaded           FileObject[]
+  notifications           Notification[]
+  notificationPreferences NotificationPreference[]
+  reportsCreated          Report[]                 @relation("ReportCreator")
+  reportsPublished        Report[]                 @relation("ReportPublisher")
+  auditLogs               AuditLog[]
+  aiSuggestionsDecided    AiSuggestion[]
+  faqEntriesCreated       FaqEntry[]               @relation("FaqCreator")
+  faqEntriesUpdated       FaqEntry[]               @relation("FaqUpdater")
+  inquiriesAsked          SupportInquiry[]         @relation("InquiryAsker")
+  inquiriesAssigned       SupportInquiry[]         @relation("InquiryAssignee")
+  inquiriesAnswered       SupportInquiry[]         @relation("InquiryAnsweredBy")
+
+  @@index([deletedAt])
+  @@map("users")
+}
+
+model Role {
+  id                String   @id @default(uuid()) @db.Uuid
+  key               String   @unique
+  nameAr            String
+  description       String? // افتراض
+  requiresCommittee Boolean  @default(false)
+  isTermBound       Boolean  @default(false)
+  isSystem          Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  permissions RolePermission[]
+  assignments RoleAssignment[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id            String   @id @default(uuid()) @db.Uuid
+  key           String   @unique
+  resource      String
+  action        String
+  descriptionAr String
+  isPhase2      Boolean  @default(false) // مولَّد من علامة (م٢) في §3.3
+  createdAt     DateTime @default(now())
+
+  roles RolePermission[]
+
+  @@unique([resource, action])
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String          @db.Uuid
+  permissionId String          @db.Uuid
+  scope        PermissionScope
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+// فهرس «دورة حالية واحدة» جزئي، في sql/constraints.sql (council_terms_one_current)
+model CouncilTerm {
+  id        String    @id @default(uuid()) @db.Uuid
+  name      String
+  startsAt  DateTime
+  endsAt    DateTime?
+  isCurrent Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  assignments RoleAssignment[]
+  meetings    Meeting[]
+
+  @@map("council_terms")
+}
+
+// المصدر الوحيد لمن يحمل أي دور في أي لجنة وأي دورة (§3.2)
+model RoleAssignment {
+  id           String    @id @default(uuid()) @db.Uuid
+  userId       String    @db.Uuid
+  roleId       String    @db.Uuid
+  termId       String?   @db.Uuid // افتراض: فارغ للأدوار غير المرتبطة بدورة (isTermBound = false) كالشاب والمؤسسة
+  committeeId  String?   @db.Uuid
+  title        String?
+  startsAt     DateTime  @default(now()) // افتراض
+  endsAt       DateTime?
+  revokedAt    DateTime?
+  assignedById String?   @db.Uuid // افتراض: null لتعيين النظام عند التسجيل
+  revokedById  String?   @db.Uuid // افتراض
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  user       User         @relation("AssignmentUser", fields: [userId], references: [id])
+  role       Role         @relation(fields: [roleId], references: [id])
+  term       CouncilTerm? @relation(fields: [termId], references: [id])
+  committee  Committee?   @relation(fields: [committeeId], references: [id])
+  assignedBy User?        @relation("AssignmentAssignedBy", fields: [assignedById], references: [id])
+  revokedBy  User?        @relation("AssignmentRevokedBy", fields: [revokedById], references: [id])
+
+  @@index([userId, revokedAt])
+  @@index([committeeId, roleId])
+  @@map("role_assignments")
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §4.3 اللجان والجداول المرجعية
+// ═══════════════════════════════════════════════════════════════
+
+model Committee {
+  id        String    @id @default(uuid()) @db.Uuid
+  slug      String    @unique
+  nameAr    String
+  mandate   String?
+  isActive  Boolean   @default(true)
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  assignments          RoleAssignment[]
+  defaultForCategories ComplaintCategory[]
+  complaints           Complaint[]
+  ideas                Idea[]
+  initiatives          Initiative[]
+  activities           Activity[]
+  meetings             Meeting[]
+  tasks                Task[]
+  mediaPosts           MediaPost[]
+
+  @@index([deletedAt])
+  @@map("committees")
+}
+
+model Area {
+  id        String   @id @default(uuid()) @db.Uuid
+  nameAr    String   @unique
+  parentId  String?  @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  parent        Area?          @relation("AreaTree", fields: [parentId], references: [id])
+  children      Area[]         @relation("AreaTree")
+  youthProfiles YouthProfile[]
+  complaints    Complaint[]
+  ideas         Idea[]
+  opportunities Opportunity[]
+  activities    Activity[]
+
+  @@map("areas")
+}
+
+model ComplaintCategory {
+  id                 String   @id @default(uuid()) @db.Uuid
+  nameAr             String   @unique
+  defaultCommitteeId String?  @db.Uuid
+  isActive           Boolean  @default(true) // افتراض
+  sortOrder          Int      @default(0) // افتراض
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  defaultCommittee Committee?  @relation(fields: [defaultCommitteeId], references: [id])
+  complaints       Complaint[]
+
+  @@map("complaint_categories")
+}
+
+// يُقرأ عبر next_ref() فقط (sql/constraints.sql)
+model Counter {
+  key       String   @id // مثل CMP-2026
+  value     Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@map("counters")
+}
+
+model Skill {
+  id        String   @id @default(uuid()) @db.Uuid
+  nameAr    String   @unique
+  category  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  youthSkills       YouthSkill[]
+  demandOptions     DemandOption[]
+  opportunitySkills OpportunitySkill[]
+
+  @@map("skills")
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §4.4 الشباب — بلا رقم هوية ولا عنوان تفصيلي ولا تاريخ ميلاد كامل
+// ═══════════════════════════════════════════════════════════════
+
+model YouthProfile {
+  userId            String          @id @db.Uuid
+  birthYear         Int?
+  areaId            String?         @db.Uuid
+  educationLevel    EducationLevel?
+  languages         String[]
+  interests         String[]
+  jobSeeking        Boolean         @default(false)
+  shareWithPartners Boolean         @default(false)
+  consentUpdatedAt  DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  user User  @relation(fields: [userId], references: [id])
+  area Area? @relation(fields: [areaId], references: [id])
+
+  @@map("youth_profiles")
+}
+
+model YouthSkill {
+  userId    String     @db.Uuid
+  skillId   String     @db.Uuid
+  level     SkillLevel
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill Skill @relation(fields: [skillId], references: [id])
+
+  @@id([userId, skillId])
+  @@map("youth_skills")
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §4.5 الشكاوى
+// ═══════════════════════════════════════════════════════════════
+
+// قيدا complaints_anonymous_has_no_submitter و complaints_dismissed_needs_reason في sql/constraints.sql
+model Complaint {
+  id             String          @id @default(uuid()) @db.Uuid
+  reference      String          @unique // RF-CMP-YYYY-NNNNNN من next_ref() حصرًا
+  accessCodeHash String
+  clientDraftId  String?         @unique @db.Uuid
+  title          String          @db.VarChar(200) // §6.3
+  body           String          @db.VarChar(5000) // §6.3 — الحد الأدنى 20 في Zod
+  status         ComplaintStatus @default(SUBMITTED)
+  isAnonymous    Boolean         @default(false)
+  submitterId    String?         @db.Uuid
+  categoryId     String?         @db.Uuid
+  areaId         String?         @db.Uuid
+  committeeId    String?         @db.Uuid
+  assigneeId     String?         @db.Uuid
+  dismissReason  String?
+  resolutionNote String? // §5.1 خطوة 10
+  closedAt       DateTime? // §5.1 خطوة 11
+  firstTrackedAt DateTime? // افتراض: لازم لقياس M5 (نسبة الشكاوى التي فُتحت صفحة تتبّعها)
+  isDemo         Boolean         @default(false)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  deletedAt      DateTime? // افتراض: ضمن النماذج الاثني عشر للحذف الناعم
+
+  submitter   User?               @relation("ComplaintSubmitter", fields: [submitterId], references: [id])
+  assignee    User?               @relation("ComplaintAssignee", fields: [assigneeId], references: [id])
+  category    ComplaintCategory?  @relation(fields: [categoryId], references: [id])
+  area        Area?               @relation(fields: [areaId], references: [id])
+  committee   Committee?          @relation(fields: [committeeId], references: [id])
+  contact     ComplaintContact?
+  events      ComplaintEvent[]
+  referrals   ComplaintReferral[]
+  tasks       Task[]
+  agendaItems AgendaItem[]
+  files       FileObject[]
+
+  @@index([status, committeeId])
+  @@index([categoryId, areaId])
+  @@index([submitterId])
+  @@index([deletedAt])
+  @@map("complaints")
+}
+
+// AES-256-GCM بمفتاح خارج قاعدة البيانات (§6.6). يُقرأ بـ complaints:read_contact فقط.
+model ComplaintContact {
+  id               String          @id @default(uuid()) @db.Uuid
+  complaintId      String          @unique @db.Uuid
+  nameEnc          Bytes?
+  phoneEnc         Bytes?
+  emailEnc         Bytes?
+  preferredChannel ContactChannel?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  complaint Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+
+  @@map("complaint_contacts")
+}
+
+model ComplaintEvent {
+  id          String           @id @default(uuid()) @db.Uuid
+  complaintId String           @db.Uuid
+  fromStatus  ComplaintStatus?
+  toStatus    ComplaintStatus
+  note        String?
+  isPublic    Boolean          @default(false)
+  actorId     String?          @db.Uuid // null لحدث التقديم المجهول
+  createdAt   DateTime         @default(now())
+
+  complaint Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  actor     User?     @relation(fields: [actorId], references: [id])
+
+  @@index([complaintId, createdAt])
+  @@map("complaint_events")
+}
+
+model ComplaintReferral {
+  id          String         @id @default(uuid()) @db.Uuid
+  complaintId String         @db.Uuid
+  target      ReferralTarget
+  targetName  String
+  note        String? // افتراض
+  followUpAt  DateTime?
+  respondedAt DateTime?
+  response    String?
+  createdById String         @db.Uuid // افتراض
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  complaint Complaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  createdBy User      @relation(fields: [createdById], references: [id])
+
+  @@index([followUpAt])
+  @@map("complaint_referrals")
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §4.6 الأفكار ومحرك الطلب
+// ═══════════════════════════════════════════════════════════════
+
+model Idea {
+  id            String     @id @default(uuid()) @db.Uuid
+  reference     String     @unique
+  clientDraftId String?    @unique @db.Uuid
+  title         String     @db.VarChar(200) // افتراض: نفس حد عنوان الشكوى
+  problem       String     @db.VarChar(5000) // AC-07: ≥ 20 محرفًا في Zod
+  solution      String     @db.VarChar(5000)
+  estimatedCost Decimal?   @db.Decimal(12, 2) // AC-07 «الكلفة»
+  status        IdeaStatus @default(SUBMITTED)
+  voteCount     Int        @default(0)
+  submitterId   String     @db.Uuid
+  committeeId   String?    @db.Uuid
+  areaId        String?    @db.Uuid // افتراض
+  reviewNote    String? // AC-08
+  decidedById   String?    @db.Uuid // افتراض: منفّذ الاعتماد/الرفض النهائي
+  decidedAt     DateTime? // افتراض
+  mergedIntoId  String?    @db.Uuid
+  initiativeId  String?    @db.Uuid
+  isDemo        Boolean    @default(false)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  deletedAt     DateTime? // افتراض: ضمن النماذج الاثني عشر للحذف الناعم
+
+  submitter    User          @relation("IdeaSubmitter", fields: [submitterId], references: [id])
+  decidedBy    User?         @relation("IdeaDecidedBy", fields: [decidedById], references: [id])
+  committee    Committee?    @relation(fields: [committeeId], references: [id])
+  area         Area?         @relation(fields: [areaId], references: [id])
+  mergedInto   Idea?         @relation("IdeaMerge", fields: [mergedIntoId], references: [id])
+  mergedFrom   Idea[]        @relation("IdeaMerge")
+  initiative   Initiative?   @relation(fields: [initiativeId], references: [id])
+  votes        IdeaVote[]
+  conceptNotes ConceptNote[]
+  files        FileObject[]
+
+  @@index([voteCount])
+  @@index([status, committeeId])
+  @@index([deletedAt])
+  @@map("ideas")
+}
+
+model IdeaVote {
+  ideaId    String   @db.Uuid
+  userId    String   @db.Uuid
+  createdAt DateTime @default(now())
+
+  idea Idea @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id])
+
+  @@id([ideaId, userId])
+  @@map("idea_votes")
+}
+
+model DemandPoll {
+  id                String    @id @default(uuid()) @db.Uuid
+  title             String
+  description       String?
+  proposalThreshold Int
+  isActive          Boolean   @default(true)
+  closesAt          DateTime?
+  initiativeId      String?   @db.Uuid
+  createdById       String    @db.Uuid // افتراض
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  initiative Initiative?    @relation(fields: [initiativeId], references: [id])
+  createdBy  User           @relation(fields: [createdById], references: [id])
+  options    DemandOption[]
+  votes      DemandVote[]
+
+  @@map("demand_polls")
+}
+
+model DemandOption {
+  id        String   @id @default(uuid()) @db.Uuid
+  pollId    String   @db.Uuid
+  label     String
+  skillId   String?  @db.Uuid
+  voteCount Int      @default(0)
+  sortOrder Int      @default(0) // افتراض
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  poll        DemandPoll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  skill       Skill?       @relation(fields: [skillId], references: [id])
+  votes       DemandVote[]
+  conceptNote ConceptNote?
+
+  @@index([pollId])
+  @@map("demand_options")
+}
+
+// صوت واحد لكل حساب لكل استطلاع، قابل للتغيير
+model DemandVote {
+  pollId    String   @db.Uuid
+  userId    String   @db.Uuid
+  optionId  String   @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  poll   DemandPoll   @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  user   User         @relation(fields: [userId], references: [id])
+  option DemandOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  @@id([pollId, userId])
+  @@index([optionId])
+  @@map("demand_votes")
+}
+
+// يبدأ DRAFT دائمًا. لا إرسال قبل approvedAt و approvedById (C15).
+model ConceptNote {
+  id             String            @id @default(uuid()) @db.Uuid
+  title          String
+  status         ConceptNoteStatus @default(DRAFT)
+  bodyMd         String
+  generatedBy    ConceptNoteSource @default(SYSTEM)
+  demandOptionId String?           @unique @db.Uuid // افتراض: فريد لتحقيق AC-12 ② «مسودة واحدة لا أكثر»
+  voterCount     Int? // AC-12 ③ «تحمل عدد المصوّتين» — لقطة وقت التوليد
+  ideaId         String?           @db.Uuid // §5.2: الفكرة المعتمدة قد تتحول إلى Concept Note
+  reviewedById   String?           @db.Uuid
+  approvedById   String?           @db.Uuid // افتراض: §4.6 يذكر approvedAt فقط، و C15 يشترط decidedById
+  approvedAt     DateTime?
+  sentAt         DateTime?
+  fileId         String?           @unique @db.Uuid
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  demandOption DemandOption? @relation(fields: [demandOptionId], references: [id])
+  idea         Idea?         @relation(fields: [ideaId], references: [id])
+  reviewedBy   User?         @relation("ConceptNoteReviewer", fields: [reviewedById], references: [id])
+  approvedBy   User?         @relation("ConceptNoteApprover", fields: [approvedById], references: [id])
+  file         FileObject?   @relation("ConceptNoteFile", fields: [fileId], references: [id])
+
+  @@map("concept_notes")
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §4.7 المبادرات والدعم والتمويل
+// ═══════════════════════════════════════════════════════════════
+
+// المبلغ المؤمَّن لا يُخزَّن: يُشتق من مجموع FundingRecord الواردة المعتمدة.
+model Initiative {
+  id                   String           @id @default(uuid()) @db.Uuid
+  slug                 String           @unique
+  title                String
+  summary              String? // افتراض
+  description          String? // افتراض
+  status               InitiativeStatus @default(DRAFT)
+  committeeId          String?          @db.Uuid // AC-09 «مبادرة تتبع لجنتي»
+  estimatedBudget      Decimal?         @db.Decimal(12, 2)
+  beneficiariesTarget  Int?
+  beneficiariesReached Int? // افتراض: لتوثيق «الأثر» (§1.6)
+  impactSummary        String? // افتراض: لتوثيق «الأثر» (§1.6)
+  progressPct          Int              @default(0) // قيد 0–100 في sql/constraints.sql
+  isFlagship           Boolean          @default(false)
+  startsAt             DateTime? // افتراض
+  endsAt               DateTime? // افتراض
+  createdById          String           @db.Uuid
+  approvedById         String?          @db.Uuid // initiatives:approve
+  approvedAt           DateTime?
+  isDemo               Boolean          @default(false)
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  deletedAt            DateTime? // افتراض: ضمن النماذج الاثني عشر للحذف الناعم
+
+  committee      Committee?          @relation(fields: [committeeId], references: [id])
+  createdBy      User                @relation("InitiativeCreator", fields: [createdById], references: [id])
+  approvedBy     User?               @relation("InitiativeApprover", fields: [approvedById], references: [id])
+  ideas          Idea[]
+  demandPolls    DemandPoll[]
+  needs          InitiativeNeed[]
+  offers         SupportOffer[]
+  partners       InitiativePartner[]
+  updates        InitiativeUpdate[]
+  fundingRecords FundingRecord[]
+  agreements     Agreement[]
+  tasks          Task[]
+  agendaItems    AgendaItem[]
+  files          FileObject[]
+
+  @@index([status, committeeId])
+  @@index([deletedAt])
+  @@map("initiatives")
+}
+
+model InitiativeNeed {
+  id           String      @id @default(uuid()) @db.Uuid
+  initiativeId String      @db.Uuid
+  type         SupportType
+  description  String
+  quantity     Int?
+  unit         String?
+  amount       Decimal?    @db.Decimal(12, 2)
+  status       NeedStatus  @default(OPEN)
+  sortOrder    Int         @default(0) // افتراض
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  initiative Initiative     @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  offers     SupportOffer[]
+
+  @@index([initiativeId, status])
+  @@map("initiative_needs")
+}
+
+model SupportOffer {
+  id             String        @id @default(uuid()) @db.Uuid
+  initiativeId   String        @db.Uuid
+  needId         String?       @db.Uuid // «يُربط باحتياج محدد متى أمكن»
+  organizationId String        @db.Uuid
+  submittedById  String        @db.Uuid
+  types          SupportType[]
+  amount         Decimal?      @db.Decimal(12, 2) // AC-10 ②: العرض غير المالي بلا مبلغ
+  currency       String        @default("ILS") @db.Char(3) // ILS أو USD (PRD §4.1)
+  note           String?
+  status         OfferStatus   @default(SUBMITTED)
+  decidedById    String?       @db.Uuid
+  decidedAt      DateTime? // افتراض
+  decisionNote   String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  initiative     Initiative          @relation(fields: [initiativeId], references: [id])
+  need           InitiativeNeed?     @relation(fields: [needId], references: [id])
+  organization   Organization        @relation(fields: [organizationId], references: [id])
+  submittedBy    User                @relation("OfferSubmitter", fields: [submittedById], references: [id])
+  decidedBy      User?               @relation("OfferDecider", fields: [decidedById], references: [id])
+  partnerships   InitiativePartner[]
+  fundingRecords FundingRecord[]
+
+  @@index([initiativeId, status])
+  @@index([organizationId])
+  @@map("support_offers")
+}
+
+model InitiativePartner {
+  initiativeId   String   @db.Uuid
+  organizationId String   @db.Uuid
+  role           String // افتراض: نص حر لا enum
+  since          DateTime @default(now())
+  offerId        String?  @db.Uuid // افتراض: العرض الذي أنشأ الشراكة
+  createdAt      DateTime @default(now())
+
+  initiative   Initiative    @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  organization Organization  @relation(fields: [organizationId], references: [id])
+  offer        SupportOffer? @relation(fields: [offerId], references: [id])
+
+  @@id([initiativeId, organizationId])
+  @@map("initiative_partners")
+}
+
+model InitiativeUpdate {
+  id           String   @id @default(uuid()) @db.Uuid
+  initiativeId String   @db.Uuid
+  authorId     String   @db.Uuid
+  body         String
+  isPublic     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  initiative Initiative   @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  author     User         @relation(fields: [authorId], references: [id])
+  files      FileObject[]
+
+  @@index([initiativeId, createdAt])
+  @@map("initiative_updates")
+}
+
+// قيدا funding_four_eyes والمبلغ الموجب في sql/constraints.sql
+model FundingRecord {
+  id             String           @id @default(uuid()) @db.Uuid
+  direction      FundingDirection
+  amount         Decimal          @db.Decimal(12, 2)
+  currency       String           @default("ILS") @db.Char(3) // ILS أو USD (PRD §4.1)
+  description    String? // افتراض
+  occurredAt     DateTime // افتراض: تاريخ الحركة الفعلي
+  initiativeId   String?          @db.Uuid
+  organizationId String?          @db.Uuid
+  offerId        String?          @db.Uuid
+  recordedById   String           @db.Uuid
+  approvedById   String?          @db.Uuid
+  approvedAt     DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  initiative   Initiative?   @relation(fields: [initiativeId], references: [id])
+  organization Organization? @relation(fields: [organizationId], references: [id])
+  offer        SupportOffer? @relation(fields: [offerId], references: [id])
+  recordedBy   User          @relation("FundingRecorder", fields: [recordedById], references: [id])
+  approvedBy   User?         @relation("FundingApprover", fields: [approvedById], references: [id])
+
+  @@index([initiativeId, direction, approvedAt])
+  @@map("funding_records")
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §4.8 المؤسسات — CRM
+// ═══════════════════════════════════════════════════════════════
+
+model Organization {
+  id            String           @id @default(uuid()) @db.Uuid
+  name          String
+  type          OrganizationType
+  country       String?
+  sectors       String[]
+  stage         PartnershipStage @default(PROSPECT)
+  website       String? // افتراض
+  ownerId       String?          @db.Uuid // عضو المجلس المسؤول عن العلاقة
+  lastContactAt DateTime?
+  isDemo        Boolean          @default(false)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  deletedAt     DateTime?
+
+  owner              User?               @relation(fields: [ownerId], references: [id])
+  contacts           OrgContact[]
+  interactions       Interaction[]
+  members            PartnerMembership[]
+  agreements         Agreement[]
+  offers             SupportOffer[]
+  initiativePartners InitiativePartner[]
+  fundingRecords     FundingRecord[]
+  opportunities      Opportunity[]
+  activityPartners   ActivityPartner[]
+
+  @@index([type, stage])
+  @@index([deletedAt])
+  @@map("organizations")
+}
+
+model OrgContact {
+  id             String   @id @default(uuid()) @db.Uuid
+  organizationId String   @db.Uuid
+  fullName       String
+  jobTitle       String?
+  email          String? // افتراض
+  phone          String? // افتراض
+  isPrimary      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("org_contacts")
+}
+
+model Interaction {
+  id             String          @id @default(uuid()) @db.Uuid
+  organizationId String          @db.Uuid
+  type           InteractionType
+  summary        String
+  occurredAt     DateTime
+  followUpAt     DateTime?
+  loggedById     String          @db.Uuid // organizations:log نطاقه «خاص»
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  loggedBy     User         @relation(fields: [loggedById], references: [id])
+
+  @@index([organizationId, occurredAt])
+  @@index([followUpAt])
+  @@map("interactions")
+}
+
+model PartnerMembership {
+  userId         String   @db.Uuid
+  organizationId String   @db.Uuid
+  isAdmin        Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  user         User         @relation(fields: [userId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@id([userId, organizationId])
+  @@map("partner_memberships")
+}
+
+model Agreement {
+  id             String    @id @default(uuid()) @db.Uuid
+  organizationId String    @db.Uuid
+  initiativeId   String?   @db.Uuid // افتراض
+  title          String
+  signedAt       DateTime?
+  startsAt       DateTime?
+  endsAt         DateTime?
+  fileId         String?   @unique @db.Uuid
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+  initiative   Initiative?  @relation(fields: [initiativeId], references: [id])
+  file         FileObject?  @relation("AgreementFile", fields: [fileId], references: [id])
+
+  @@map("agreements")
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §4.9 الفرص والأنشطة والتطوع
+// ═══════════════════════════════════════════════════════════════
+
+model Opportunity {
+  id             String            @id @default(uuid()) @db.Uuid
+  title          String
+  description    String
+  type           OpportunityType
+  applyMode      ApplyMode
+  externalUrl    String?
+  seats          Int?
+  deadline       DateTime?
+  status         OpportunityStatus @default(PENDING_REVIEW)
+  organizationId String?           @db.Uuid
+  areaId         String?           @db.Uuid // افتراض
+  createdById    String            @db.Uuid
+  reviewedById   String?           @db.Uuid // opportunities:publish
+  publishedAt    DateTime?
+  isDemo         Boolean           @default(false)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  deletedAt      DateTime? // افتراض: ضمن النماذج الاثني عشر للحذف الناعم
+
+  organization Organization?            @relation(fields: [organizationId], references: [id])
+  area         Area?                    @relation(fields: [areaId], references: [id])
+  createdBy    User                     @relation("OpportunityCreator", fields: [createdById], references: [id])
+  reviewedBy   User?                    @relation("OpportunityReviewer", fields: [reviewedById], references: [id])
+  skills       OpportunitySkill[]
+  applications OpportunityApplication[]
+  files        FileObject[]
+
+  @@index([status, type])
+  @@index([deadline])
+  @@index([deletedAt])
+  @@map("opportunities")
+}
+
+model OpportunitySkill {
+  opportunityId String @db.Uuid
+  skillId       String @db.Uuid
+
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  skill       Skill       @relation(fields: [skillId], references: [id])
+
+  @@id([opportunityId, skillId])
+  @@map("opportunity_skills")
+}
+
+// الموافقة لحظة التقديم (shareProfile) لا إعداد عام
+model OpportunityApplication {
+  id            String            @id @default(uuid()) @db.Uuid
+  opportunityId String            @db.Uuid
+  applicantId   String            @db.Uuid
+  message       String?
+  shareProfile  Boolean           @default(false)
+  status        ApplicationStatus @default(SUBMITTED)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id])
+  applicant   User        @relation(fields: [applicantId], references: [id])
+
+  @@unique([opportunityId, applicantId])
+  @@map("opportunity_applications")
+}
+
+model Activity {
+  id               String         @id @default(uuid()) @db.Uuid
+  title            String
+  description      String?
+  kind             ActivityKind   @default(ACTIVITY)
+  committeeId      String?        @db.Uuid
+  startsAt         DateTime
+  endsAt           DateTime? // افتراض
+  location         String? // افتراض
+  areaId           String?        @db.Uuid // افتراض
+  seats            Int?
+  registrationOpen Boolean        @default(false)
+  status           ActivityStatus @default(DRAFT)
+  outcomes         String?
+  createdById      String         @db.Uuid
+  isDemo           Boolean        @default(false)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  deletedAt        DateTime? // افتراض: ضمن النماذج الاثني عشر للحذف الناعم
+
+  committee      Committee?             @relation(fields: [committeeId], references: [id])
+  area           Area?                  @relation(fields: [areaId], references: [id])
+  createdBy      User                   @relation(fields: [createdById], references: [id])
+  registrations  ActivityRegistration[]
+  partners       ActivityPartner[]
+  volunteerHours VolunteerHour[]
+  files          FileObject[]
+
+  @@index([startsAt, status])
+  @@index([committeeId])
+  @@index([deletedAt])
+  @@map("activities")
+}
+
+// قيد التقييم 1–5 في sql/constraints.sql
+model ActivityRegistration {
+  id                   String             @id @default(uuid()) @db.Uuid
+  activityId           String             @db.Uuid
+  userId               String             @db.Uuid
+  status               RegistrationStatus @default(REGISTERED)
+  isVolunteer          Boolean            @default(false)
+  rating               Int?
+  feedback             String?
+  attendanceMarkedById String?            @db.Uuid // AC-13 ④ «باسم من سجّله»
+  attendanceMarkedAt   DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  activity           Activity @relation(fields: [activityId], references: [id])
+  user               User     @relation("RegistrationUser", fields: [userId], references: [id])
+  attendanceMarkedBy User?    @relation("AttendanceMarkedBy", fields: [attendanceMarkedById], references: [id])
+
+  @@unique([activityId, userId])
+  @@map("activity_registrations")
+}
+
+model ActivityPartner {
+  activityId     String @db.Uuid
+  organizationId String @db.Uuid
+
+  activity     Activity     @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@id([activityId, organizationId])
+  @@map("activity_partners")
+}
+
+// م٢ · قيد 0 < hours ≤ 24 في sql/constraints.sql
+model VolunteerHour {
+  id           String              @id @default(uuid()) @db.Uuid
+  userId       String              @db.Uuid
+  activityId   String?             @db.Uuid
+  hours        Decimal             @db.Decimal(4, 2)
+  date         DateTime            @db.Date
+  description  String? // افتراض
+  status       VolunteerHourStatus @default(PENDING)
+  approvedById String?             @db.Uuid
+  approvedAt   DateTime? // افتراض
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  user       User      @relation("VolunteerHourUser", fields: [userId], references: [id])
+  activity   Activity? @relation(fields: [activityId], references: [id])
+  approvedBy User?     @relation("VolunteerHourApprover", fields: [approvedById], references: [id])
+
+  @@index([userId, status])
+  @@map("volunteer_hours")
+}
+
+// م٢
+model Certificate {
+  id         String          @id @default(uuid()) @db.Uuid
+  userId     String          @db.Uuid
+  serial     String          @unique
+  verifyCode String          @unique
+  kind       CertificateKind
+  hours      Decimal?        @db.Decimal(6, 2)
+  issuedById String          @db.Uuid // افتراض
+  issuedAt   DateTime        @default(now())
+  revokedAt  DateTime?
+  createdAt  DateTime        @default(now())
+
+  user     User @relation("CertificateHolder", fields: [userId], references: [id])
+  issuedBy User @relation("CertificateIssuer", fields: [issuedById], references: [id])
+
+  @@map("certificates")
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §4.10 عمل المجلس والإعلام
+// ═══════════════════════════════════════════════════════════════
+
+// م٢
+model Meeting {
+  id          String        @id @default(uuid()) @db.Uuid
+  number      Int
+  termId      String        @db.Uuid
+  committeeId String?       @db.Uuid // null = اجتماع المجلس العام
+  title       String // افتراض
+  scheduledAt DateTime // افتراض
+  location    String? // افتراض
+  status      MeetingStatus @default(SCHEDULED)
+  minutesMd   String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  term        CouncilTerm         @relation(fields: [termId], references: [id])
+  committee   Committee?          @relation(fields: [committeeId], references: [id])
+  agendaItems AgendaItem[]
+  attendance  MeetingAttendance[]
+  decisions   Decision[]
+
+  // يُعاد إنشاؤه بـ NULLS NOT DISTINCT في sql/constraints.sql بنفس الاسم
+  @@unique([termId, committeeId, number])
+  @@map("meetings")
+}
+
+// م٢
+model AgendaItem {
+  id           String   @id @default(uuid()) @db.Uuid
+  meetingId    String   @db.Uuid
+  order        Int
+  title        String
+  notes        String? // افتراض
+  complaintId  String?  @db.Uuid
+  initiativeId String?  @db.Uuid
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  meeting    Meeting     @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  complaint  Complaint?  @relation(fields: [complaintId], references: [id])
+  initiative Initiative? @relation(fields: [initiativeId], references: [id])
+
+  @@index([meetingId, order])
+  @@map("agenda_items")
+}
+
+// م٢
+model MeetingAttendance {
+  meetingId String           @db.Uuid
+  userId    String           @db.Uuid
+  status    AttendanceStatus
+
+  meeting Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@id([meetingId, userId])
+  @@map("meeting_attendance")
+}
+
+// م٢ · الرقم من next_ref() (RF-DEC-YYYY-NNNN)
+model Decision {
+  id          String   @id @default(uuid()) @db.Uuid
+  reference   String   @unique
+  meetingId   String?  @db.Uuid
+  text        String
+  decidedAt   DateTime
+  createdById String   @db.Uuid // افتراض
+  createdAt   DateTime @default(now())
+
+  meeting   Meeting? @relation(fields: [meetingId], references: [id])
+  createdBy User     @relation(fields: [createdById], references: [id])
+  tasks     Task[]
+
+  @@map("decisions")
+}
+
+// قيد tasks_no_self_approval في sql/constraints.sql
+model Task {
+  id           String       @id @default(uuid()) @db.Uuid
+  title        String
+  description  String?
+  committeeId  String       @db.Uuid
+  status       TaskStatus   @default(TODO)
+  priority     TaskPriority @default(MEDIUM)
+  dueAt        DateTime?
+  assigneeId   String?      @db.Uuid
+  createdById  String       @db.Uuid
+  approvedById String?      @db.Uuid
+  approvedAt   DateTime?
+  complaintId  String?      @db.Uuid
+  initiativeId String?      @db.Uuid
+  decisionId   String?      @db.Uuid
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  deletedAt    DateTime? // افتراض: ضمن النماذج الاثني عشر للحذف الناعم
+
+  committee  Committee     @relation(fields: [committeeId], references: [id])
+  assignee   User?         @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  createdBy  User          @relation("TaskCreator", fields: [createdById], references: [id])
+  approvedBy User?         @relation("TaskApprover", fields: [approvedById], references: [id])
+  complaint  Complaint?    @relation(fields: [complaintId], references: [id])
+  initiative Initiative?   @relation(fields: [initiativeId], references: [id])
+  decision   Decision?     @relation(fields: [decisionId], references: [id])
+  comments   TaskComment[]
+  files      FileObject[]
+
+  @@index([committeeId, status])
+  @@index([assigneeId, status])
+  @@index([dueAt])
+  @@index([deletedAt])
+  @@map("tasks")
+}
+
+model TaskComment {
+  id        String   @id @default(uuid()) @db.Uuid
+  taskId    String   @db.Uuid
+  authorId  String   @db.Uuid
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id])
+
+  @@index([taskId, createdAt])
+  @@map("task_comments")
+}
+
+// م٢ · لا مسار إلى PUBLISHED دون المراحل الأربع (§9)
+model MediaPost {
+  id            String        @id @default(uuid()) @db.Uuid
+  slug          String        @unique
+  type          MediaPostType
+  title         String
+  bodyMd        String
+  status        MediaStatus   @default(DRAFT)
+  committeeId   String?       @db.Uuid // افتراض: لجنة كاتب المسودة
+  authorId      String        @db.Uuid
+  publishedById String?       @db.Uuid
+  publishedAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime? // افتراض: ضمن النماذج الاثني عشر للحذف الناعم
+
+  committee   Committee?    @relation(fields: [committeeId], references: [id])
+  author      User          @relation("MediaAuthor", fields: [authorId], references: [id])
+  publishedBy User?         @relation("MediaPublisher", fields: [publishedById], references: [id])
+  reviews     MediaReview[]
+  files       FileObject[]
+
+  @@index([status, type])
+  @@index([deletedAt])
+  @@map("media_posts")
+}
+
+// م٢
+model MediaReview {
+  id         String         @id @default(uuid()) @db.Uuid
+  postId     String         @db.Uuid
+  reviewerId String         @db.Uuid
+  stage      MediaStatus
+  decision   ReviewDecision
+  comment    String?
+  createdAt  DateTime       @default(now())
+
+  post     MediaPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  reviewer User      @relation(fields: [reviewerId], references: [id])
+
+  @@index([postId, createdAt])
+  @@map("media_reviews")
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §4.11 النظام
+// ═══════════════════════════════════════════════════════════════
+
+// مالك واحد على الأكثر — قيد files_single_owner في sql/constraints.sql.
+// افتراض: قائمة أعمدة المالك غير محددة في PRD. Agreement و ConceptNote يشيران إلى الملف بـ fileId فريد.
+model FileObject {
+  id                 String         @id @default(uuid()) @db.Uuid
+  bucket             String
+  path               String         @unique
+  mimeType           String
+  sizeBytes          Int
+  sha256             String         @db.Char(64)
+  isPublic           Boolean        @default(false)
+  scan               FileScanStatus @default(PENDING)
+  uploadedById       String?        @db.Uuid // null عند رفع مرفق شكوى مجهولة
+  complaintId        String?        @db.Uuid
+  ideaId             String?        @db.Uuid
+  initiativeId       String?        @db.Uuid
+  initiativeUpdateId String?        @db.Uuid
+  opportunityId      String?        @db.Uuid
+  activityId         String?        @db.Uuid
+  taskId             String?        @db.Uuid
+  mediaPostId        String?        @db.Uuid
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  deletedAt          DateTime? // افتراض: ضمن النماذج الاثني عشر للحذف الناعم
+
+  uploadedBy       User?             @relation(fields: [uploadedById], references: [id])
+  complaint        Complaint?        @relation(fields: [complaintId], references: [id])
+  idea             Idea?             @relation(fields: [ideaId], references: [id])
+  initiative       Initiative?       @relation(fields: [initiativeId], references: [id])
+  initiativeUpdate InitiativeUpdate? @relation(fields: [initiativeUpdateId], references: [id])
+  opportunity      Opportunity?      @relation(fields: [opportunityId], references: [id])
+  activity         Activity?         @relation(fields: [activityId], references: [id])
+  task             Task?             @relation(fields: [taskId], references: [id])
+  mediaPost        MediaPost?        @relation(fields: [mediaPostId], references: [id])
+  agreement        Agreement?        @relation("AgreementFile")
+  conceptNote      ConceptNote?      @relation("ConceptNoteFile")
+
+  @@index([sha256])
+  @@index([complaintId])
+  @@index([deletedAt])
+  @@map("file_objects")
+}
+
+model Notification {
+  id        String              @id @default(uuid()) @db.Uuid
+  userId    String              @db.Uuid
+  type      NotificationType
+  title     String
+  body      String? // افتراض
+  link      String?
+  channel   NotificationChannel
+  status    NotificationStatus  @default(PENDING)
+  readAt    DateTime?
+  sentAt    DateTime? // افتراض
+  createdAt DateTime            @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt])
+  @@index([status, channel])
+  @@map("notifications")
+}
+
+// §8.3: لا يمكن إيقاف IN_APP — يُفرض في الخادم
+model NotificationPreference {
+  userId    String              @db.Uuid
+  type      NotificationType
+  channel   NotificationChannel
+  enabled   Boolean             @default(true)
+  updatedAt DateTime            @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, type, channel])
+  @@map("notification_preferences")
+}
+
+// metrics لقطة ثابتة وقت التوليد — لا تُعاد حسابها بعد النشر
+model Report {
+  id            String       @id @default(uuid()) @db.Uuid
+  title         String // افتراض
+  period        ReportPeriod
+  periodStart   DateTime     @db.Date
+  periodEnd     DateTime     @db.Date
+  metrics       Json
+  summaryMd     String? // افتراض
+  isPublished   Boolean      @default(false)
+  publishedAt   DateTime? // افتراض
+  publishedById String?      @db.Uuid // افتراض
+  createdById   String       @db.Uuid // افتراض
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  createdBy   User  @relation("ReportCreator", fields: [createdById], references: [id])
+  publishedBy User? @relation("ReportPublisher", fields: [publishedById], references: [id])
+
+  @@index([isPublished, periodEnd])
+  @@map("reports")
+}
+
+// إلحاقي فقط — trigger يمنع UPDATE و DELETE في sql/constraints.sql
+model AuditLog {
+  id         BigInt   @id @default(autoincrement())
+  actorId    String?  @db.Uuid // null لعمليات النظام وللشكوى المجهولة
+  actorRoles String[] // لقطة أدوار المنفّذ وقت الفعل
+  action     String // من قائمة §6.9
+  entityType String
+  entityId   String
+  before     Json?
+  after      Json?
+  ip         String? // لا يُسجَّل مع الشكوى المجهولة (§6.7)
+  createdAt  DateTime @default(now())
+
+  actor User? @relation(fields: [actorId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([actorId, createdAt])
+  @@index([action, createdAt])
+  @@map("audit_logs")
+}
+
+// لا يُطبَّق دون decidedById و decidedAt (§10.3)
+model AiSuggestion {
+  id          String             @id @default(uuid()) @db.Uuid
+  kind        AiSuggestionKind
+  entityType  String
+  entityId    String
+  payload     Json
+  model       String
+  status      AiSuggestionStatus @default(PENDING)
+  decidedById String?            @db.Uuid
+  decidedAt   DateTime?
+  createdAt   DateTime           @default(now())
+
+  decidedBy User? @relation(fields: [decidedById], references: [id])
+
+  @@index([entityType, entityId])
+  @@map("ai_suggestions")
+}
+
+// ═══════════════════════════════════════════════════════════════
+// §4.12 FAQ وبوت الاستفسارات
+// ═══════════════════════════════════════════════════════════════
+
+model FaqCategory {
+  id        String   @id @default(uuid()) @db.Uuid
+  nameAr    String   @unique
+  slug      String   @unique
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  entries FaqEntry[]
+
+  @@map("faq_categories")
+}
+
+model FaqEntry {
+  id          String    @id @default(uuid()) @db.Uuid
+  categoryId  String    @db.Uuid
+  question    String
+  answerMd    String
+  keywords    String[]
+  isActive    Boolean   @default(true)
+  useCount    Int       @default(0)
+  createdById String?   @db.Uuid // افتراض: null لأسئلة البذرة
+  updatedById String?   @db.Uuid // افتراض
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  category         FaqCategory      @relation(fields: [categoryId], references: [id])
+  createdBy        User?            @relation("FaqCreator", fields: [createdById], references: [id])
+  updatedBy        User?            @relation("FaqUpdater", fields: [updatedById], references: [id])
+  matchedInquiries SupportInquiry[] @relation("InquiryMatchedFaq")
+  promotedFrom     SupportInquiry[] @relation("InquiryPromotedFaq")
+
+  @@index([isActive, categoryId])
+  @@index([deletedAt])
+  @@map("faq_entries")
+}
+
+model SupportInquiry {
+  id            String        @id @default(uuid()) @db.Uuid
+  question      String        @db.VarChar(2000) // افتراض: الحد
+  askerId       String?       @db.Uuid // null للزائر
+  contactHint   String?
+  status        InquiryStatus @default(NEW)
+  matchedFaqId  String?       @db.Uuid
+  assigneeId    String?       @db.Uuid
+  answerMd      String?
+  answeredById  String?       @db.Uuid
+  answeredAt    DateTime? // افتراض
+  promotedToFaq Boolean       @default(false)
+  promotedFaqId String?       @db.Uuid // افتراض: السؤال الذي أُنشئ من الرد
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  asker       User?     @relation("InquiryAsker", fields: [askerId], references: [id])
+  assignee    User?     @relation("InquiryAssignee", fields: [assigneeId], references: [id])
+  answeredBy  User?     @relation("InquiryAnsweredBy", fields: [answeredById], references: [id])
+  matchedFaq  FaqEntry? @relation("InquiryMatchedFaq", fields: [matchedFaqId], references: [id])
+  promotedFaq FaqEntry? @relation("InquiryPromotedFaq", fields: [promotedFaqId], references: [id])
+
+  @@index([status, createdAt])
+  @@index([assigneeId])
+  @@map("support_inquiries")
+}

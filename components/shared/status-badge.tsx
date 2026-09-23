@@ -1,0 +1,50 @@
+import { CheckCircle2, Circle, Clock, XCircle, type LucideIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+// لون + أيقونة + نص دائمًا — لا يُعتمد اللون وحده (PRD §12 StatusBadge).
+// Sprint 0 يعرّف حالات الإعدادات فقط؛ السبرنتات التالية تضيف complaint | idea | task …
+type Tone = 'success' | 'warning' | 'info' | 'danger' | 'neutral';
+
+const STATUSES: Record<string, Record<string, { label: string; tone: Tone }>> = {
+  active: {
+    true: { label: 'نشط', tone: 'success' },
+    false: { label: 'معطّل', tone: 'neutral' },
+  },
+  assignment: {
+    active: { label: 'فعّال', tone: 'success' },
+    expiring: { label: 'مؤقت', tone: 'warning' },
+    revoked: { label: 'مسحوب', tone: 'neutral' },
+    inactive: { label: 'غير فعّال', tone: 'neutral' },
+  },
+  term: {
+    current: { label: 'الدورة الحالية', tone: 'success' },
+    past: { label: 'منتهية', tone: 'neutral' },
+  },
+};
+
+const TONES: Record<Tone, { className: string; icon: LucideIcon }> = {
+  success: { className: 'bg-success-soft text-success', icon: CheckCircle2 },
+  warning: { className: 'bg-warning-soft text-warning', icon: Clock },
+  info: { className: 'bg-info-soft text-info', icon: Circle },
+  danger: { className: 'bg-danger-soft text-danger', icon: XCircle },
+  neutral: { className: 'bg-muted text-muted-foreground', icon: Circle },
+};
+
+export function StatusBadge({ kind, status, size = 'sm' }: { kind: string; status: string; size?: 'sm' | 'md' }) {
+  // حالة غير معروفة تُعرض رمادية بنصها الخام لا بانهيار
+  const def = STATUSES[kind]?.[status] ?? { label: status, tone: 'neutral' as const };
+  const tone = TONES[def.tone];
+  const Icon = tone.icon;
+  return (
+    <span
+      className={cn(
+        'inline-flex items-center gap-1 rounded-full font-medium whitespace-nowrap',
+        size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-2.5 py-1 text-sm',
+        tone.className,
+      )}
+    >
+      <Icon className={size === 'sm' ? 'size-3' : 'size-3.5'} aria-hidden />
+      {def.label}
+    </span>
+  );
+}

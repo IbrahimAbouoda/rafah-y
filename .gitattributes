@@ -1,0 +1,6 @@
+# LF دائمًا: Prisma يتحقق من checksum ملفات migration، وتحويل CRLF يجعلها تبدو معدَّلة
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.webp binary
+*.ico binary
