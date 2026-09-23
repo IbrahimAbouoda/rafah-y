@@ -7,6 +7,15 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 const PROTECTED_PREFIXES = ['/admin', '/me', '/partner'];
 
+// رفع المرفقات يذهب من المتصفح إلى Supabase Storage مباشرة برابط موقّع (§6.5)
+function supabaseOrigin(): string {
+  try {
+    return process.env.NEXT_PUBLIC_SUPABASE_URL ? ` ${new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin}` : '';
+  } catch {
+    return '';
+  }
+}
+
 function contentSecurityPolicy(nonce: string) {
   const isDev = process.env.NODE_ENV === 'development';
   return [
@@ -15,7 +24,9 @@ function contentSecurityPolicy(nonce: string) {
     `style-src 'self' ${isDev ? `'unsafe-inline'` : `'nonce-${nonce}'`}`,
     `img-src 'self' blob: data:`,
     `font-src 'self'`,
-    `connect-src 'self'${isDev ? ' ws:' : ''}`,
+    `connect-src 'self'${supabaseOrigin()}${isDev ? ' ws:' : ''}`,
+    `worker-src 'self'`,
+    `manifest-src 'self'`,
     `object-src 'none'`,
     `base-uri 'self'`,
     `form-action 'self'`,

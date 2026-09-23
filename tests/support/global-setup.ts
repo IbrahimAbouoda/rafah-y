@@ -5,7 +5,7 @@ import { PGlite } from '@electric-sql/pglite';
 import { PrismaPGlite } from 'pglite-prisma-adapter';
 import type { TestProject } from 'vitest/node';
 import { PrismaClient } from '../../lib/generated/prisma/client';
-import { seedCommittees, seedDevTerm } from '../../prisma/seed';
+import { seedCommittees, seedDevReference, seedDevTerm } from '../../prisma/seed';
 import { seedRbac } from '../../prisma/rbac.seed';
 
 declare module 'vitest' {
@@ -33,6 +33,7 @@ export default async function setup(project: TestProject) {
   await seedRbac(db);
   await seedCommittees(db);
   await seedDevTerm(db);
+  await seedDevReference(db);
   await db.$disconnect();
   await pg.close();
 

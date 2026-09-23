@@ -20,7 +20,8 @@ async function register(page: Page, name: string, email: string) {
   await page.getByLabel('كلمة المرور', { exact: true }).fill(PASSWORD);
   await page.getByLabel('تأكيد كلمة المرور').fill(PASSWORD);
   await page.getByRole('button', { name: 'إنشاء الحساب' }).click();
-  await expect(page.getByText(`أهلًا ${name}`)).toBeVisible();
+  // Sprint 1: التسجيل يهبط في بوابة الشباب /me
+  await expect(page.getByRole('heading', { name: `أهلًا ${name}` })).toBeVisible();
   await page.getByRole('button', { name: 'تسجيل الخروج' }).click();
 }
 
@@ -38,7 +39,10 @@ test('تسجيل ← تعيين عضو لجنة ← سجل التدقيق', asyn
   await page.getByLabel('البريد الإلكتروني أو رقم الجوّال').fill(presidentEmail);
   await page.getByLabel('كلمة المرور').fill(PASSWORD);
   await page.getByRole('button', { name: 'دخول' }).click();
-  await expect(page).toHaveURL(/\/admin\/settings\/users/);
+  // Sprint 1: الدور الداخلي يهبط في لوحة المجلس /admin، ومنها إلى إدارة المستخدمين
+  // أول طلب لـ /admin في خادم تطوير جديد يترجم اللوحة كاملة
+  await expect(page).toHaveURL(/\/admin$/, { timeout: 45_000 });
+  await page.goto('/admin/settings/users');
 
   await page.getByRole('searchbox').or(page.getByPlaceholder('ابحث بالاسم أو البريد أو الهاتف')).fill(memberEmail);
   await page.getByRole('button', { name: 'بحث' }).click();

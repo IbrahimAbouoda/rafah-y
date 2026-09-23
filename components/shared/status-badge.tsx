@@ -1,8 +1,9 @@
 import { CheckCircle2, Circle, Clock, XCircle, type LucideIcon } from 'lucide-react';
+import { STATUS_LABELS } from '@/lib/complaints/workflow';
 import { cn } from '@/lib/utils';
 
 // لون + أيقونة + نص دائمًا — لا يُعتمد اللون وحده (PRD §12 StatusBadge).
-// Sprint 0 يعرّف حالات الإعدادات فقط؛ السبرنتات التالية تضيف complaint | idea | task …
+// Sprint 0: حالات الإعدادات · Sprint 1: complaint · السبرنتات التالية تضيف idea | task …
 type Tone = 'success' | 'warning' | 'info' | 'danger' | 'neutral';
 
 const STATUSES: Record<string, Record<string, { label: string; tone: Tone }>> = {
@@ -19,6 +20,24 @@ const STATUSES: Record<string, Record<string, { label: string; tone: Tone }>> = 
   term: {
     current: { label: 'الدورة الحالية', tone: 'success' },
     past: { label: 'منتهية', tone: 'neutral' },
+  },
+  complaint: {
+    SUBMITTED: { label: STATUS_LABELS.SUBMITTED, tone: 'info' },
+    UNDER_REVIEW: { label: STATUS_LABELS.UNDER_REVIEW, tone: 'info' },
+    ASSIGNED: { label: STATUS_LABELS.ASSIGNED, tone: 'info' },
+    COMMITTEE_REVIEW: { label: STATUS_LABELS.COMMITTEE_REVIEW, tone: 'warning' },
+    REFERRED: { label: STATUS_LABELS.REFERRED, tone: 'warning' },
+    WAITING_RESPONSE: { label: STATUS_LABELS.WAITING_RESPONSE, tone: 'warning' },
+    IN_PROGRESS: { label: STATUS_LABELS.IN_PROGRESS, tone: 'warning' },
+    RESOLVED: { label: STATUS_LABELS.RESOLVED, tone: 'success' },
+    CLOSED: { label: STATUS_LABELS.CLOSED, tone: 'neutral' },
+    DISMISSED: { label: STATUS_LABELS.DISMISSED, tone: 'danger' },
+  },
+  file: {
+    PENDING: { label: 'قيد الفحص', tone: 'warning' },
+    CLEAN: { label: 'سليم', tone: 'success' },
+    INFECTED: { label: 'مرفوض', tone: 'danger' },
+    FAILED: { label: 'مرفوض', tone: 'danger' },
   },
 };
 

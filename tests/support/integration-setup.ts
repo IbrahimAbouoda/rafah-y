@@ -4,7 +4,7 @@ import { afterAll, inject, vi } from 'vitest';
 import { createDbFromClient, setDbForTests } from '@/lib/db';
 import { PrismaClient } from '@/lib/generated/prisma/client';
 
-process.env.CONTACT_ENCRYPTION_KEY ??= Buffer.alloc(32, 7).toString('base64');
+process.env.CONTACT_ENCRYPTION_KEY ||= Buffer.alloc(32, 7).toString('base64');
 
 // التطبيق يتصل عبر @prisma/adapter-pg؛ الاختبار عبر محوّل PGlite داخل العملية — نفس المخطط والقيود والبذرة.
 const pg = new PGlite(inject('pgliteDir'));
@@ -32,4 +32,11 @@ vi.mock('@/lib/auth', async (importOriginal) => {
       return user;
     }),
   };
+});
+
+// clientIp() يقرأ رؤوس طلب Next.js؛ في الاختبار يُضبط بـ setTestIp()
+vi.mock('@/lib/request', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/lib/request')>();
+  const { currentTestIp } = await import('./identity');
+  return { ...actual, clientIp: vi.fn(async () => currentTestIp()) };
 });

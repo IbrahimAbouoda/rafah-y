@@ -1,0 +1,13 @@
+{
+  "name": "نبض رفح | منصة الشباب",
+  "short_name": "نبض رفح",
+  "description": "صوت الشباب... فكرة تتحول إلى أثر — منصة المجلس البلدي الشبابي في رفح",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/me",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f6f2",
+  "theme_color": "#0b5c4b",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

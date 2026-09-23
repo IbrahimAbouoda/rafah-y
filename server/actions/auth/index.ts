@@ -16,7 +16,7 @@ import { LoginSchema, NewPasswordSchema, RegisterSchema, ResetRequestSchema } fr
 
 async function afterSignIn(authUserId: string, next: string | null): Promise<never> {
   const user = await loadSessionUser(db, authUserId);
-  const target = next ?? (user && landingPath(user)) ?? '/login?signedIn=1';
+  const target = next ?? (user ? landingPath(user) : '/login');
   redirect(target);
 }
 
@@ -115,6 +115,6 @@ export async function setNewPasswordAction(_prev: ActionState, form: FormData): 
     // إبطال كل الجلسات الأخرى عند تغيير كلمة المرور (PRD §6.1)
     await supabase.auth.signOut({ scope: 'others' });
     const user = await getCurrentUser();
-    redirect((user && landingPath(user)) ?? '/login?passwordChanged=1');
+    redirect(user ? landingPath(user) : '/login?passwordChanged=1');
   });
 }

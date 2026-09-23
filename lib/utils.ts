@@ -20,3 +20,26 @@ export function toDateInput(d: Date | null | undefined): string {
   if (!d) return '';
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Gaza' }).format(d);
 }
+
+/** بداية يوم YYYY-MM-DD بتوقيت غزة كلحظة UTC — تراعي التوقيت الصيفي (+02 / +03) */
+export function gazaDayStart(day: string): Date | null {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(day);
+  if (!m) return null;
+  const utcGuess = Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  if (Number.isNaN(utcGuess)) return null;
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Gaza',
+      hourCycle: 'h23',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+      .formatToParts(new Date(utcGuess))
+      .map((p) => [p.type, p.value]),
+  );
+  const localAsUtc = Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day), Number(parts.hour), Number(parts.minute));
+  return new Date(utcGuess - (localAsUtc - utcGuess));
+}

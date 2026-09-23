@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import type { SessionUser } from '@/lib/rbac';
 import { loadSessionUser } from '@/lib/session';
 import type { RoleKey } from '@/prisma/rbac.seed';
-import { setTestUser } from './identity';
+import { setTestIp, setTestUser } from './identity';
 
 // بيانات اختبار مولَّدة — لا أسماء ولا أرقام حقيقية (C6)
 
@@ -54,4 +54,17 @@ export function form(fields: Record<string, string | undefined>): FormData {
   const f = new FormData();
   for (const [k, v] of Object.entries(fields)) if (v !== undefined) f.set(k, v);
   return f;
+}
+
+let ipCounter = 0;
+/** عنوان IP جديد لكل اختبار: حدود المعدل في الذاكرة مشتركة بين الاختبارات */
+export function freshIp(): string {
+  ipCounter += 1;
+  const value = `198.51.${Math.floor(ipCounter / 250)}.${(ipCounter % 250) + 1}`;
+  setTestIp(value);
+  return value;
+}
+
+export async function categoryId(): Promise<string> {
+  return (await db.complaintCategory.findFirstOrThrow({ where: { isActive: true }, orderBy: { sortOrder: 'asc' } })).id;
 }

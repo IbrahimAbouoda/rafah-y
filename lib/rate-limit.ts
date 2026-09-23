@@ -92,11 +92,21 @@ export const LIMITS = {
   register: { max: 5, windowSec: 3600 },
   resetPassword: { max: 5, windowSec: 3600 },
   loginFailures: { max: 5, windowSec: 3600 },
+  /** شكوى من حساب — لكل حساب (§6.4) */
+  complaint: { max: 3, windowSec: 3600 },
+  /** شكوى زائر — لكل IP، أشد من الحساب (§6.4 · D21) */
+  publicComplaint: { max: 2, windowSec: 3600 },
+  /** /track — لكل IP، إلزامي وإلا صار الرمز قابلًا للتخمين (§6.4 · AC-02 ④) */
+  track: { max: 10, windowSec: 3600 },
+  /** رفع ملف — لكل IP (§6.4) */
+  upload: { max: 10, windowSec: 3600 },
 } as const;
 
 export type LimitResult = { allowed: boolean; retryAfterSec: number };
 
-export async function limit(bucket: 'register' | 'resetPassword', id: string): Promise<LimitResult> {
+type Bucket = 'register' | 'resetPassword' | 'complaint' | 'publicComplaint' | 'track' | 'upload';
+
+export async function limit(bucket: Bucket, id: string): Promise<LimitResult> {
   const { max, windowSec } = LIMITS[bucket];
   const { count, ttlSec } = await store().hit(`rl:${bucket}:${id}`, windowSec);
   return { allowed: count <= max, retryAfterSec: ttlSec };

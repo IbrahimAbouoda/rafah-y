@@ -2,7 +2,21 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Calendar, Layers, MapPin, Shield, Tags, Users, type LucideIcon } from 'lucide-react';
+import {
+  Bell,
+  Calendar,
+  FileText,
+  History,
+  House,
+  Inbox,
+  Layers,
+  MapPin,
+  Plus,
+  Shield,
+  Tags,
+  Users,
+  type LucideIcon,
+} from 'lucide-react';
 import type { NavGroup, NavIcon } from '@/lib/nav';
 import { cn } from '@/lib/utils';
 
@@ -13,13 +27,24 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   layers: Layers,
   tags: Tags,
   map: MapPin,
+  home: House,
+  inbox: Inbox,
+  file: FileText,
+  plus: Plus,
+  bell: Bell,
+  history: History,
 };
 
 /** عناصر مبنية من الصلاحيات على الخادم. على الجوّال: شريط تبويبات أفقي قابل للتمرير (PRD §12). */
 export function Sidebar({ groups }: { groups: NavGroup[] }) {
   const pathname = usePathname();
   if (groups.length === 0) return null;
-  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+  // أطول رابط مطابق هو النشط وحده: /me/complaints/new لا يُبرز «لوحتي» ولا «شكاواي» معه
+  const hrefs = groups.flatMap((g) => g.items.map((i) => i.href));
+  const active = hrefs
+    .filter((href) => pathname === href || pathname.startsWith(`${href}/`))
+    .sort((a, b) => b.length - a.length)[0];
+  const isActive = (href: string) => href === active;
 
   return (
     <>

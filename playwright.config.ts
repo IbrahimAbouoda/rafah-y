@@ -1,6 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
 // يتطلب Supabase محليًا: npx supabase start ثم .env.local مضبوط (انظر .env.example)
+// شغّل `npm run dev` قبل الاختبارات: خادم يبدؤه Playwright باردًا على قرص بطيء قد يعيد 404 لمسار موجود
+// في أول ترجمة له (لوحظ على A:). reuseExistingServer يستخدم الخادم الجاري.
 export default defineConfig({
   testDir: 'tests/e2e',
   fullyParallel: false,

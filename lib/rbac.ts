@@ -54,6 +54,25 @@ export function can(user: SessionUser | null, key: PermissionKey, ctx?: ScopeCon
   return false;
 }
 
+/** نطاق المنحة للقوائم: ما الذي يحق للمستخدم رؤيته من سجلات هذا المفتاح. null = لا شيء. */
+export type ScopeFilter = { all: true } | { all: false; committees: string[]; own: boolean };
+
+export function scopeFilter(user: SessionUser | null, key: PermissionKey): ScopeFilter | null {
+  const grant = user?.grants.get(key);
+  if (!grant) return null;
+  if (grant.all) return { all: true };
+  return { all: false, committees: [...grant.committees], own: grant.own };
+}
+
+/**
+ * هل تمتد الصلاحية إلى سجلات غيره (لجنة أو الكل)؟ بها تُبنى لوحة المجلس:
+ * الشاب يملك complaints:read بنطاق «خاص» فلا يرى /admin/complaints، ومراقب البلدية يراها بنطاق «الكل».
+ */
+export function canBeyondOwn(user: SessionUser | null, key: PermissionKey): boolean {
+  const grant = user?.grants.get(key);
+  return !!grant && (grant.all || grant.committees.size > 0);
+}
+
 export type AssignmentRow = {
   committeeId: string | null;
   committee: { slug: string; nameAr: string } | null;

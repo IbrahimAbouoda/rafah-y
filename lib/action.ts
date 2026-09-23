@@ -35,29 +35,45 @@ export function formToObject(form: FormData): Record<string, string> {
 }
 
 /** يحوّل كل خطأ إلى رسالة عربية قابلة للعرض. لا رسائل تقنية خام للمستخدم (DoD بند 6). */
+function errorState(e: unknown): NonNullable<ActionState> {
+  unstable_rethrow(e);
+  if (e instanceof AppError) {
+    return { ok: false, message: e.message, fieldErrors: e.fieldErrors, at: Date.now() };
+  }
+  if (e instanceof z.ZodError) {
+    return {
+      ok: false,
+      message: 'بعض الحقول تحتاج تصحيحًا. راجع الرسائل تحت كل حقل.',
+      fieldErrors: z.flattenError(e).fieldErrors as Record<string, string[]>,
+      at: Date.now(),
+    };
+  }
+  if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+    return { ok: false, message: 'هذه القيمة مستخدمة في سجل آخر. اختر قيمة مختلفة.', at: Date.now() };
+  }
+  const constraint = constraintMessage(e);
+  if (constraint) return { ok: false, message: constraint, at: Date.now() };
+  console.error('[action]', e);
+  return { ok: false, message: 'تعذّر إتمام العملية بسبب خطأ في الخادم. أعد المحاولة بعد قليل.', at: Date.now() };
+}
+
 export async function runAction(fn: () => Promise<string | void>): Promise<ActionState> {
   try {
     const message = await fn();
     return { ok: true, message: message ?? 'تم الحفظ.', at: Date.now() };
   } catch (e) {
-    unstable_rethrow(e);
-    if (e instanceof AppError) {
-      return { ok: false, message: e.message, fieldErrors: e.fieldErrors, at: Date.now() };
-    }
-    if (e instanceof z.ZodError) {
-      return {
-        ok: false,
-        message: 'بعض الحقول تحتاج تصحيحًا. راجع الرسائل تحت كل حقل.',
-        fieldErrors: z.flattenError(e).fieldErrors as Record<string, string[]>,
-        at: Date.now(),
-      };
-    }
-    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
-      return { ok: false, message: 'هذه القيمة مستخدمة في سجل آخر. اختر قيمة مختلفة.', at: Date.now() };
-    }
-    const constraint = constraintMessage(e);
-    if (constraint) return { ok: false, message: constraint, at: Date.now() };
-    console.error('[action]', e);
-    return { ok: false, message: 'تعذّر إتمام العملية بسبب خطأ في الخادم. أعد المحاولة بعد قليل.', at: Date.now() };
+    return errorState(e);
+  }
+}
+
+/** نتيجة إجراء تحمل بيانات للعميل (مثل الرقم المرجعي والرمز بعد التقديم) */
+export type DataState<T> = (NonNullable<ActionState> & { data?: T }) | null;
+
+export async function runActionData<T>(fn: () => Promise<{ message?: string; data: T }>): Promise<DataState<T>> {
+  try {
+    const { message, data } = await fn();
+    return { ok: true, message: message ?? 'تم الحفظ.', data, at: Date.now() };
+  } catch (e) {
+    return errorState(e);
   }
 }

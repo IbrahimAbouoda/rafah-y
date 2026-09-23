@@ -3,6 +3,7 @@ import { IBM_Plex_Sans_Arabic } from 'next/font/google';
 import { headers } from 'next/headers';
 import { ThemeProvider } from 'next-themes';
 import { DemoBadge } from '@/components/shared/demo-badge';
+import { ServiceWorkerRegister } from '@/components/shared/sw-register';
 import './globals.css';
 
 const arabic = IBM_Plex_Sans_Arabic({
@@ -15,6 +16,8 @@ const arabic = IBM_Plex_Sans_Arabic({
 export const metadata: Metadata = {
   title: { default: 'نبض رفح | منصة الشباب', template: '%s · نبض رفح' },
   description: 'صوت الشباب... فكرة تتحول إلى أثر — منصة المجلس البلدي الشبابي في رفح',
+  manifest: '/manifest.webmanifest',
+  icons: { icon: '/icon.svg' },
 };
 
 export const viewport: Viewport = {
@@ -35,6 +38,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem nonce={nonce}>
           <DemoBadge />
           {children}
+          <ServiceWorkerRegister />
         </ThemeProvider>
       </body>
     </html>
