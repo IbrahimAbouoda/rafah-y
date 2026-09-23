@@ -54,7 +54,8 @@ test('تسجيل ← تعيين عضو لجنة ← سجل التدقيق', asyn
     const member = await db.user.findFirstOrThrow({ where: { email: memberEmail } });
     const assignment = await db.roleAssignment.findFirstOrThrow({ where: { userId: member.id, role: { key: 'committee_member' } } });
     const audit = await db.auditLog.findFirstOrThrow({ where: { action: 'role.assign', entityId: assignment.id } });
-    expect(audit.actorRoles).toEqual(['council_president']);
+    // كل حساب جديد يحمل دور youth تلقائيًا، فالمهم أن الإجراء منسوب لرئاسة المجلس
+    expect(audit.actorRoles).toContain('council_president');
   } finally {
     await db.$disconnect();
   }
