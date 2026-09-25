@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { committeeMembers } from '@/lib/committees';
 import { nextStatuses } from '@/lib/complaints/workflow';
 import { db } from '@/lib/db';
 import { formatBytes } from '@/lib/files';
@@ -11,6 +12,7 @@ import { ComplaintActionsPanel, type ComplaintActions } from '@/components/compl
 import { ContactReveal } from '@/components/complaints/contact-reveal';
 import { FileDownload } from '@/components/complaints/file-download';
 import { WorkflowTimeline } from '@/components/complaints/workflow-timeline';
+import { CreateTaskForm } from '@/components/tasks/create-task-form';
 import { PageHeader } from '@/components/shared/page-header';
 import { Forbidden } from '@/components/shared/states';
 import { StatusBadge } from '@/components/shared/status-badge';
@@ -47,6 +49,7 @@ export default async function ComplaintFilePage({ params }: { params: Promise<{ 
       dismissReason: true,
       resolutionNote: true,
       closedAt: true,
+      followUpAt: true,
       createdAt: true,
       category: { select: { nameAr: true, defaultCommitteeId: true } },
       area: { select: { nameAr: true } },
@@ -68,6 +71,10 @@ export default async function ComplaintFilePage({ params }: { params: Promise<{ 
           response: true,
           createdAt: true,
         },
+      },
+      tasks: {
+        orderBy: { createdAt: 'asc' },
+        select: { id: true, title: true, status: true, dueAt: true, assignee: { select: { fullName: true } } },
       },
       files: {
         where: { scan: { in: ['PENDING', 'CLEAN'] } },
@@ -104,6 +111,11 @@ export default async function ComplaintFilePage({ params }: { params: Promise<{ 
     awaitingResponse: complaint.status === 'WAITING_RESPONSE',
   };
   const canContact = can(user, 'complaints:read_contact', ctx);
+  // AC-05: «أنشئ مهمة» من الشكوى المحوّلة للجنة، لمن يملك tasks:create بنطاقها
+  const taskMembers =
+    complaint.committeeId && can(user, 'tasks:create', ctx) && complaint.status !== 'CLOSED' && complaint.status !== 'DISMISSED'
+      ? await committeeMembers(db, complaint.committeeId)
+      : null;
   const submitterLabel = complaint.isAnonymous ? 'مجهول' : complaint.submitterId ? 'حساب مسجّل' : 'زائر بلا حساب';
 
   return (
@@ -138,6 +150,13 @@ export default async function ComplaintFilePage({ params }: { params: Promise<{ 
                 <span className="text-muted-foreground">اللجنة: </span>
                 {complaint.committee?.nameAr ?? 'لم تُحوَّل بعد'}
               </p>
+              {complaint.followUpAt ? (
+                <p className={complaint.followUpAt < new Date() ? 'text-danger' : undefined}>
+                  <span className="text-muted-foreground">موعد المتابعة: </span>
+                  {formatDate(complaint.followUpAt)}
+                  {complaint.followUpAt < new Date() ? ' — متأخرة' : ''}
+                </p>
+              ) : null}
               {complaint.closedAt ? (
                 <p>
                   <span className="text-muted-foreground">أُغلقت: </span>
@@ -206,6 +225,50 @@ export default async function ComplaintFilePage({ params }: { params: Promise<{ 
         <div className="flex flex-col gap-4">
           {/* اللوحة تبقى معروضة دائمًا لتحمل نتيجة آخر إجراء، وتعرض «صلاحية عرض فقط» حين لا إجراء */}
           <ComplaintActionsPanel complaintId={complaint.id} actions={actions} />
+
+          {complaint.tasks.length > 0 || taskMembers ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>مهام اللجنة على الشكوى</CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4">
+                {complaint.tasks.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">لا مهام بعد. أنشئ مهمة وأسندها لعضو في اللجنة.</p>
+                ) : (
+                  <ul className="flex flex-col divide-y text-sm">
+                    {complaint.tasks.map((t) => (
+                      <li key={t.id} className="flex items-center justify-between gap-2 py-2">
+                        <span className="flex flex-col">
+                          <span>{t.title}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {t.assignee?.fullName ?? 'غير مسندة'}
+                            {t.dueAt ? ` · حتى ${formatDate(t.dueAt)}` : ''}
+                          </span>
+                        </span>
+                        <StatusBadge kind="task" status={t.status} />
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {taskMembers && complaint.committeeId ? (
+                  taskMembers.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">لا أعضاء في اللجنة لإسناد مهمة إليهم.</p>
+                  ) : (
+                    <details>
+                      <summary className="cursor-pointer text-sm font-medium text-brand">أنشئ مهمة من الشكوى</summary>
+                      <div className="mt-3">
+                        <CreateTaskForm
+                          committeeId={complaint.committeeId}
+                          members={taskMembers}
+                          complaint={{ id: complaint.id, title: complaint.title }}
+                        />
+                      </div>
+                    </details>
+                  )
+                ) : null}
+              </CardContent>
+            </Card>
+          ) : null}
 
           <Card>
             <CardHeader>

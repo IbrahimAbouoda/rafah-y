@@ -8,6 +8,9 @@ import {
   FileText,
   History,
   House,
+  KanbanSquare,
+  Lightbulb,
+  UsersRound,
   Inbox,
   Layers,
   MapPin,
@@ -33,6 +36,9 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   plus: Plus,
   bell: Bell,
   history: History,
+  lightbulb: Lightbulb,
+  kanban: KanbanSquare,
+  committee: UsersRound,
 };
 
 /** عناصر مبنية من الصلاحيات على الخادم. على الجوّال: شريط تبويبات أفقي قابل للتمرير (PRD §12). */

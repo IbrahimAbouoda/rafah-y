@@ -14,7 +14,10 @@ export type NavIcon =
   | 'file'
   | 'plus'
   | 'bell'
-  | 'history';
+  | 'history'
+  | 'lightbulb'
+  | 'kanban'
+  | 'committee';
 
 /**
  * permission = null ⇒ يكفي تسجيل الدخول.
@@ -31,6 +34,9 @@ export const ADMIN_NAV: NavGroup[] = [
       // فالعنصر يظهر الآن لمن يملك الفرز وحده حتى لا يفتح أحد صندوقًا بلا قسم له.
       { href: '/admin/inbox', label: 'صندوق الوارد', permission: 'complaints:triage', icon: 'inbox' },
       { href: '/admin/complaints', label: 'الشكاوى', permission: 'complaints:read', beyondOwn: true, icon: 'file' },
+      { href: '/admin/ideas', label: 'الأفكار', permission: 'ideas:review', icon: 'lightbulb' },
+      { href: '/admin/committees', label: 'اللجان', permission: 'committees:read', beyondOwn: true, icon: 'committee' },
+      { href: '/admin/tasks', label: 'مهامي', permission: 'tasks:read', icon: 'kanban' },
       { href: '/admin/audit', label: 'سجل التدقيق', permission: 'audit:read', beyondOwn: true, icon: 'history' },
     ],
   },
@@ -54,6 +60,7 @@ export const ME_NAV: NavGroup[] = [
       { href: '/me', label: 'لوحتي', permission: null, icon: 'home' },
       { href: '/me/complaints', label: 'شكاواي', permission: 'complaints:read', icon: 'file' },
       { href: '/me/complaints/new', label: 'تقديم شكوى', permission: 'complaints:create', icon: 'plus' },
+      { href: '/me/ideas', label: 'أفكاري', permission: 'ideas:create', icon: 'lightbulb' },
       { href: '/me/notifications', label: 'الإشعارات', permission: null, icon: 'bell' },
     ],
   },

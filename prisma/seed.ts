@@ -114,6 +114,79 @@ export async function seedDemoComplaints(db: PrismaClient): Promise<{ reference:
   return out;
 }
 
+// صاحب الأفكار التجريبية: حساب وهمي معطّل لا يدخل (isActive = false) — يُحذف مع بيانات isDemo في Sprint 6 (AC-20)
+const DEMO_SUBMITTER = { email: 'demo-ideas@example.invalid', fullName: 'حساب عرض تجريبي' };
+
+const DEMO_IDEAS = [
+  {
+    title: 'عرض: مساحة دراسة مسائية للطلاب',
+    problem: 'فكرة عرض تجريبية: لا يوجد مكان هادئ ومضاء للدراسة مساءً في المنطقة التجريبية.',
+    solution: 'تجهيز قاعة في المركز الشبابي بإنارة ومقاعد وفتحها من السادسة حتى العاشرة مساءً.',
+    status: 'COMMITTEE_REVIEW' as const,
+    committee: 'activities-initiatives',
+    votes: 0,
+  },
+  {
+    title: 'عرض: دوري كرة قدم بين الأحياء',
+    problem: 'فكرة عرض تجريبية: الشباب بلا نشاط رياضي منظّم في الصيف، والملاعب شبه فارغة.',
+    solution: 'دوري من ثمانية فرق على ملعبين، بتحكيم متطوعين وجوائز رمزية من مؤسسة داعمة.',
+    status: 'SCREENING' as const,
+    committee: null,
+    votes: 0,
+  },
+  {
+    title: 'عرض: خريطة رقمية لنقاط المياه',
+    problem: 'فكرة عرض تجريبية: الأهالي لا يعرفون أين ومتى تتوفر نقاط تعبئة المياه في الحي.',
+    solution: 'صفحة بسيطة تحدّثها لجنة التكنولوجيا يوميًا بمواقع النقاط ومواعيدها.',
+    status: 'APPROVED' as const,
+    committee: 'technology-digital-systems',
+    votes: 0,
+  },
+  {
+    title: 'عرض: ورشة إسعافات أولية للشابات',
+    problem: 'فكرة عرض تجريبية: قلة من يعرفن الإسعافات الأولية الأساسية في الحي التجريبي.',
+    solution: 'ثلاث ورش مع متطوعات من القطاع الصحي، ومنح شهادة حضور للمشاركات.',
+    status: 'SUBMITTED' as const,
+    committee: null,
+    votes: 0,
+  },
+];
+
+/** أفكار عرض بحالات مختلفة لتجربة /ideas والفرز ولوحة اللجنة. تُنشأ مرة واحدة. */
+export async function seedDemoIdeas(db: PrismaClient): Promise<string[]> {
+  if ((await db.idea.count({ where: { isDemo: true } })) > 0) return [];
+  const submitter = await db.user.upsert({
+    where: { email: DEMO_SUBMITTER.email },
+    create: { ...DEMO_SUBMITTER, authId: crypto.randomUUID(), isActive: false },
+    update: {},
+  });
+  const year = new Intl.DateTimeFormat('en', { year: 'numeric', timeZone: 'Asia/Gaza' }).format(new Date());
+  const areas = await db.area.findMany({ orderBy: { nameAr: 'asc' }, select: { id: true } });
+  const refs: string[] = [];
+  for (const [i, idea] of DEMO_IDEAS.entries()) {
+    const committee = idea.committee ? await db.committee.findUnique({ where: { slug: idea.committee }, select: { id: true } }) : null;
+    const ref = await db.$transaction(async (tx) => {
+      const [row] = await tx.$queryRaw<{ ref: string }[]>`SELECT next_ref(${`IDA-${year}`}, 6) AS ref`;
+      await tx.idea.create({
+        data: {
+          reference: row!.ref,
+          title: idea.title,
+          problem: idea.problem,
+          solution: idea.solution,
+          status: idea.status,
+          committeeId: committee?.id ?? null,
+          areaId: areas[i % Math.max(areas.length, 1)]?.id ?? null,
+          submitterId: submitter.id,
+          isDemo: true,
+        },
+      });
+      return row!.ref;
+    });
+    refs.push(ref);
+  }
+  return refs;
+}
+
 async function main() {
   const url = process.env.DIRECT_URL ?? process.env.DATABASE_URL;
   if (!url) throw new Error('Set DIRECT_URL (or DATABASE_URL) before seeding');
@@ -123,10 +196,12 @@ async function main() {
     await seedCommittees(db);
     const dev = process.env.NODE_ENV !== 'production';
     let demo: { reference: string; code: string }[] = [];
+    let ideas: string[] = [];
     if (dev) {
       await seedDevTerm(db);
       await seedDevReference(db);
       demo = await seedDemoComplaints(db);
+      ideas = await seedDemoIdeas(db);
     }
 
     const grants = PERMISSIONS.reduce((n, p) => n + Object.keys(p.grants).length, 0);
@@ -134,6 +209,7 @@ async function main() {
     console.log(`✓ ${INITIAL_COMMITTEES.length} لجان`);
     if (dev) console.log(`✓ تطوير: ${DEV_CATEGORIES.length} تصنيفات · ${DEV_AREAS.length} مناطق تجريبية`);
     for (const d of demo) console.log(`  شكوى عرض ${d.reference} · رمز ${d.code}`);
+    if (ideas.length) console.log(`  أفكار عرض: ${ideas.join(' · ')}`);
   } finally {
     await db.$disconnect();
   }

@@ -90,6 +90,8 @@ export const AssignComplaintSchema = z.object({
   complaintId,
   committeeId: z.uuid('اختر اللجنة التي تُحوَّل إليها الشكوى.'),
   note: optionalText(1000, 'تعليق التحويل أطول من 1000 محرف.'),
+  /** D23: موعد متابعة التحويل للجنة */
+  followUpAt: optionalDate('اكتب موعد متابعة صحيحًا أو اتركه فارغًا.'),
 });
 
 export const UpdateStatusSchema = z
@@ -100,6 +102,8 @@ export const UpdateStatusSchema = z
     isPublic: checkbox,
     /** رد الجهة الخارجية عند الانتقال من WAITING_RESPONSE */
     response: optionalText(2000, 'الرد أطول من 2000 محرف.'),
+    /** D23: تحديث موعد المتابعة مع الانتقال (فارغ = بلا تغيير) */
+    followUpAt: optionalDate('اكتب موعد متابعة صحيحًا أو اتركه فارغًا.'),
   })
   .superRefine((v, ctx) => {
     if (v.toStatus === 'RESOLVED' && (!v.note || v.note.length < 10)) {

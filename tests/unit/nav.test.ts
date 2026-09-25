@@ -39,26 +39,26 @@ describe('بوابة الشباب ولوحة المجلس — من الصلاح�
     const youth = asUser([{ key: 'youth' }]);
     expect(isInternal(youth)).toBe(false);
     expect(landingPath(youth)).toBe('/me');
-    expect(hrefs(meNavFor(youth))).toEqual(['/me', '/me/complaints', '/me/complaints/new', '/me/notifications']);
+    expect(hrefs(meNavFor(youth))).toEqual(['/me', '/me/complaints', '/me/complaints/new', '/me/ideas', '/me/notifications']);
     expect(canBeyondOwn(youth, 'complaints:read')).toBe(false);
   });
 
-  it('أمين السر: الوارد والشكاوى، بلا سجل التدقيق', () => {
+  it('أمين السر: الوارد والشكاوى والأفكار واللجان، بلا سجل التدقيق', () => {
     const secretary = asUser([{ key: 'secretary' }]);
     expect(landingPath(secretary)).toBe('/admin');
     const admin = hrefs(navFor(secretary));
-    expect(admin).toEqual(['/admin', '/admin/inbox', '/admin/complaints']);
+    expect(admin).toEqual(['/admin', '/admin/inbox', '/admin/complaints', '/admin/ideas', '/admin/committees', '/admin/tasks']);
   });
 
-  it('رئيس اللجنة: الشكاوى بنطاق لجنته، بلا وارد', () => {
+  it('رئيس اللجنة: شكاوى لجنته وأفكارها ومهامها، بلا وارد ولا تدقيق', () => {
     const head = asUser([{ key: 'committee_head', committeeId: COMMITTEE }]);
-    expect(hrefs(navFor(head))).toEqual(['/admin', '/admin/complaints']);
+    expect(hrefs(navFor(head))).toEqual(['/admin', '/admin/complaints', '/admin/ideas', '/admin/committees', '/admin/tasks']);
     expect(scopeFilter(head, 'complaints:read')).toEqual({ all: false, committees: [COMMITTEE], own: false });
   });
 
   it('مراقب البلدية: الشكاوى قراءةً بنطاق الكل، بلا تدقيق (§3.4)', () => {
     const observer = asUser([{ key: 'municipality_observer' }]);
-    expect(hrefs(navFor(observer))).toEqual(['/admin', '/admin/complaints']);
+    expect(hrefs(navFor(observer))).toEqual(['/admin', '/admin/complaints', '/admin/committees', '/admin/tasks']);
     expect(scopeFilter(observer, 'complaints:read')).toEqual({ all: true });
     expect(canBeyondOwn(observer, 'complaints:read_contact')).toBe(false);
   });
@@ -66,7 +66,7 @@ describe('بوابة الشباب ولوحة المجلس — من الصلاح�
   it('الرئيس: الوارد والشكاوى والتدقيق والإعدادات', () => {
     const president = asUser([{ key: 'council_president' }, { key: 'youth' }]);
     const admin = hrefs(navFor(president));
-    expect(admin.slice(0, 4)).toEqual(['/admin', '/admin/inbox', '/admin/complaints', '/admin/audit']);
+    expect(admin.slice(0, 7)).toEqual(['/admin', '/admin/inbox', '/admin/complaints', '/admin/ideas', '/admin/committees', '/admin/tasks', '/admin/audit']);
     expect(admin).toContain('/admin/settings/users');
   });
 

@@ -47,6 +47,13 @@ function assertTransition(from: ComplaintStatus, to: ComplaintStatus, key: Permi
   }
 }
 
+/** D23: موعد المتابعة في المستقبل فقط */
+function assertFuture(date: Date | undefined) {
+  if (date && date <= new Date()) {
+    throw invalid('موعد المتابعة يجب أن يكون في المستقبل.', { followUpAt: ['تاريخ في الماضي.'] });
+  }
+}
+
 type TransitionSpec = {
   user: SessionUser;
   complaint: Loaded;
@@ -157,13 +164,14 @@ export async function assignToCommitteeAction(_prev: ActionState, form: FormData
     if (!committee) {
       throw invalid('اللجنة غير موجودة أو معطّلة. اختر لجنة نشطة.', { committeeId: ['اختر لجنة نشطة.'] });
     }
+    assertFuture(data.followUpAt);
 
     await transition({
       user,
       complaint,
       to: 'ASSIGNED',
       audit: 'complaint.assign',
-      data: { committeeId: committee.id },
+      data: { committeeId: committee.id, followUpAt: data.followUpAt ?? null },
       event: { note: `حُوّلت الشكوى إلى ${committee.nameAr}.`, isPublic: true },
       extra: async (tx) => {
         // تعليق التحويل داخلي: للجنة فقط، لا يظهر في /track
@@ -216,6 +224,7 @@ export async function updateStatusAction(_prev: ActionState, form: FormData): Pr
     // AC-04 ①: رئيس لجنة أخرى يُرفض هنا حتى لو خمّن المعرّف
     requirePermission(user, 'complaints:update_status', { committeeId: complaint.committeeId });
     assertTransition(complaint.status, data.toStatus, 'complaints:update_status');
+    assertFuture(data.followUpAt);
 
     const resolving = data.toStatus === 'RESOLVED';
     // ملاحظة الحل تصل مقدّم الشكوى دائمًا (§5.1 خطوة 10)
@@ -227,7 +236,11 @@ export async function updateStatusAction(_prev: ActionState, form: FormData): Pr
       complaint,
       to: data.toStatus,
       audit: 'complaint.status_change',
-      data: resolving ? { resolutionNote: data.note } : undefined,
+      data: {
+        ...(resolving ? { resolutionNote: data.note } : {}),
+        // الحل ينهي المتابعة؛ وإلا فالموعد الجديد إن كُتب
+        ...(resolving ? { followUpAt: null } : data.followUpAt ? { followUpAt: data.followUpAt } : {}),
+      },
       event: { note: data.note ?? null, isPublic },
       extra: responseArrived
         ? async (tx) => {

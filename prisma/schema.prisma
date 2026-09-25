@@ -683,6 +683,7 @@ model Complaint {
   dismissReason  String?
   resolutionNote String? // §5.1 خطوة 10
   closedAt       DateTime? // §5.1 خطوة 11
+  followUpAt     DateTime? // D23 (Q16): موعد متابعة التحويل للجنة — يضبطه الفرز وتحدّثه اللجنة
   firstTrackedAt DateTime? // افتراض: لازم لقياس M5 (نسبة الشكاوى التي فُتحت صفحة تتبّعها)
   isDemo         Boolean         @default(false)
   createdAt      DateTime        @default(now())
@@ -704,6 +705,7 @@ model Complaint {
   @@index([status, committeeId])
   @@index([categoryId, areaId])
   @@index([submitterId])
+  @@index([followUpAt])
   @@index([deletedAt])
   @@map("complaints")
 }

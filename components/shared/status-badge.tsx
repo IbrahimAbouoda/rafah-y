@@ -1,9 +1,11 @@
 import { CheckCircle2, Circle, Clock, XCircle, type LucideIcon } from 'lucide-react';
 import { STATUS_LABELS } from '@/lib/complaints/workflow';
+import { IDEA_STATUS_LABELS } from '@/lib/ideas/workflow';
+import { TASK_STATUS_LABELS } from '@/lib/tasks/workflow';
 import { cn } from '@/lib/utils';
 
 // لون + أيقونة + نص دائمًا — لا يُعتمد اللون وحده (PRD §12 StatusBadge).
-// Sprint 0: حالات الإعدادات · Sprint 1: complaint · السبرنتات التالية تضيف idea | task …
+// Sprint 0: حالات الإعدادات · Sprint 1: complaint · Sprint 2: idea · task
 type Tone = 'success' | 'warning' | 'info' | 'danger' | 'neutral';
 
 const STATUSES: Record<string, Record<string, { label: string; tone: Tone }>> = {
@@ -32,6 +34,21 @@ const STATUSES: Record<string, Record<string, { label: string; tone: Tone }>> = 
     RESOLVED: { label: STATUS_LABELS.RESOLVED, tone: 'success' },
     CLOSED: { label: STATUS_LABELS.CLOSED, tone: 'neutral' },
     DISMISSED: { label: STATUS_LABELS.DISMISSED, tone: 'danger' },
+  },
+  idea: {
+    SUBMITTED: { label: IDEA_STATUS_LABELS.SUBMITTED, tone: 'info' },
+    SCREENING: { label: IDEA_STATUS_LABELS.SCREENING, tone: 'info' },
+    COMMITTEE_REVIEW: { label: IDEA_STATUS_LABELS.COMMITTEE_REVIEW, tone: 'warning' },
+    CHANGES_REQUESTED: { label: IDEA_STATUS_LABELS.CHANGES_REQUESTED, tone: 'warning' },
+    APPROVED: { label: IDEA_STATUS_LABELS.APPROVED, tone: 'success' },
+    REJECTED: { label: IDEA_STATUS_LABELS.REJECTED, tone: 'danger' },
+    MERGED: { label: IDEA_STATUS_LABELS.MERGED, tone: 'neutral' },
+  },
+  task: {
+    TODO: { label: TASK_STATUS_LABELS.TODO, tone: 'neutral' },
+    IN_PROGRESS: { label: TASK_STATUS_LABELS.IN_PROGRESS, tone: 'info' },
+    REVIEW: { label: TASK_STATUS_LABELS.REVIEW, tone: 'warning' },
+    DONE: { label: TASK_STATUS_LABELS.DONE, tone: 'success' },
   },
   file: {
     PENDING: { label: 'قيد الفحص', tone: 'warning' },

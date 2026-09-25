@@ -100,6 +100,9 @@ export function ComplaintActionsPanel({ complaintId, actions }: { complaintId: s
             <Field name="note" label="تعليق التحويل (داخلي)" hint="يراه أعضاء اللجنة فقط، ولا يظهر لمقدّم الشكوى.">
               <Textarea rows={3} maxLength={1000} />
             </Field>
+            <Field name="followUpAt" label="موعد المتابعة (اختياري)" hint="تراه اللجنة في لوحتها، ويظهر متأخرًا إن فات.">
+              <Input type="date" />
+            </Field>
             <SubmitButton>تحويل</SubmitButton>
           </ActionForm>
         </Section>
@@ -120,6 +123,9 @@ export function ComplaintActionsPanel({ complaintId, actions }: { complaintId: s
             </Field>
             <Field name="note" label="ملاحظة">
               <Textarea rows={3} maxLength={2000} />
+            </Field>
+            <Field name="followUpAt" label="موعد متابعة جديد (اختياري)" hint="فارغ = يبقى الموعد الحالي. الحل ينهي المتابعة.">
+              <Input type="date" />
             </Field>
             {actions.awaitingResponse ? (
               <Field name="response" label="رد الجهة الخارجية (عند وصوله)" hint="يُحفظ على سجل الإحالة، داخليًا.">

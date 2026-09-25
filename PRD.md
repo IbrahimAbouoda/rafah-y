@@ -452,7 +452,7 @@ can(user, 'complaints:update_status', { committeeId, ownerId }): boolean
 
 | Model | الغرض | حقول مفتاحية | قيود وفهارس |
 | --- | --- | --- | --- |
-| `Complaint` | الشكوى | `reference` `accessCodeHash` `clientDraftId` `status` `isAnonymous` `submitterId` `committeeId` `assigneeId` `dismissReason` | `reference` و `clientDraftId` فريدان · فهارس `[status, committeeId]` و `[categoryId, areaId]` · قيدان: المجهولة بلا `submitterId`، والمستبعَدة بسبب مكتوب |
+| `Complaint` | الشكوى | `reference` `accessCodeHash` `clientDraftId` `status` `isAnonymous` `submitterId` `committeeId` `assigneeId` `dismissReason` `followUpAt` (D23) | `reference` و `clientDraftId` فريدان · فهارس `[status, committeeId]` و `[categoryId, areaId]` · قيدان: المجهولة بلا `submitterId`، والمستبعَدة بسبب مكتوب |
 | `ComplaintContact` | الاسم والهاتف والبريد **مشفّرة** (`Bytes`) في جدول منفصل | `nameEnc` `phoneEnc` `emailEnc` `preferredChannel` | 1:1 مع الشكوى · تُقرأ بصلاحية `complaints:read_contact` فقط |
 | `ComplaintEvent` | كل انتقال في المسار، مع `isPublic` يفصل ما يراه المواطن عن الملاحظات الداخلية | `fromStatus` `toStatus` `note` `isPublic` `actorId` | فهرس `[complaintId, createdAt]` |
 | `ComplaintReferral` | التحويل لجهة خارجية بموعد متابعة ورد | `target` `targetName` `followUpAt` `respondedAt` `response` | فهرس على `followUpAt` لتنبيهات المتابعة |
@@ -1471,7 +1471,8 @@ flowchart LR
 | Q13 | هل يُسمح للشاب بسحب شكواه أو حذف حسابه؟ وما أثر ذلك على شكاوى مغلقة سبق أن عولجت؟ | مسار الحذف والتجهيل | Sprint 6 |
 | Q14 | أين تُستضاف قاعدة البيانات جغرافيًا، ومن يملك حساب Supabase ومفاتيح التشفير عند تغيّر الدورة؟ **مُجاب جزئيًا 2026-09-23:** التطوير على Supabase محليًا (Docker)، ومفتاح التشفير في `.env.local` للتطوير المحلي فقط (D20) | قرار الاستضافة وتسليم المفاتيح — **مسألة استمرارية لا تقنية** | أول نشر تجريبي |
 | Q15 | هل تُعرض أسماء أعضاء المجلس واللجان للعامة في `/committees`؟ | صفحة اللجان العامة | Sprint 2 |
-| Q16 | AC-03 يذكر «موعد المتابعة» عند تحويل الشكوى للجنة، ولا حقل له في `Complaint` (الموعد الموجود في `ComplaintReferral` للإحالة الخارجية فقط). هل يُضاف حقل، أم يُكتفى بموعد الإحالة؟ | حقل جديد + migration، أو حذف العبارة من AC-03 | Sprint 2 |
+| Q16 | ~~موعد المتابعة عند التحويل للجنة~~ **مُجاب 2026-09-24 (D23):** حقل `Complaint.followUpAt` اختياري، يضبطه الفرز عند التحويل وتحدّثه اللجنة | — | — |
+| Q17 | أيّ الأفكار تُعرض للعامة في `/ideas`، وهل يظهر اسم صاحبها؟ **افتراض Sprint 2:** من SCREENING فصاعدًا (المُستلمة تنتظر الفرز)، بلا اسم صاحبها | إشراف المحتوى وخصوصية المقدّم | Sprint 3 |
 
 ---
 
@@ -1530,4 +1531,6 @@ flowchart LR
 | D20 | مفتاح التشفير (Q14) | `CONTACT_ENCRYPTION_KEY` في `.env.local` للتطوير المحلي فقط؛ الإنتاج ينتظر قرار الاستضافة | §6.6 · §18 |
 | D21 | حد شكوى الزائر | 2 لكل IP في الساعة (شكوى الحساب 3 لكل حساب) | §6.4 |
 | D22 | صلاحيات الاختبار التقني | حساب المطوّر يُمنح `council_president` و `committee_head` في كل لجنة عبر `npm run admin:grant … --all-committees` — لا عبر البذرة، لأن البذرة لا تحمل بيانات أشخاص حقيقيين (C6) والحساب لا يوجد قبل التسجيل. يُسحب قبل الإطلاق مع البيانات التجريبية | §16.1 C6 |
+| D23 | موعد متابعة التحويل (Q16) | `Complaint.followUpAt` اختياري (migration `complaint_follow_up`) — سُمّي `followUpAt` اتساقًا مع `ComplaintReferral` و `Interaction`. يُضبط في `complaints/assignToCommittee` ويُحدَّث في `complaints/updateStatus`، ويظهر المتأخر في لوحة اللجنة | §4.5 · AC-03 |
+| D24 | نطاق Sprint 2 (2026-09-24) | كما في PRD: تقديم الفكرة بحساب (`/me/ideas/new`)، «أرشفة» المقترح = رفض بسبب مكتوب أو دمج (بلا حالة جديدة)، تصفية الأفكار بالّلجنة والمنطقة. سجل القرارات العام (`/decisions`) يبقى في المرحلة الثانية مع الاجتماعات | §5.2 · §11.2 |
 

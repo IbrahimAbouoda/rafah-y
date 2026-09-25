@@ -478,3 +478,33 @@ describe('الإشعارات — markRead · markAllRead', () => {
     expect(await markAllReadAction()).toMatchObject({ ok: false });
   });
 });
+
+describe('موعد متابعة التحويل — D23 (Q16)', () => {
+  it('يُضبط عند التحويل، ويرفض تاريخًا ماضيًا، وتحدّثه اللجنة، والحل ينهيه', async () => {
+    const s = await submitted();
+    const secretary = await createUser(['secretary']);
+    await actAs(secretary.id);
+    await openForTriageAction(null, form({ complaintId: s.complaint.id }));
+    const committee = await committeeId('health-affairs');
+    expect(
+      await assignToCommitteeAction(null, form({ complaintId: s.complaint.id, committeeId: committee, followUpAt: '2020-01-01' })),
+    ).toMatchObject({ ok: false, fieldErrors: { followUpAt: expect.any(Array) } });
+    const inWeek = new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10);
+    expect(
+      await assignToCommitteeAction(null, form({ complaintId: s.complaint.id, committeeId: committee, followUpAt: inWeek })),
+    ).toMatchObject({ ok: true });
+    expect((await db.complaint.findUniqueOrThrow({ where: { id: s.complaint.id } })).followUpAt?.toISOString().slice(0, 10)).toBe(inWeek);
+    const assignAudit = await db.auditLog.findFirstOrThrow({ where: { action: 'complaint.assign', entityId: s.complaint.id } });
+    expect(assignAudit.after).toMatchObject({ followUpAt: expect.stringContaining(inWeek) });
+
+    const head = await createUser([{ key: 'committee_head', committee: 'health-affairs' }]);
+    await actAs(head.id);
+    const inMonth = new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10);
+    await updateStatusAction(null, form({ complaintId: s.complaint.id, toStatus: 'COMMITTEE_REVIEW', followUpAt: inMonth }));
+    expect((await db.complaint.findUniqueOrThrow({ where: { id: s.complaint.id } })).followUpAt?.toISOString().slice(0, 10)).toBe(inMonth);
+    await updateStatusAction(null, form({ complaintId: s.complaint.id, toStatus: 'IN_PROGRESS' }));
+    expect((await db.complaint.findUniqueOrThrow({ where: { id: s.complaint.id } })).followUpAt).not.toBeNull();
+    await updateStatusAction(null, form({ complaintId: s.complaint.id, toStatus: 'RESOLVED', note: 'حُلّت المشكلة بالكامل.' }));
+    expect((await db.complaint.findUniqueOrThrow({ where: { id: s.complaint.id } })).followUpAt).toBeNull();
+  });
+});
