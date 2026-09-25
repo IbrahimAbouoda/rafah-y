@@ -8,6 +8,15 @@ export const MEDIA_COMMITTEE_SLUG = 'public-relations-media';
 
 export const isProduction = process.env.NODE_ENV === 'production';
 
+/** لجنة المؤسسات والشراكات: تظهر مسودات Concept Note في مهامها (AC-12) */
+export const PARTNERSHIPS_COMMITTEE_SLUG = 'organizations-partnerships';
+
+/** الدور الذي يُمنح لممثل مؤسسة عند ربطه بها (D26) */
+export const PARTNER_ROLE_KEY = 'partner';
+
+/** العملات المسموحة (D13 · قيد funding_currency_allowed) */
+export const CURRENCIES = ['ILS', 'USD'] as const;
+
 /** البريد الرسمي للمجلس — مرسِل كل الإشعارات والقوالب (PRD §19.3 D19، مؤقت حتى النطاق الدائم Q8) */
 export const COUNCIL_EMAIL = 'info.rafahyouth@gmail.com';
 export const COUNCIL_SENDER_NAME = 'نبض رفح — المجلس البلدي الشبابي';

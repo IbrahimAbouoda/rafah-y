@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import type { ActionState } from '@/lib/action';
 import { STATUS_LABELS } from '@/lib/complaints/workflow';
 import type { ComplaintStatus } from '@/lib/generated/prisma/enums';
 import {
@@ -50,33 +48,17 @@ function Section({ title, description, children }: { title: string; description?
   );
 }
 
-type Action = (state: ActionState, form: FormData) => Promise<ActionState>;
-
 export function ComplaintActionsPanel({ complaintId, actions }: { complaintId: string; actions: ComplaintActions }) {
   const hidden = <input type="hidden" name="complaintId" value={complaintId} />;
-  // نجاح الإجراء يغيّر الحالة فيختفي نموذجه نفسه (فتح الفرز، الإغلاق…)؛ لذا تُعرض النتيجة هنا، في اللوحة الباقية
-  const [done, setDone] = useState<ActionState>(null);
-  const report =
-    (action: Action): Action =>
-    async (prev, form) => {
-      const result = await action(prev, form);
-      if (result?.ok) setDone(result);
-      return result;
-    };
   const any =
     actions.openForTriage || !!actions.assign || actions.dismiss || actions.close || actions.refer || actions.updateStatus.length > 0;
 
   return (
     <div className="flex flex-col gap-4">
-      {done?.message ? (
-        <Alert key={done.at} tone="success">
-          {done.message}
-        </Alert>
-      ) : null}
       {!any ? <Alert tone="info">صلاحية عرض فقط: لا إجراء متاح لك على هذه الشكوى في حالتها الحالية.</Alert> : null}
       {actions.openForTriage ? (
         <Section title="الفرز" description="افتح الشكوى للفرز ليعرف مقدّمها أنها قيد المراجعة، ثم اختر اللجنة.">
-          <ActionForm action={report(openForTriageAction)} hideSuccess resetOnSuccess>
+          <ActionForm action={openForTriageAction} resetOnSuccess>
             {hidden}
             <SubmitButton>فتح للفرز</SubmitButton>
           </ActionForm>
@@ -85,7 +67,7 @@ export function ComplaintActionsPanel({ complaintId, actions }: { complaintId: s
 
       {actions.assign ? (
         <Section title="التحويل إلى لجنة" description="يصل رئيس اللجنة إشعار فوري، ويرى مقدّم الشكوى اسم اللجنة في صفحة التتبّع.">
-          <ActionForm action={report(assignToCommitteeAction)} hideSuccess resetOnSuccess>
+          <ActionForm action={assignToCommitteeAction} resetOnSuccess>
             {hidden}
             <Field name="committeeId" label="اللجنة" hint={actions.assign.suggestedId ? 'المقترحة من التصنيف محددة مسبقًا.' : undefined}>
               <Select defaultValue={actions.assign.suggestedId ?? ''}>
@@ -110,7 +92,7 @@ export function ComplaintActionsPanel({ complaintId, actions }: { complaintId: s
 
       {actions.updateStatus.length > 0 ? (
         <Section title="تحديث الحالة" description="انقل الشكوى إلى خطوتها التالية واكتب ملاحظة. ملاحظة الحل تظهر لمقدّم الشكوى دائمًا.">
-          <ActionForm action={report(updateStatusAction)} hideSuccess resetOnSuccess>
+          <ActionForm action={updateStatusAction} resetOnSuccess>
             {hidden}
             <Field name="toStatus" label="الحالة التالية">
               <Select defaultValue={actions.updateStatus[0]}>
@@ -144,7 +126,7 @@ export function ComplaintActionsPanel({ complaintId, actions }: { complaintId: s
 
       {actions.refer ? (
         <Section title="إحالة لجهة خارجية" description="اسم الجهة وتفاصيل الإحالة داخلية؛ يرى مقدّم الشكوى أنها أُحيلت فقط.">
-          <ActionForm action={report(referComplaintAction)} hideSuccess resetOnSuccess>
+          <ActionForm action={referComplaintAction} resetOnSuccess>
             {hidden}
             <div className="grid gap-3 sm:grid-cols-2">
               <Field name="target" label="نوع الجهة">
@@ -173,7 +155,7 @@ export function ComplaintActionsPanel({ complaintId, actions }: { complaintId: s
 
       {actions.close ? (
         <Section title="الإغلاق" description="بعد إبلاغ مقدّم الشكوى بالحل.">
-          <ActionForm action={report(closeComplaintAction)} hideSuccess resetOnSuccess>
+          <ActionForm action={closeComplaintAction} resetOnSuccess>
             {hidden}
             <Field name="note" label="كلمة ختامية (اختيارية، عامة)">
               <Textarea rows={2} maxLength={1000} />
@@ -185,7 +167,7 @@ export function ComplaintActionsPanel({ complaintId, actions }: { complaintId: s
 
       {actions.dismiss ? (
         <Section title="الاستبعاد" description="للشكوى المكررة أو خارج اختصاص المجلس. السبب إلزامي ويصل مقدّم الشكوى.">
-          <ActionForm action={report(dismissComplaintAction)} hideSuccess resetOnSuccess>
+          <ActionForm action={dismissComplaintAction} resetOnSuccess>
             {hidden}
             <Field name="reason" label="سبب الاستبعاد">
               <Textarea rows={3} maxLength={1000} />

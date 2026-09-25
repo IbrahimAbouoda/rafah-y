@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isInternal, landingPath, meNavFor, navFor } from '@/lib/nav';
+import { isInternal, landingPath, meNavFor, navFor, partnerNavFor } from '@/lib/nav';
 import { buildGrants, canBeyondOwn, scopeFilter, type AssignmentRow, type SessionUser } from '@/lib/rbac';
 import { PERMISSIONS, type RoleKey } from '@/prisma/rbac.seed';
 
@@ -47,18 +47,18 @@ describe('بوابة الشباب ولوحة المجلس — من الصلاح�
     const secretary = asUser([{ key: 'secretary' }]);
     expect(landingPath(secretary)).toBe('/admin');
     const admin = hrefs(navFor(secretary));
-    expect(admin).toEqual(['/admin', '/admin/inbox', '/admin/complaints', '/admin/ideas', '/admin/committees', '/admin/tasks']);
+    expect(admin).toEqual(['/admin', '/admin/inbox', '/admin/complaints', '/admin/ideas', '/admin/committees', '/admin/tasks', '/admin/initiatives', '/admin/organizations']);
   });
 
   it('رئيس اللجنة: شكاوى لجنته وأفكارها ومهامها، بلا وارد ولا تدقيق', () => {
     const head = asUser([{ key: 'committee_head', committeeId: COMMITTEE }]);
-    expect(hrefs(navFor(head))).toEqual(['/admin', '/admin/complaints', '/admin/ideas', '/admin/committees', '/admin/tasks']);
+    expect(hrefs(navFor(head))).toEqual(['/admin', '/admin/complaints', '/admin/ideas', '/admin/committees', '/admin/tasks', '/admin/initiatives', '/admin/organizations']);
     expect(scopeFilter(head, 'complaints:read')).toEqual({ all: false, committees: [COMMITTEE], own: false });
   });
 
   it('مراقب البلدية: الشكاوى قراءةً بنطاق الكل، بلا تدقيق (§3.4)', () => {
     const observer = asUser([{ key: 'municipality_observer' }]);
-    expect(hrefs(navFor(observer))).toEqual(['/admin', '/admin/complaints', '/admin/committees', '/admin/tasks']);
+    expect(hrefs(navFor(observer))).toEqual(['/admin', '/admin/complaints', '/admin/committees', '/admin/tasks', '/admin/organizations', '/admin/finance']);
     expect(scopeFilter(observer, 'complaints:read')).toEqual({ all: true });
     expect(canBeyondOwn(observer, 'complaints:read_contact')).toBe(false);
   });
@@ -66,7 +66,18 @@ describe('بوابة الشباب ولوحة المجلس — من الصلاح�
   it('الرئيس: الوارد والشكاوى والتدقيق والإعدادات', () => {
     const president = asUser([{ key: 'council_president' }, { key: 'youth' }]);
     const admin = hrefs(navFor(president));
-    expect(admin.slice(0, 7)).toEqual(['/admin', '/admin/inbox', '/admin/complaints', '/admin/ideas', '/admin/committees', '/admin/tasks', '/admin/audit']);
+    expect(admin.slice(0, 10)).toEqual([
+      '/admin',
+      '/admin/inbox',
+      '/admin/complaints',
+      '/admin/ideas',
+      '/admin/committees',
+      '/admin/tasks',
+      '/admin/initiatives',
+      '/admin/organizations',
+      '/admin/finance',
+      '/admin/audit',
+    ]);
     expect(admin).toContain('/admin/settings/users');
   });
 
@@ -76,5 +87,19 @@ describe('بوابة الشباب ولوحة المجلس — من الصلاح�
     expect(admin).toContain('/admin/audit');
     expect(admin).not.toContain('/admin/complaints');
     expect(admin).not.toContain('/admin/inbox');
+  });
+
+  it('المؤسسة الشريكة: بوابة /partner فقط، بلا لوحة المجلس (D26)', () => {
+    const partner = asUser([{ key: 'partner' }, { key: 'youth' }]);
+    expect(isInternal(partner)).toBe(false);
+    expect(landingPath(partner)).toBe('/partner');
+    expect(hrefs(partnerNavFor(partner))).toEqual(['/partner', '/partner/needs', '/partner/offers']);
+  });
+
+  it('أمين الصندوق: السجل المالي، بلا شكاوى', () => {
+    const treasurer = asUser([{ key: 'treasurer' }]);
+    const admin = hrefs(navFor(treasurer));
+    expect(admin).toContain('/admin/finance');
+    expect(admin).not.toContain('/admin/complaints');
   });
 });

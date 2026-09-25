@@ -17,13 +17,24 @@ export type NavIcon =
   | 'history'
   | 'lightbulb'
   | 'kanban'
-  | 'committee';
+  | 'committee'
+  | 'rocket'
+  | 'building'
+  | 'wallet'
+  | 'handshake';
 
 /**
  * permission = null ⇒ يكفي تسجيل الدخول.
  * beyondOwn ⇒ يُعرض فقط لمن تمتد صلاحيته إلى سجلات غيره (لجنة أو الكل)، لا لمن يملكها على سجلاته فقط.
  */
-export type NavItem = { href: string; label: string; permission: PermissionKey | null; beyondOwn?: boolean; icon: NavIcon };
+/** permission مصفوفة ⇒ تكفي أيٌّ منها (مثل /admin/initiatives وتبويباته) */
+export type NavItem = {
+  href: string;
+  label: string;
+  permission: PermissionKey | PermissionKey[] | null;
+  beyondOwn?: boolean;
+  icon: NavIcon;
+};
 export type NavGroup = { label: string; items: NavItem[] };
 
 export const ADMIN_NAV: NavGroup[] = [
@@ -37,6 +48,15 @@ export const ADMIN_NAV: NavGroup[] = [
       { href: '/admin/ideas', label: 'الأفكار', permission: 'ideas:review', icon: 'lightbulb' },
       { href: '/admin/committees', label: 'اللجان', permission: 'committees:read', beyondOwn: true, icon: 'committee' },
       { href: '/admin/tasks', label: 'مهامي', permission: 'tasks:read', icon: 'kanban' },
+      {
+        href: '/admin/initiatives',
+        label: 'المبادرات',
+        // تبويبات الصفحة: المبادرات · استطلاعات الطلب · مسودات Concept Note (D30)
+        permission: ['initiatives:update', 'demand:manage', 'concept_notes:approve'],
+        icon: 'rocket',
+      },
+      { href: '/admin/organizations', label: 'المؤسسات', permission: 'organizations:read', beyondOwn: true, icon: 'building' },
+      { href: '/admin/finance', label: 'السجل المالي', permission: 'finance:read', icon: 'wallet' },
       { href: '/admin/audit', label: 'سجل التدقيق', permission: 'audit:read', beyondOwn: true, icon: 'history' },
     ],
   },
@@ -66,9 +86,22 @@ export const ME_NAV: NavGroup[] = [
   },
 ];
 
+// بوابة المؤسسات — D26: من رُبط بمؤسسة ومُنح دور partner
+export const PARTNER_NAV: NavGroup[] = [
+  {
+    label: 'بوابة المؤسسات',
+    items: [
+      { href: '/partner', label: 'لوحة المؤسسة', permission: 'offers:create', icon: 'home' },
+      { href: '/partner/needs', label: 'الاحتياجات المفتوحة', permission: 'offers:create', icon: 'handshake' },
+      { href: '/partner/offers', label: 'عروض دعمنا', permission: 'offers:read', icon: 'file' },
+    ],
+  },
+];
+
 function allowed(user: SessionUser, item: NavItem): boolean {
   if (!item.permission) return true;
-  return item.beyondOwn ? canBeyondOwn(user, item.permission) : can(user, item.permission);
+  const keys = Array.isArray(item.permission) ? item.permission : [item.permission];
+  return keys.some((k) => (item.beyondOwn ? canBeyondOwn(user, k) : can(user, k)));
 }
 
 function filterNav(groups: NavGroup[], user: SessionUser): NavGroup[] {
@@ -86,11 +119,18 @@ export function navFor(user: SessionUser): NavGroup[] {
 
 export const isInternal = (user: SessionUser) => navFor(user).length > 0;
 
+export function partnerNavFor(user: SessionUser): NavGroup[] {
+  return filterNav(PARTNER_NAV, user);
+}
+
+export const isPartner = (user: SessionUser) => can(user, 'offers:create');
+
 export function meNavFor(user: SessionUser): NavGroup[] {
   return filterNav(ME_NAV, user);
 }
 
-/** بعد الدخول: لوحة المجلس لمن له دور داخلي، وبوابة الشباب لغيره. */
+/** بعد الدخول: لوحة المجلس لمن له دور داخلي، ثم بوابة المؤسسات لممثليها، وبوابة الشباب لغيرهم. */
 export function landingPath(user: SessionUser): string {
-  return isInternal(user) ? '/admin' : '/me';
+  if (isInternal(user)) return '/admin';
+  return isPartner(user) ? '/partner' : '/me';
 }

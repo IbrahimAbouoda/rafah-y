@@ -12,6 +12,12 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
             <span className="hidden text-xs text-muted-foreground sm:inline">صوت الشباب... فكرة تتحول إلى أثر</span>
           </span>
           <nav aria-label="روابط عامة" className="ms-auto flex items-center gap-0.5 overflow-x-auto text-sm">
+            <Link href="/initiatives" className="rounded-lg px-2 py-1.5 hover:bg-muted">
+              المبادرات
+            </Link>
+            <Link href="/support" className="hidden rounded-lg px-2 py-1.5 hover:bg-muted sm:inline">
+              ادعمنا
+            </Link>
             <Link href="/ideas" className="rounded-lg px-2 py-1.5 hover:bg-muted">
               الأفكار
             </Link>

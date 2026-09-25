@@ -1,11 +1,12 @@
 import { CheckCircle2, Circle, Clock, XCircle, type LucideIcon } from 'lucide-react';
 import { STATUS_LABELS } from '@/lib/complaints/workflow';
 import { IDEA_STATUS_LABELS } from '@/lib/ideas/workflow';
+import { INITIATIVE_STATUS_LABELS, NEED_STATUS_LABELS } from '@/lib/initiatives/workflow';
 import { TASK_STATUS_LABELS } from '@/lib/tasks/workflow';
 import { cn } from '@/lib/utils';
 
 // لون + أيقونة + نص دائمًا — لا يُعتمد اللون وحده (PRD §12 StatusBadge).
-// Sprint 0: حالات الإعدادات · Sprint 1: complaint · Sprint 2: idea · task
+// Sprint 0: حالات الإعدادات · Sprint 1: complaint · Sprint 2: idea · task · Sprint 3: initiative · need · offer · funding
 type Tone = 'success' | 'warning' | 'info' | 'danger' | 'neutral';
 
 const STATUSES: Record<string, Record<string, { label: string; tone: Tone }>> = {
@@ -49,6 +50,30 @@ const STATUSES: Record<string, Record<string, { label: string; tone: Tone }>> = 
     IN_PROGRESS: { label: TASK_STATUS_LABELS.IN_PROGRESS, tone: 'info' },
     REVIEW: { label: TASK_STATUS_LABELS.REVIEW, tone: 'warning' },
     DONE: { label: TASK_STATUS_LABELS.DONE, tone: 'success' },
+  },
+  initiative: {
+    DRAFT: { label: INITIATIVE_STATUS_LABELS.DRAFT, tone: 'neutral' },
+    PENDING_APPROVAL: { label: INITIATIVE_STATUS_LABELS.PENDING_APPROVAL, tone: 'warning' },
+    PUBLISHED: { label: INITIATIVE_STATUS_LABELS.PUBLISHED, tone: 'info' },
+    IN_PROGRESS: { label: INITIATIVE_STATUS_LABELS.IN_PROGRESS, tone: 'info' },
+    COMPLETED: { label: INITIATIVE_STATUS_LABELS.COMPLETED, tone: 'success' },
+    CANCELLED: { label: INITIATIVE_STATUS_LABELS.CANCELLED, tone: 'danger' },
+  },
+  need: {
+    OPEN: { label: NEED_STATUS_LABELS.OPEN, tone: 'warning' },
+    PARTIALLY_COVERED: { label: NEED_STATUS_LABELS.PARTIALLY_COVERED, tone: 'info' },
+    COVERED: { label: NEED_STATUS_LABELS.COVERED, tone: 'success' },
+    CANCELLED: { label: NEED_STATUS_LABELS.CANCELLED, tone: 'neutral' },
+  },
+  offer: {
+    SUBMITTED: { label: 'بانتظار القرار', tone: 'warning' },
+    ACCEPTED: { label: 'مقبول', tone: 'success' },
+    REJECTED: { label: 'معتذَر عنه', tone: 'neutral' },
+    WITHDRAWN: { label: 'مسحوب', tone: 'neutral' },
+  },
+  funding: {
+    pending: { label: 'بانتظار الاعتماد', tone: 'warning' },
+    approved: { label: 'معتمد', tone: 'success' },
   },
   file: {
     PENDING: { label: 'قيد الفحص', tone: 'warning' },

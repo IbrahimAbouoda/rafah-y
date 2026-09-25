@@ -118,3 +118,24 @@ export async function committeeHoldersOf(client: Db | Tx, committeeId: string, k
   });
   return [...new Set(rows.map((r) => r.userId))];
 }
+
+/**
+ * من يحمل صلاحية بنطاق «الكل» الآن — مثل «الرئيس وأمين السر» في §8.2 دون مقارنة باسم دور.
+ */
+export async function allScopeHoldersOf(client: Db | Tx, keys: PermissionKey[]): Promise<string[]> {
+  const now = new Date();
+  const rows = await client.roleAssignment.findMany({
+    where: {
+      revokedAt: null,
+      startsAt: { lte: now },
+      user: { isActive: true, deletedAt: null },
+      role: { permissions: { some: { scope: 'ALL', permission: { key: { in: keys } } } } },
+      AND: [
+        { OR: [{ endsAt: null }, { endsAt: { gt: now } }] },
+        { OR: [{ role: { isTermBound: false } }, { term: { isCurrent: true } }] },
+      ],
+    },
+    select: { userId: true },
+  });
+  return [...new Set(rows.map((r) => r.userId))];
+}

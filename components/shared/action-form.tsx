@@ -1,11 +1,12 @@
 'use client';
 
-import { cloneElement, createContext, startTransition, use, useActionState, useEffect, useRef } from 'react';
+import { cloneElement, createContext, startTransition, use, useActionState, useEffect, useId, useRef } from 'react';
 import { Loader2 } from 'lucide-react';
 import type { ActionState } from '@/lib/action';
 import { Button, type ButtonProps } from '@/components/ui/button';
 import { Label } from '@/components/ui/form-controls';
 import { Alert } from '@/components/ui/surface';
+import { useFlash } from './flash';
 import { cn } from '@/lib/utils';
 
 type Action = (state: ActionState, form: FormData) => Promise<ActionState>;
@@ -30,7 +31,13 @@ export function ActionForm({
   resetOnSuccess?: boolean;
   hideSuccess?: boolean;
 }) {
-  const [state, formAction, pending] = useActionState(action, null);
+  const flash = useFlash();
+  // النجاح يُسجَّل في رسالة الهيكل من داخل الاستدعاء: قد يزول النموذج نفسه مع تحديث الصفحة
+  const [state, formAction, pending] = useActionState<ActionState, FormData>(async (prev, data) => {
+    const result = await action(prev, data);
+    if (result?.ok && result.message && flash && !hideSuccess) flash(result.message);
+    return result;
+  }, null);
   const ref = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -51,7 +58,7 @@ export function ActionForm({
         className={cn('flex flex-col gap-4', className)}
       >
         {children}
-        {state?.message && !(state.ok && hideSuccess) ? (
+        {state?.message && !(state.ok && (hideSuccess || flash)) ? (
           <Alert key={state.at} tone={state.ok ? 'success' : 'danger'}>
             {state.message}
           </Alert>
@@ -77,13 +84,16 @@ export function Field({
 }) {
   const { state } = use(FormStateContext);
   const errors = state?.fieldErrors?.[name];
-  const errorId = `${name}-error`;
-  const hintId = `${name}-hint`;
+  // معرّف فريد لكل حقل: الصفحة قد تحمل النموذج نفسه مرات (عرض لكل مؤسسة، قيد لكل عرض)،
+  // ومعرّف مكرر يربط العنوان بحقل نموذج آخر (إمكانية الوصول)
+  const id = `${name}-${useId()}`;
+  const errorId = `${id}-error`;
+  const hintId = `${id}-hint`;
   return (
     <div className={cn('flex flex-col gap-1.5', className)}>
-      <Label htmlFor={name}>{label}</Label>
+      <Label htmlFor={id}>{label}</Label>
       {cloneElement(children, {
-        id: name,
+        id,
         name,
         'aria-invalid': errors ? true : undefined,
         'aria-describedby': [errors ? errorId : null, hint ? hintId : null].filter(Boolean).join(' ') || undefined,

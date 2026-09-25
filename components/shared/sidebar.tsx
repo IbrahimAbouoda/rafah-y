@@ -4,6 +4,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Bell,
+  Building2,
+  Handshake,
+  Rocket,
+  Wallet,
   Calendar,
   FileText,
   History,
@@ -39,6 +43,10 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   lightbulb: Lightbulb,
   kanban: KanbanSquare,
   committee: UsersRound,
+  rocket: Rocket,
+  building: Building2,
+  wallet: Wallet,
+  handshake: Handshake,
 };
 
 /** عناصر مبنية من الصلاحيات على الخادم. على الجوّال: شريط تبويبات أفقي قابل للتمرير (PRD §12). */

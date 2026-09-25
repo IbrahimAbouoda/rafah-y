@@ -4,6 +4,7 @@ import { logoutAction } from '@/server/actions/auth';
 import type { NavGroup } from '@/lib/nav';
 import type { SerializedGrants, SessionUser } from '@/lib/rbac';
 import { Button } from '@/components/ui/button';
+import { FlashProvider } from './flash';
 import { PermissionsProvider } from './permission-gate';
 import { Sidebar } from './sidebar';
 import { ThemeToggle } from './theme-toggle';
@@ -95,7 +96,9 @@ export function AppShell({
       </header>
       <div className="flex flex-col lg:flex-row">
         <Sidebar groups={nav} />
-        <main className="min-w-0 flex-1 p-4 sm:p-6">{children}</main>
+        <main className="min-w-0 flex-1 p-4 sm:p-6">
+          <FlashProvider>{children}</FlashProvider>
+        </main>
       </div>
     </PermissionsProvider>
   );

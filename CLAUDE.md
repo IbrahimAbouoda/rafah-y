@@ -107,7 +107,7 @@ npm run check       # tsc + lint + prisma validate
 
 ## حالة المشروع
 
-**السبرنت الحالي:** 2 — قيد التنفيذ (Sprint 1 مكتمل عدا النشر التجريبي بانتظار Q14). `PRD.md` v1.1 معتمد، وقرارات 2026-09-23/24 في §19.3 (D1–D24).
+**السبرنت الحالي:** 3 — قيد التنفيذ (Sprint 2 مكتمل عدا النشر التجريبي بانتظار Q14). `PRD.md` v1.1 معتمد، وقرارات 2026-09-23/25 في §19.3 (D1–D30).
 
 **ثوابت يسهل نسيانها:**
 - الأرقام المرجعية: `next_ref('CMP-2026')` → `RF-CMP-2026-000124` · الأفكار `IDA-2026` · القرارات `next_ref('DEC-2026', 4)`. الدالة تضيف `RF-` بنفسها.
@@ -115,6 +115,7 @@ npm run check       # tsc + lint + prisma validate
 - لجنة الإعلام = slug `public-relations-media` (من إعداد، لا مقارنة اسم).
 - التطوير على Supabase محلي (Docker)؛ الاختبارات التي تحتاج قاعدة بيانات تعمل على PGlite.
 - المرسِل الرسمي للبريد `info.rafahyouth@gmail.com` (`COUNCIL_EMAIL` في `lib/config.ts`)؛ محليًا يلتقطه Mailpit على `http://127.0.0.1:54324`.
+- المبلغ المؤمَّن من `securedTotals()` (قيود واردة معتمدة فقط)، ونطاق «خاص» للمؤسسة = أعضاؤها يُمرَّرون إلى `can()` كـ ownerId (`lib/organizations.ts`).
 - انتقالات المهمة من `lib/tasks/workflow.ts` والفكرة من `lib/ideas/workflow.ts`؛ عضوية اللجنة من `lib/committees.ts` (تعيين فعّال، لا جدول).
 - انتقالات الشكوى من `lib/complaints/workflow.ts` فقط، ونطاق القوائم من `readableComplaints()` — لا شروط حالة أو لجنة مكتوبة في الصفحات.
 

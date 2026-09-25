@@ -187,6 +187,43 @@ export async function seedDemoIdeas(db: PrismaClient): Promise<string[]> {
   return refs;
 }
 
+/** مبادرة عرض منشورة باحتياجات مرقّمة، ومؤسسة عرض — لتجربة /initiatives و /support و /partner/needs */
+export async function seedDemoInitiatives(db: PrismaClient): Promise<string | null> {
+  if ((await db.initiative.count({ where: { isDemo: true } })) > 0) return null;
+  const creator = await db.user.upsert({
+    where: { email: DEMO_SUBMITTER.email },
+    create: { ...DEMO_SUBMITTER, authId: crypto.randomUUID(), isActive: false },
+    update: {},
+  });
+  const committee = await db.committee.findUnique({ where: { slug: 'activities-initiatives' }, select: { id: true } });
+  await db.organization.create({
+    data: { name: 'مؤسسة عرض تجريبية', type: 'LOCAL_NGO', sectors: ['تمكين الشباب'], stage: 'CONTACTED', isDemo: true },
+  });
+  const initiative = await db.initiative.create({
+    data: {
+      slug: 'demo-summer-workshops',
+      title: 'عرض: ورش صيفية للمهارات الرقمية',
+      summary: 'مبادرة عرض تجريبية: ثلاث ورش صيفية لثلاثين شابًا في التصميم والبرمجة.',
+      status: 'PUBLISHED',
+      committeeId: committee?.id ?? null,
+      estimatedBudget: '6000',
+      beneficiariesTarget: 30,
+      createdById: creator.id,
+      approvedAt: new Date(),
+      isDemo: true,
+      needs: {
+        create: [
+          { type: 'FUNDING', description: 'تمويل أدوات الورش ومواصلات المشاركين', amount: '3500', sortOrder: 1 },
+          { type: 'TRAINER', description: 'مدرّب تصميم جرافيك', quantity: 1, unit: 'مدرّب', sortOrder: 2 },
+          { type: 'VENUE', description: 'قاعة بثلاثين مقعدًا وشبكة إنترنت', quantity: 6, unit: 'أيام', sortOrder: 3 },
+          { type: 'EQUIPMENT', description: 'أجهزة حاسوب محمولة', quantity: 10, unit: 'جهاز', sortOrder: 4 },
+        ],
+      },
+    },
+  });
+  return initiative.slug;
+}
+
 async function main() {
   const url = process.env.DIRECT_URL ?? process.env.DATABASE_URL;
   if (!url) throw new Error('Set DIRECT_URL (or DATABASE_URL) before seeding');
@@ -197,11 +234,13 @@ async function main() {
     const dev = process.env.NODE_ENV !== 'production';
     let demo: { reference: string; code: string }[] = [];
     let ideas: string[] = [];
+    let initiative: string | null = null;
     if (dev) {
       await seedDevTerm(db);
       await seedDevReference(db);
       demo = await seedDemoComplaints(db);
       ideas = await seedDemoIdeas(db);
+      initiative = await seedDemoInitiatives(db);
     }
 
     const grants = PERMISSIONS.reduce((n, p) => n + Object.keys(p.grants).length, 0);
@@ -210,6 +249,7 @@ async function main() {
     if (dev) console.log(`✓ تطوير: ${DEV_CATEGORIES.length} تصنيفات · ${DEV_AREAS.length} مناطق تجريبية`);
     for (const d of demo) console.log(`  شكوى عرض ${d.reference} · رمز ${d.code}`);
     if (ideas.length) console.log(`  أفكار عرض: ${ideas.join(' · ')}`);
+    if (initiative) console.log(`  مبادرة عرض: /initiatives/${initiative}`);
   } finally {
     await db.$disconnect();
   }
