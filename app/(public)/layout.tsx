@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { FlashProvider } from '@/components/shared/flash';
 import { ThemeToggle } from '@/components/shared/theme-toggle';
 
 // الصفحات العامة — بلا تسجيل دخول (PRD §11.1). الروابط هنا لمسارات منفَّذة فقط.
@@ -21,6 +22,12 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
             <Link href="/ideas" className="rounded-lg px-2 py-1.5 hover:bg-muted">
               الأفكار
             </Link>
+            <Link href="/opportunities" className="rounded-lg px-2 py-1.5 hover:bg-muted">
+              الفرص
+            </Link>
+            <Link href="/activities" className="rounded-lg px-2 py-1.5 hover:bg-muted">
+              الأنشطة
+            </Link>
             <Link href="/committees" className="hidden rounded-lg px-2 py-1.5 hover:bg-muted sm:inline">
               اللجان
             </Link>
@@ -37,7 +44,10 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
           </nav>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-6">{children}</main>
+      {/* نتيجة الإجراء تبقى ظاهرة حين يتغيّر النموذج نفسه بعد النجاح (التقديم على فرصة، التسجيل في نشاط) */}
+      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-6">
+        <FlashProvider>{children}</FlashProvider>
+      </main>
     </div>
   );
 }
