@@ -41,6 +41,7 @@ export function ApplyForm({ opportunityId, recipient }: { opportunityId: string;
       </ActionForm>
       <ConsentDialog
         open={asking}
+        title={`مشاركة بياناتك مع ${recipient} لهذا الطلب فقط`}
         purpose="لتدرس الجهة طلبك وتتواصل معك بشأن هذه الفرصة. الموافقة لهذا الطلب وحده، ولا تغني عنها موافقتك العامة في ملفك."
         recipient={recipient}
         dataPoints={APPLICANT_DATA_POINTS}

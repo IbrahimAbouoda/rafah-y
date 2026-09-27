@@ -90,7 +90,7 @@ test('فرصة من مؤسسة ← نشر أمين السر ← تقديم بم�
   await youth.page.getByRole('link', { name: title }).click();
   await youth.page.getByLabel('رسالة للجهة (اختيارية)').fill('أعمل في التصميم منذ سنتين.');
   await youth.page.getByRole('button', { name: 'تقديم الطلب' }).click();
-  const dialog = youth.page.getByRole('dialog', { name: 'موافقتك على مشاركة بياناتك' });
+  const dialog = youth.page.getByRole('dialog', { name: `مشاركة بياناتك مع مؤسسة النور ${tag} لهذا الطلب فقط` });
   await expect(dialog).toBeVisible();
 
   // إغلاق دون قرار (Esc الثاني في Chrome أو زر الرجوع في أندرويد): لا طلب، والحوار يعود بالضغط مجددًا
@@ -103,7 +103,7 @@ test('فرصة من مؤسسة ← نشر أمين السر ← تقديم بم�
   expect(applications).toBe(0);
   await youth.page.getByRole('button', { name: 'تقديم الطلب' }).click();
   await expect(dialog).toBeVisible();
-  await expect(dialog.getByText(`مؤسسة النور ${tag}`)).toBeVisible();
+  await expect(dialog.getByText(`مؤسسة النور ${tag}`, { exact: true })).toBeVisible();
   await expect(dialog.getByText('بريدك الإلكتروني ورقم جوّالك')).toBeVisible();
   await expect(dialog.getByRole('button', { name: 'أرسل دون مشاركة ملفي' })).toBeFocused();
   // Esc لا يغلقه دون قرار

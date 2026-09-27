@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 // onDismiss يُبلغ الأب ليعيد حالته، والإغلاق دون قرار لا يرسل شيئًا ولا يمنح موافقة.
 export function ConsentDialog({
   open,
+  title = 'موافقتك على مشاركة بياناتك',
   purpose,
   dataPoints,
   recipient,
@@ -21,6 +22,8 @@ export function ConsentDialog({
   declineLabel = 'لا أوافق',
 }: {
   open: boolean;
+  /** يسمّي الجهة ونطاق الموافقة صراحةً، مثل «… مع <المؤسسة> لهذا الطلب فقط» */
+  title?: string;
   purpose: string;
   dataPoints: readonly string[];
   recipient: string;
@@ -60,7 +63,7 @@ export function ConsentDialog({
         <div className="flex items-center gap-2">
           <ShieldCheck className="size-5 text-brand" aria-hidden />
           <h2 id={titleId} className="text-base font-semibold">
-            موافقتك على مشاركة بياناتك
+            {title}
           </h2>
         </div>
         <p id={purposeId} className="text-sm">
