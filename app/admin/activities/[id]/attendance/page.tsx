@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { attendanceBlocker } from '@/lib/activities/workflow';
+import { attendanceBlocker, ratingSummary } from '@/lib/activities/workflow';
 import { db } from '@/lib/db';
 import { guardPage } from '@/lib/page-guard';
 import { can } from '@/lib/rbac';
@@ -42,8 +42,8 @@ export default async function AttendancePage({ params }: { params: Promise<{ id:
     },
   });
   const blocker = attendanceBlocker(activity);
-  const rated = registrations.filter((r) => r.rating !== null);
-  const avg = rated.length ? rated.reduce((s, r) => s + r.rating!, 0) / rated.length : null;
+  // الحاضرون وحدهم — تقييم من صار «لم يحضر» لا يُحتسب
+  const { average: avg, rated } = ratingSummary(registrations);
 
   return (
     <>

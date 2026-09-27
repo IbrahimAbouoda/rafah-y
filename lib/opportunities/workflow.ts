@@ -18,6 +18,17 @@ export const OPPORTUNITY_REVIEW: Record<OpportunityStatus, OpportunityStatus[]> 
   CLOSED: [],
 };
 
+/**
+ * هل تُنشر الفرصة الآن؟ null = تُنشر · نص = السبب. الرفض يبقى مسموحًا دائمًا.
+ * فرصة انتهى موعدها قبل مراجعتها لا تُنشر: ستظهر ميتة لا تقبل طلبًا.
+ */
+export function publishBlocker(o: { deadline: Date | null }, now = new Date()): string | null {
+  if (o.deadline && o.deadline.getTime() < now.getTime()) {
+    return 'انتهى موعد التقديم على هذه الفرصة قبل مراجعتها، فلا تُنشر. ارفضها أو اطلب من المؤسسة إرسالها بموعد جديد.';
+  }
+  return null;
+}
+
 /** إغلاق فرصة منشورة — من المؤسسة صاحبتها أو ممن يملك opportunities:publish */
 export const CLOSABLE_OPPORTUNITY_STATUSES: OpportunityStatus[] = ['PUBLISHED'];
 

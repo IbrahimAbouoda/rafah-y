@@ -48,6 +48,8 @@ export function ApplyForm({ opportunityId, recipient }: { opportunityId: string;
         declineLabel="أرسل دون مشاركة ملفي"
         onAccept={() => decide(true)}
         onDecline={() => decide(false)}
+        // الإغلاق ليس قرار «أرسل دون مشاركة»: لا يُرسل شيء
+        onDismiss={() => setAsking(false)}
       />
     </>
   );

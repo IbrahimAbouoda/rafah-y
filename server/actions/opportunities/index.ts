@@ -14,6 +14,7 @@ import {
   CLOSABLE_OPPORTUNITY_STATUSES,
   nextApplicationStatuses,
   OPPORTUNITY_REVIEW,
+  publishBlocker,
   WITHDRAWABLE_APPLICATION_STATUSES,
   type ApplicantView,
 } from '@/lib/opportunities/workflow';
@@ -86,12 +87,16 @@ export async function reviewOpportunityAction(_prev: ActionState, form: FormData
     const data = ReviewOpportunitySchema.parse(formToObject(form));
     const opportunity = await db.opportunity.findUnique({
       where: { id: data.opportunityId },
-      select: { id: true, title: true, status: true, organizationId: true },
+      select: { id: true, title: true, status: true, organizationId: true, deadline: true },
     });
     if (!opportunity) throw notFound('الفرصة');
     // لا نطاق لجنة للفرصة: المراجعة لمن يملك الصلاحية بنطاق «الكل»
     requirePermission(user, 'opportunities:publish', { committeeId: null });
     if (!OPPORTUNITY_REVIEW[opportunity.status].includes(data.decision)) throw conflict('رُوجعت هذه الفرصة من قبل.');
+    if (data.decision === 'PUBLISHED') {
+      const blocker = publishBlocker(opportunity);
+      if (blocker) throw conflict(blocker);
+    }
 
     const published = data.decision === 'PUBLISHED';
     const emailIds = await db.$transaction(async (tx) => {
@@ -132,11 +137,17 @@ export async function closeOpportunityAction(_prev: ActionState, form: FormData)
     const opportunity = await db.opportunity.findUnique({ where: { id: opportunityId }, select: { id: true, status: true, organizationId: true } });
     if (!opportunity) throw notFound('الفرصة');
     const owners = await orgOwners(opportunity.organizationId);
+    // الفرصة بلا لجنة: committeeId = null لا يطابق أي منحة لجنة، فلا يمرّ إلا نطاق «الكل» — كما في reviewOpportunityAction
     if (!can(user, 'opportunities:publish', { committeeId: null }) && !can(user, 'opportunities:create', { ownerId: owners })) {
       throw forbidden();
     }
     if (!CLOSABLE_OPPORTUNITY_STATUSES.includes(opportunity.status)) throw conflict('الفرصة ليست منشورة، فلا تُغلق.');
-    await db.opportunity.update({ where: { id: opportunity.id }, data: { status: 'CLOSED' } });
+    // مشروط بالحالة في نفس الكتابة: لا يُغلق ما تغيّرت حالته بين القراءة والحفظ
+    const { count } = await db.opportunity.updateMany({
+      where: { id: opportunity.id, status: { in: CLOSABLE_OPPORTUNITY_STATUSES } },
+      data: { status: 'CLOSED' },
+    });
+    if (count === 0) throw conflict('تغيّرت حالة الفرصة للتو. حدّث الصفحة.');
     revalidateOpportunities(opportunity.id);
     return 'أُغلقت الفرصة، ولم تعد تقبل طلبات.';
   });

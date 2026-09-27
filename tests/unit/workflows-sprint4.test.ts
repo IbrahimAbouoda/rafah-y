@@ -3,6 +3,7 @@ import {
   attendanceBlocker,
   canMoveActivity,
   canRate,
+  ratingSummary,
   registerBlocker,
   registrationStatusFor,
 } from '@/lib/activities/workflow';
@@ -13,6 +14,7 @@ import {
   nextApplicationStatuses,
   OPPORTUNITY_REVIEW,
   PROFILE_DATA_POINTS,
+  publishBlocker,
 } from '@/lib/opportunities/workflow';
 import { gazaDateTime, toDateTimeInput } from '@/lib/utils';
 import { ActivitySchema, OpportunitySchema, ProfileSchema, RateSchema } from '@/lib/validation/opportunities';
@@ -45,6 +47,12 @@ describe('الفرصة — §5.4 · AC-11', () => {
   it('المراجعة: من PENDING_REVIEW إلى نشر أو رفض فقط', () => {
     expect(OPPORTUNITY_REVIEW.PENDING_REVIEW).toEqual(['PUBLISHED', 'REJECTED']);
     expect(OPPORTUNITY_REVIEW.PUBLISHED).toEqual([]);
+  });
+
+  it('لا تُنشر فرصة مضى موعدها قبل مراجعتها؛ بلا موعد أو بموعد قادم تُنشر', () => {
+    expect(publishBlocker({ deadline: new Date(NOW.getTime() - hour) }, NOW)).toMatch(/انتهى موعد التقديم.*ارفضها/);
+    expect(publishBlocker({ deadline: new Date(NOW.getTime() + hour) }, NOW)).toBeNull();
+    expect(publishBlocker({ deadline: null }, NOW)).toBeNull();
   });
 
   it('D33: طلب بلا موافقة لا تديره المؤسسة؛ المحسوم لا يُنقل', () => {
@@ -83,6 +91,19 @@ describe('النشاط — §5.5 · AC-13', () => {
     expect(attendanceBlocker({ status: 'DRAFT', startsAt: new Date(NOW.getTime() - hour) }, NOW)).toMatch(/منشور أو منتهٍ/);
     expect(canRate('ATTENDED')).toBe(true);
     for (const s of ['REGISTERED', 'WAITLISTED', 'NO_SHOW', 'CANCELLED'] as const) expect(canRate(s)).toBe(false);
+  });
+
+  it('ملخص التقييم: من صار «لم يحضر» يبقى تقييمه مخزّنًا ولا يُحتسب', () => {
+    const rows = [
+      { status: 'ATTENDED' as const, rating: 5 },
+      { status: 'ATTENDED' as const, rating: 3 },
+      { status: 'NO_SHOW' as const, rating: 1 },
+      { status: 'ATTENDED' as const, rating: null },
+    ];
+    const { average, rated } = ratingSummary(rows);
+    expect(average).toBe(4);
+    expect(rated).toHaveLength(2);
+    expect(ratingSummary([{ status: 'NO_SHOW' as const, rating: 2 }]).average).toBeNull();
   });
 
   it('الانتقالات: المسودة تُنشر، والمنتهي والملغى نهائيان', () => {

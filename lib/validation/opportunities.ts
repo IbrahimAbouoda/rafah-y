@@ -43,11 +43,16 @@ const toGazaMoment = (v: unknown) => {
 const gazaMoment = (message: string) => z.preprocess(toGazaMoment, z.coerce.date({ error: message }));
 const optionalGazaMoment = (message: string) => z.preprocess(toGazaMoment, z.coerce.date({ error: message }).optional());
 
-const thisYear = new Date().getFullYear();
-
 export const ProfileSchema = z.object({
   // لا تاريخ ميلاد كامل (§4.4)
-  birthYear: optionalInt(`سنة الميلاد رقم بين ${thisYear - 60} و ${thisYear - 10}.`, thisYear - 60, thisYear - 10),
+  // الحدود من السنة الحالية عند كل تحقق، لا عند تحميل الوحدة (خادم يعمل عبر رأس السنة)
+  birthYear: z
+    .preprocess(blankToUndefined, z.coerce.number({ error: 'سنة الميلاد رقم من أربع خانات، مثل 2003.' }).int('سنة الميلاد رقم من أربع خانات، مثل 2003.').optional())
+    .superRefine((v, ctx) => {
+      if (v === undefined) return;
+      const year = new Date().getFullYear();
+      if (v < year - 60 || v > year - 10) ctx.addIssue({ code: 'custom', message: `سنة الميلاد رقم بين ${year - 60} و ${year - 10}.` });
+    }),
   areaId: optionalUuid('اختر المنطقة من القائمة.'),
   educationLevel: z.preprocess(blankToUndefined, z.enum(EDUCATION_LEVELS, { error: 'اختر المستوى التعليمي من القائمة.' }).optional()),
   languages: commaList('اللغات'),
@@ -135,6 +140,12 @@ export const ActivitySchema = z
       ctx.addIssue({ code: 'custom', path: ['endsAt'], message: 'موعد النهاية قبل موعد البداية.' });
     }
   });
+
+/** النشاط المنتهي أو الملغى: المخرجات وحدها (§5.5) */
+export const ActivityOutcomesSchema = z.object({
+  id: z.uuid('النشاط غير محدد. حدّث الصفحة.'),
+  outcomes: optionalText(5000, 'المخرجات أطول من 5000 محرف.'),
+});
 
 export const ActivityStatusSchema = z.object({
   activityId: z.uuid('النشاط غير محدد. حدّث الصفحة.'),

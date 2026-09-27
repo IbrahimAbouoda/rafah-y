@@ -174,6 +174,7 @@ export function ConsentToggle({
           submit('true');
         }}
         onDecline={() => setAsking(false)}
+        onDismiss={() => setAsking(false)}
       />
     </>
   );

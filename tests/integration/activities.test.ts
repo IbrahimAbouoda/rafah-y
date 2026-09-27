@@ -7,7 +7,8 @@ import {
   saveActivityAction,
   setActivityStatusAction,
 } from '@/server/actions/activities';
-import { actAs, committeeId, createUser, form } from '../support/factories';
+import { actAs, committeeId, createUser, form, session } from '../support/factories';
+import { setTestUser } from '../support/identity';
 
 // Sprint 4 — AC-13 · §5.5 · D34 (كل نشاط تتبعه لجنة)
 
@@ -88,6 +89,38 @@ describe('إنشاء النشاط ونشره — §5.5 · D34', () => {
     expect((await db.activity.findUniqueOrThrow({ where: { id: draft.id } })).status).toBe('DRAFT');
   });
 
+  it('المنتهي: المخرجات وحدها تُحفظ، والعنوان والموعد والمقاعد والشركاء كما هي', async () => {
+    const org = await db.organization.create({ data: { name: `شريك نشاط ${Date.now()}`, type: 'LOCAL_NGO' } });
+    const other = await db.organization.create({ data: { name: `شريك آخر ${Date.now()}`, type: 'DONOR' } });
+    const { activity } = await publishedActivity({ seats: '10' });
+    // الشريك الأول يُضاف والنشاط ما زال منشورًا
+    const start = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Gaza', dateStyle: 'short', timeStyle: 'short' })
+      .format(activity.startsAt)
+      .replace(' ', 'T');
+    const edit = form({ id: activity.id, committeeId: await committeeId(SLUG), title: activity.title, kind: 'WORKSHOP', startsAt: start, seats: '10' });
+    edit.append('partnerIds', org.id);
+    expect(await saveActivityAction(null, edit)).toMatchObject({ ok: true });
+    expect(await setActivityStatusAction(null, form({ activityId: activity.id, toStatus: 'COMPLETED' }))).toMatchObject({ ok: true });
+    const before = await db.activity.findUniqueOrThrow({ where: { id: activity.id } });
+
+    const late = form({
+      id: activity.id,
+      committeeId: await committeeId('health-affairs'),
+      title: 'عنوان مختلف تمامًا',
+      kind: 'EVENT',
+      startsAt: '2031-01-01T10:00',
+      seats: '99',
+      outcomes: 'حضر 18 شابًا وأنجزوا ثلاثة تصاميم.',
+    });
+    late.append('partnerIds', other.id);
+    expect(await saveActivityAction(null, late)).toMatchObject({ ok: true, message: expect.stringMatching(/المخرجات وحدها/) });
+
+    const after = await db.activity.findUniqueOrThrow({ where: { id: activity.id }, include: { partners: true } });
+    expect(after.outcomes).toBe('حضر 18 شابًا وأنجزوا ثلاثة تصاميم.');
+    expect(after).toMatchObject({ title: before.title, kind: before.kind, seats: 10, committeeId: before.committeeId, startsAt: before.startsAt });
+    expect(after.partners.map((p) => p.organizationId)).toEqual([org.id]);
+  });
+
   it('الانتقال غير المسموح مرفوض برسالة عربية', async () => {
     const { activity } = await publishedActivity();
     expect(await setActivityStatusAction(null, form({ activityId: activity.id, toStatus: 'DRAFT' }))).toMatchObject({
@@ -113,6 +146,22 @@ describe('التسجيل — AC-13 ① ②', () => {
       ]),
     );
     expect(regs).toHaveLength(2);
+  });
+
+  it('تزامن: تسجيلان معًا على المقعد الأخير ⇒ واحد REGISTERED وواحد WAITLISTED', async () => {
+    // PGlite اتصال واحد يسلسل المعاملات، فلا يثبت هذا الاختبار القفل FOR UPDATE وحده؛
+    // يبقى اختبار انحدار: المقاعد تُقرأ من الصف المقفول داخل المعاملة.
+    const { activity } = await publishedActivity({ seats: '1' });
+    const [a, b] = [await createUser(['youth']), await createUser(['youth'])];
+    const [sa, sb] = [await session(a.id), await session(b.id)];
+    // الإجراء يقرأ المستخدم متزامنًا عند استدعائه، فتبديل الهوية بين الاستدعاءين آمن
+    setTestUser(sa);
+    const first = registerAction(null, form({ activityId: activity.id }));
+    setTestUser(sb);
+    const second = registerAction(null, form({ activityId: activity.id }));
+    expect(await Promise.all([first, second])).toEqual([expect.objectContaining({ ok: true }), expect.objectContaining({ ok: true })]);
+    const statuses = (await db.activityRegistration.findMany({ where: { activityId: activity.id } })).map((r) => r.status).sort();
+    expect(statuses).toEqual(['REGISTERED', 'WAITLISTED']);
   });
 
   it('المسودة والتسجيل المغلق والنشاط الذي بدأ: لا تسجيل', async () => {
@@ -172,6 +221,29 @@ describe('الحضور والتقييم — AC-13 ③ ④', () => {
     });
     expect(await rateActivityAction(null, form({ activityId: activity.id, rating: '4', feedback: 'ورشة مفيدة' }))).toMatchObject({ ok: true });
     expect(await db.activityRegistration.findUniqueOrThrow({ where: { id: regOf(present.id) } })).toMatchObject({ rating: 4, feedback: 'ورشة مفيدة' });
+  });
+
+  it('من قيّم ثم عُلِّم «لم يحضر» لا يقيّم من جديد', async () => {
+    const { activity } = await publishedActivity();
+    const youth = await createUser(['youth']);
+    await register(youth.id, activity.id);
+    await startNow(activity.id);
+    const reg = await db.activityRegistration.findFirstOrThrow({ where: { activityId: activity.id } });
+    const member = await createUser([{ key: 'committee_member', committee: SLUG }]);
+    await actAs(member.id);
+    expect(await markAttendanceAction(null, form({ activityId: activity.id, [`mark:${reg.id}`]: 'ATTENDED' }))).toMatchObject({ ok: true });
+    await actAs(youth.id);
+    expect(await rateActivityAction(null, form({ activityId: activity.id, rating: '5' }))).toMatchObject({ ok: true });
+
+    await actAs(member.id);
+    expect(await markAttendanceAction(null, form({ activityId: activity.id, [`mark:${reg.id}`]: 'NO_SHOW' }))).toMatchObject({ ok: true });
+    await actAs(youth.id);
+    expect(await rateActivityAction(null, form({ activityId: activity.id, rating: '1' }))).toMatchObject({
+      ok: false,
+      message: expect.stringMatching(/لمن حضر/),
+    });
+    // التقييم السابق باقٍ مخزّنًا (لا حذف بلا قرار) — ولا يُحتسب (ratingSummary)
+    expect(await db.activityRegistration.findUniqueOrThrow({ where: { id: reg.id } })).toMatchObject({ status: 'NO_SHOW', rating: 5 });
   });
 
   it('③ التقييم خارج 1–5 مرفوض من قاعدة البيانات نفسها', async () => {

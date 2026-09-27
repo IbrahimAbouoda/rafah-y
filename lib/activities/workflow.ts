@@ -14,6 +14,10 @@ export function canMoveActivity(from: ActivityStatus, to: ActivityStatus): boole
   return ACTIVITY_TRANSITIONS[from].includes(to);
 }
 
+/** منتهٍ أو ملغى: لا يُعدَّل فيه إلا المخرجات والتوثيق (§5.5) */
+export const FINISHED_ACTIVITY_STATUSES: ActivityStatus[] = ['COMPLETED', 'CANCELLED'];
+export const EDITABLE_ACTIVITY_STATUSES: ActivityStatus[] = ['DRAFT', 'PUBLISHED'];
+
 /** تظهر للعامة في /activities */
 export const PUBLIC_ACTIVITY_STATUSES: ActivityStatus[] = ['PUBLISHED', 'COMPLETED'];
 
@@ -50,6 +54,18 @@ export function attendanceBlocker(a: { status: ActivityStatus; startsAt: Date },
   if (a.status !== 'PUBLISHED' && a.status !== 'COMPLETED') return 'لا يُسجَّل الحضور إلا لنشاط منشور أو منتهٍ.';
   if (a.startsAt.getTime() > now.getTime()) return 'لم يبدأ النشاط بعد. سجّل الحضور بعد بدئه.';
   return null;
+}
+
+/**
+ * ملخص التقييم (AC-13 «التقييم من الحاضر فقط»): يُحتسب تقييم من حالته ATTENDED الآن وحده.
+ * من قيّم ثم عُلِّم «لم يحضر» يبقى تقييمه مخزّنًا (لا حذف بلا قرار) ولا يدخل المتوسط ولا الملاحظات.
+ */
+export function ratingSummary<T extends { status: RegistrationStatus; rating: number | null }>(
+  rows: T[],
+): { average: number | null; rated: T[] } {
+  const rated = rows.filter((r) => r.status === 'ATTENDED' && r.rating !== null);
+  const average = rated.length ? rated.reduce((s, r) => s + r.rating!, 0) / rated.length : null;
+  return { average, rated };
 }
 
 export const ACTIVITY_KIND_LABELS: Record<ActivityKind, string> = {

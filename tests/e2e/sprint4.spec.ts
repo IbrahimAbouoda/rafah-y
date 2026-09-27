@@ -13,9 +13,6 @@ import { PrismaClient } from '../../lib/generated/prisma/client';
 config({ path: '.env.local' });
 const PASSWORD = 'Rafah2026test';
 
-test.beforeEach(({}, info) => {
-  test.skip(info.project.name !== 'desktop', 'مسار واحد لكل تشغيل');
-});
 
 async function createAccount(fullName: string): Promise<string> {
   const email = `e2e-${randomUUID().slice(0, 8)}@example.test`;
@@ -53,7 +50,8 @@ async function withDb<T>(fn: (db: PrismaClient) => Promise<T>): Promise<T> {
   }
 }
 
-test('فرصة من مؤسسة ← نشر أمين السر ← تقديم بموافقة ← المؤسسة ترى الملف', async ({ browser }) => {
+test('فرصة من مؤسسة ← نشر أمين السر ← تقديم بموافقة ← المؤسسة ترى الملف', async ({ browser }, info) => {
+  test.skip(info.project.name !== 'desktop', 'مسار واحد لكل تشغيل');
   test.setTimeout(300_000);
   const tag = randomUUID().slice(0, 6);
   const title = `تدريب تصميم ${tag}`;
@@ -94,6 +92,17 @@ test('فرصة من مؤسسة ← نشر أمين السر ← تقديم بم�
   await youth.page.getByRole('button', { name: 'تقديم الطلب' }).click();
   const dialog = youth.page.getByRole('dialog', { name: 'موافقتك على مشاركة بياناتك' });
   await expect(dialog).toBeVisible();
+
+  // إغلاق دون قرار (Esc الثاني في Chrome أو زر الرجوع في أندرويد): لا طلب، والحوار يعود بالضغط مجددًا
+  await youth.page.evaluate(() => document.querySelector<HTMLDialogElement>('dialog[open]')?.close());
+  await expect(dialog).toBeHidden();
+  const applications = await withDb(async (db) => {
+    const u = await db.user.findUniqueOrThrow({ where: { email: youth.email } });
+    return db.opportunityApplication.count({ where: { applicantId: u.id } });
+  });
+  expect(applications).toBe(0);
+  await youth.page.getByRole('button', { name: 'تقديم الطلب' }).click();
+  await expect(dialog).toBeVisible();
   await expect(dialog.getByText(`مؤسسة النور ${tag}`)).toBeVisible();
   await expect(dialog.getByText('بريدك الإلكتروني ورقم جوّالك')).toBeVisible();
   await expect(dialog.getByRole('button', { name: 'أرسل دون مشاركة ملفي' })).toBeFocused();
@@ -122,4 +131,17 @@ test('فرصة من مؤسسة ← نشر أمين السر ← تقديم بم�
     return db.auditLog.count({ where: { action: 'application.view', actorId: reader.id } });
   });
   expect(audited).toBe(1);
+});
+
+test('360px: الفرص والأنشطة والملف بلا تمرير أفقي', async ({ browser }, info) => {
+  test.skip(info.project.name !== 'mobile-360', 'فحص الجوّال وحده');
+  test.setTimeout(180_000);
+  const youth = await accountPage(browser, `شاب-جوال-${randomUUID().slice(0, 6)}`);
+  await youth.page.setViewportSize({ width: 360, height: 780 });
+  for (const path of ['/opportunities', '/activities', '/me/profile']) {
+    await youth.page.goto(path);
+    await expect(youth.page.getByRole('heading', { level: 1 })).toBeVisible({ timeout: 45_000 });
+    const overflow = await youth.page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    expect(overflow, path).toBeLessThanOrEqual(0);
+  }
 });

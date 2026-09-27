@@ -8,6 +8,8 @@ import {
   attendanceBlocker,
   canMoveActivity,
   canRate,
+  EDITABLE_ACTIVITY_STATUSES,
+  FINISHED_ACTIVITY_STATUSES,
   MARKABLE,
   registerBlocker,
   registrationStatusFor,
@@ -16,7 +18,15 @@ import {
 import { db } from '@/lib/db';
 import { conflict, invalid, notFound } from '@/lib/errors';
 import { Prisma } from '@/lib/generated/prisma/client';
-import { ActivityIdSchema, ActivitySchema, ActivityStatusSchema, AttendanceSchema, RateSchema } from '@/lib/validation/opportunities';
+import type { ActivityStatus } from '@/lib/generated/prisma/enums';
+import {
+  ActivityIdSchema,
+  ActivityOutcomesSchema,
+  ActivitySchema,
+  ActivityStatusSchema,
+  AttendanceSchema,
+  RateSchema,
+} from '@/lib/validation/opportunities';
 
 // الأنشطة — PRD §5.5 · AC-13. كل نشاط تتبعه لجنة (D34)، والصلاحيات بنطاق لجنته.
 
@@ -29,24 +39,36 @@ function revalidateActivities(id?: string) {
   }
 }
 
-/** activities:create (جديد) · activities:update (تعديل) — بنطاق اللجنة القديمة والجديدة معًا */
+/**
+ * activities:create (جديد) · activities:update (تعديل) — بنطاق اللجنة القديمة والجديدة معًا.
+ * النشاط المنتهي أو الملغى تُحدَّث مخرجاته وحدها (§5.5)؛ بقية الحقول والشركاء لا تتغيّر مهما أُرسل.
+ */
 export async function saveActivityAction(_prev: ActionState, form: FormData): Promise<ActionState> {
   return runAction(async () => {
     const user = await requireUser();
     const raw = formToObject(form);
     const editing = !!raw.id;
     requirePermission(user, editing ? 'activities:update' : 'activities:create');
-    const data = ActivitySchema.parse({ ...raw, partnerIds: form.getAll('partnerIds') });
 
-    if (data.id) {
-      const current = await db.activity.findUnique({ where: { id: data.id }, select: { committeeId: true, status: true } });
+    if (editing) {
+      const { id } = ActivityOutcomesSchema.pick({ id: true }).parse(raw);
+      const current = await db.activity.findUnique({ where: { id }, select: { committeeId: true, status: true } });
       if (!current) throw notFound('النشاط');
       requirePermission(user, 'activities:update', { committeeId: current.committeeId });
-      if (current.status === 'COMPLETED' || current.status === 'CANCELLED') {
-        // المخرجات تُوثَّق بعد الانتهاء (§5.5) — ولا يُغيَّر غيرها
-        if (current.committeeId !== data.committeeId) throw conflict('النشاط منتهٍ أو ملغى، فلا تُغيَّر لجنته.');
+      if (FINISHED_ACTIVITY_STATUSES.includes(current.status)) {
+        // الحقول المعطّلة في النموذج لا تُرسل أصلًا، فلا يُطبَّق عليها التحقق الكامل
+        const { outcomes } = ActivityOutcomesSchema.parse(raw);
+        const { count } = await db.activity.updateMany({
+          where: { id, status: { in: FINISHED_ACTIVITY_STATUSES } },
+          data: { outcomes: outcomes ?? null },
+        });
+        if (count === 0) throw conflict('تغيّرت حالة النشاط للتو. حدّث الصفحة.');
+        revalidateActivities(id);
+        return 'النشاط منتهٍ أو ملغى: حُفظت المخرجات وحدها.';
       }
     }
+
+    const data = ActivitySchema.parse({ ...raw, partnerIds: form.getAll('partnerIds') });
     requirePermission(user, editing ? 'activities:update' : 'activities:create', { committeeId: data.committeeId });
 
     if (data.partnerIds.length && (await db.organization.count({ where: { id: { in: data.partnerIds } } })) !== data.partnerIds.length) {
@@ -70,9 +92,18 @@ export async function saveActivityAction(_prev: ActionState, form: FormData): Pr
       outcomes: data.outcomes ?? null,
     };
     const id = await db.$transaction(async (tx) => {
-      const activity = data.id
-        ? await tx.activity.update({ where: { id: data.id }, data: fields, select: { id: true } })
-        : await tx.activity.create({ data: { ...fields, createdById: user.id, status: 'DRAFT' }, select: { id: true } });
+      let activity: { id: string };
+      if (data.id) {
+        // انتهى أو أُلغي بين القراءة والحفظ ⇒ لا يُعدَّل
+        const { count } = await tx.activity.updateMany({
+          where: { id: data.id, status: { in: EDITABLE_ACTIVITY_STATUSES } },
+          data: fields,
+        });
+        if (count === 0) throw conflict('تغيّرت حالة النشاط للتو. حدّث الصفحة.');
+        activity = { id: data.id };
+      } else {
+        activity = await tx.activity.create({ data: { ...fields, createdById: user.id, status: 'DRAFT' }, select: { id: true } });
+      }
       await tx.activityPartner.deleteMany({ where: { activityId: activity.id, organizationId: { notIn: data.partnerIds } } });
       await tx.activityPartner.createMany({
         data: data.partnerIds.map((organizationId) => ({ activityId: activity.id, organizationId })),
@@ -106,7 +137,8 @@ export async function setActivityStatusAction(_prev: ActionState, form: FormData
 
 /**
  * activities:register («خاص») — تسجيل واحد لكل نشاط (AC-13 ②)، و WAITLISTED عند امتلاء المقاعد (AC-13 ①).
- * يُقفل صف النشاط داخل المعاملة فلا يأخذ طلبان متزامنان المقعد الأخير معًا.
+ * يُقفل صف النشاط داخل المعاملة فلا يأخذ طلبان متزامنان المقعد الأخير معًا، ويُعاد الفحص على الصف المقفول:
+ * نشاط أُلغي أو أُغلق تسجيله أو غُيّرت مقاعده في اللحظة نفسها لا يقبل التسجيل بحالته القديمة.
  */
 export async function registerAction(_prev: ActionState, form: FormData): Promise<ActionState> {
   return runAction(async () => {
@@ -120,19 +152,26 @@ export async function registerAction(_prev: ActionState, form: FormData): Promis
       select: { id: true, status: true, registrationOpen: true, startsAt: true, seats: true },
     });
     if (!activity) throw notFound('النشاط');
-    const blocker = registerBlocker(activity);
-    if (blocker) throw conflict(blocker);
+    // فحص سريع قبل المعاملة؛ الحاسم هو الذي بعد القفل
+    const early = registerBlocker(activity);
+    if (early) throw conflict(early);
 
     const status = await db
       .$transaction(async (tx) => {
-        await tx.$queryRaw`SELECT id FROM activities WHERE id = ${activity.id}::uuid FOR UPDATE`;
+        const [locked] = await tx.$queryRaw<
+          { status: ActivityStatus; registrationOpen: boolean; startsAt: Date; seats: number | null }[]
+        >`SELECT status, "registrationOpen", "startsAt", seats FROM activities WHERE id = ${activity.id}::uuid AND "deletedAt" IS NULL FOR UPDATE`;
+        if (!locked) throw notFound('النشاط');
+        const blocker = registerBlocker(locked);
+        if (blocker) throw conflict(blocker);
         const existing = await tx.activityRegistration.findUnique({
           where: { activityId_userId: { activityId: activity.id, userId: user.id } },
           select: { id: true },
         });
         if (existing) throw conflict('سجّلت في هذا النشاط من قبل.');
         const taken = await tx.activityRegistration.count({ where: { activityId: activity.id, status: { in: SEAT_HOLDING } } });
-        const next = registrationStatusFor(taken, activity.seats);
+        // المقاعد من الصف المقفول، لا من القراءة الأولى
+        const next = registrationStatusFor(taken, locked.seats);
         await tx.activityRegistration.create({ data: { activityId: activity.id, userId: user.id, status: next } });
         return next;
       })
@@ -159,11 +198,14 @@ export async function rateActivityAction(_prev: ActionState, form: FormData): Pr
     });
     if (!registration) throw notFound('تسجيلك في هذا النشاط');
     requirePermission(user, 'activities:register', { ownerId: registration.userId });
-    if (!canRate(registration.status)) throw conflict('التقييم لمن حضر النشاط فقط، بعد أن تسجّل اللجنة حضوره.');
-    await db.activityRegistration.update({
-      where: { id: registration.id },
+    const notAttended = 'التقييم لمن حضر النشاط فقط، بعد أن تسجّل اللجنة حضوره.';
+    if (!canRate(registration.status)) throw conflict(notAttended);
+    // مشروط بالحالة في نفس الكتابة: عُلِّم «لم يحضر» بين القراءة والحفظ ⇒ لا تقييم
+    const { count } = await db.activityRegistration.updateMany({
+      where: { id: registration.id, status: 'ATTENDED' },
       data: { rating: data.rating, feedback: data.feedback ?? null },
     });
+    if (count === 0) throw conflict(notAttended);
     revalidateActivities(data.activityId);
     return 'شكرًا، وصل تقييمك للجنة المنظِّمة.';
   });
@@ -204,10 +246,12 @@ export async function markAttendanceAction(_prev: ActionState, form: FormData): 
         const from = byId.get(m.registrationId)!;
         // ما لم يتغيّر يبقى باسم من سجّله أول مرة
         if (!MARKABLE.includes(from) || from === m.status) continue;
-        await tx.activityRegistration.update({
-          where: { id: m.registrationId },
+        // مشروط بالحالة التي قُرئت: تغيير متزامن من عضو آخر يُلغي المعاملة كلها
+        const { count } = await tx.activityRegistration.updateMany({
+          where: { id: m.registrationId, status: from },
           data: { status: m.status, attendanceMarkedById: user.id, attendanceMarkedAt: now },
         });
+        if (count === 0) throw conflict('غيّر شخص آخر الحضور للتو. حدّث الصفحة.');
         changed += 1;
       }
     });

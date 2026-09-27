@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { db } from '@/lib/db';
-import { OPPORTUNITY_TYPE_LABELS } from '@/lib/opportunities/workflow';
+import { OPPORTUNITY_TYPE_LABELS, publishBlocker } from '@/lib/opportunities/workflow';
 import { listApplicants } from '@/lib/opportunities/queries';
 import { guardPage } from '@/lib/page-guard';
 import { formatDate } from '@/lib/utils';
@@ -11,7 +11,7 @@ import { ActionButtons } from '@/components/shared/action-buttons';
 import { PageHeader } from '@/components/shared/page-header';
 import { EmptyState, Forbidden } from '@/components/shared/states';
 import { StatusBadge } from '@/components/shared/status-badge';
-import { Card } from '@/components/ui/surface';
+import { Alert, Card } from '@/components/ui/surface';
 
 export const metadata: Metadata = { title: 'مراجعة الفرص' };
 
@@ -55,52 +55,66 @@ export default async function AdminOpportunitiesPage() {
             <EmptyState title="لا فرص بانتظار المراجعة" hint="حين ترسل مؤسسة شريكة فرصة تظهر هنا لتنشرها أو ترفضها." />
           </Card>
         ) : (
-          pending.map((o) => (
-            <Card key={o.id} className="flex flex-col gap-3 p-4">
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <span className="flex flex-col gap-0.5">
-                  <span className="font-semibold">{o.title}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {OPPORTUNITY_TYPE_LABELS[o.type]} · {o.organization?.name} · أرسلها {o.createdBy.fullName} · {formatDate(o.createdAt)}
+          pending.map((o) => {
+            const expired = publishBlocker(o);
+            return (
+              <Card key={o.id} className="flex flex-col gap-3 p-4">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <span className="flex flex-col gap-0.5">
+                    <span className="font-semibold">{o.title}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {OPPORTUNITY_TYPE_LABELS[o.type]} · {o.organization?.name} · أرسلها {o.createdBy.fullName} · {formatDate(o.createdAt)}
+                    </span>
                   </span>
-                </span>
-                <StatusBadge kind="opportunity" status={o.status} />
-              </div>
-              <p className="text-sm whitespace-pre-line">{o.description}</p>
-              <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
-                <dt className="text-muted-foreground">التقديم</dt>
-                <dd>
-                  {o.applyMode === 'EXTERNAL' ? (
-                    <a href={o.externalUrl ?? '#'} target="_blank" rel="noopener noreferrer nofollow" dir="ltr" className="break-all text-brand hover:underline">
-                      {o.externalUrl}
-                    </a>
-                  ) : (
-                    'داخل المنصة'
-                  )}
-                </dd>
-                <dt className="text-muted-foreground">آخر موعد</dt>
-                <dd>{o.deadline ? formatDate(o.deadline) : 'بلا موعد'}</dd>
-                {o.seats ? (
-                  <>
-                    <dt className="text-muted-foreground">المقاعد</dt>
-                    <dd>{o.seats}</dd>
-                  </>
-                ) : null}
-                {o.skills.length ? (
-                  <>
-                    <dt className="text-muted-foreground">المهارات</dt>
-                    <dd>{o.skills.map((s) => s.skill.nameAr).join('، ')}</dd>
-                  </>
-                ) : null}
-              </dl>
-              <ActionButtons
-                items={[
-                  { action: reviewOpportunityAction, fields: { opportunityId: o.id, decision: 'PUBLISHED' }, label: 'نشر الفرصة', variant: 'default' },
-                  { action: reviewOpportunityAction, fields: { opportunityId: o.id, decision: 'REJECTED' }, label: 'رفض' },
-                ]}
-              />
-            </Card>
-          ))
+                  <StatusBadge kind="opportunity" status={o.status} />
+                </div>
+                <p className="text-sm whitespace-pre-line">{o.description}</p>
+                <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
+                  <dt className="text-muted-foreground">التقديم</dt>
+                  <dd>
+                    {o.applyMode === 'EXTERNAL' ? (
+                      <a href={o.externalUrl ?? '#'} target="_blank" rel="noopener noreferrer nofollow" dir="ltr" className="break-all text-brand hover:underline">
+                        {o.externalUrl}
+                      </a>
+                    ) : (
+                      'داخل المنصة'
+                    )}
+                  </dd>
+                  <dt className="text-muted-foreground">آخر موعد</dt>
+                  <dd>{o.deadline ? formatDate(o.deadline) : 'بلا موعد'}</dd>
+                  {o.seats ? (
+                    <>
+                      <dt className="text-muted-foreground">المقاعد</dt>
+                      <dd>{o.seats}</dd>
+                    </>
+                  ) : null}
+                  {o.skills.length ? (
+                    <>
+                      <dt className="text-muted-foreground">المهارات</dt>
+                      <dd>{o.skills.map((s) => s.skill.nameAr).join('، ')}</dd>
+                    </>
+                  ) : null}
+                </dl>
+                {expired ? <Alert tone="warning">{expired}</Alert> : null}
+                <ActionButtons
+                  items={[
+                    // فرصة مضى موعدها: الرفض وحده (الخادم يرفض النشر على أي حال)
+                    ...(expired
+                      ? []
+                      : [
+                          {
+                            action: reviewOpportunityAction,
+                            fields: { opportunityId: o.id, decision: 'PUBLISHED' },
+                            label: 'نشر الفرصة',
+                            variant: 'default' as const,
+                          },
+                        ]),
+                    { action: reviewOpportunityAction, fields: { opportunityId: o.id, decision: 'REJECTED' }, label: 'رفض' },
+                  ]}
+                />
+              </Card>
+            );
+          })
         )}
       </section>
 

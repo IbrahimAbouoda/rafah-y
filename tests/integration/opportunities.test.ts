@@ -103,6 +103,21 @@ describe('نشر الفرصة — AC-11', () => {
     expect((await db.opportunity.findUniqueOrThrow({ where: { id: o.id } })).status).toBe('PENDING_REVIEW');
   });
 
+  it('فرصة مضى موعدها وهي بانتظار المراجعة لا تُنشر ولا يُكتب opportunity.publish، ورفضها ممكن', async () => {
+    const p = await partnerOf();
+    const o = await createOpportunity(p.rep.id, p.org.id);
+    // التحقق يمنع موعدًا ماضيًا عند الإنشاء، فيُكتب مباشرة في القاعدة
+    await db.opportunity.update({ where: { id: o.id }, data: { deadline: new Date(Date.now() - 60_000) } });
+    await actAs(p.secretary.id);
+    expect(await reviewOpportunityAction(null, form({ opportunityId: o.id, decision: 'PUBLISHED' }))).toMatchObject({
+      ok: false,
+      message: expect.stringMatching(/انتهى موعد التقديم.*قبل مراجعتها/),
+    });
+    expect(await db.auditLog.count({ where: { action: 'opportunity.publish', entityId: o.id } })).toBe(0);
+    expect(await reviewOpportunityAction(null, form({ opportunityId: o.id, decision: 'REJECTED' }))).toMatchObject({ ok: true });
+    expect((await db.opportunity.findUniqueOrThrow({ where: { id: o.id } })).status).toBe('REJECTED');
+  });
+
   it('الفرصة الخارجية تحتاج رابطًا، والداخلية لا تحمل رابطًا', async () => {
     const p = await partnerOf();
     await actAs(p.rep.id);
