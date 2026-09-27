@@ -3,10 +3,13 @@ import { STATUS_LABELS } from '@/lib/complaints/workflow';
 import { IDEA_STATUS_LABELS } from '@/lib/ideas/workflow';
 import { INITIATIVE_STATUS_LABELS, NEED_STATUS_LABELS } from '@/lib/initiatives/workflow';
 import { TASK_STATUS_LABELS } from '@/lib/tasks/workflow';
+import { APPLICATION_STATUS_LABELS, OPPORTUNITY_STATUS_LABELS } from '@/lib/opportunities/workflow';
+import { ACTIVITY_STATUS_LABELS, REGISTRATION_STATUS_LABELS } from '@/lib/activities/workflow';
 import { cn } from '@/lib/utils';
 
 // لون + أيقونة + نص دائمًا — لا يُعتمد اللون وحده (PRD §12 StatusBadge).
 // Sprint 0: حالات الإعدادات · Sprint 1: complaint · Sprint 2: idea · task · Sprint 3: initiative · need · offer · funding
+// Sprint 4: opportunity · application · activity · registration
 type Tone = 'success' | 'warning' | 'info' | 'danger' | 'neutral';
 
 const STATUSES: Record<string, Record<string, { label: string; tone: Tone }>> = {
@@ -74,6 +77,33 @@ const STATUSES: Record<string, Record<string, { label: string; tone: Tone }>> = 
   funding: {
     pending: { label: 'بانتظار الاعتماد', tone: 'warning' },
     approved: { label: 'معتمد', tone: 'success' },
+  },
+  opportunity: {
+    DRAFT: { label: OPPORTUNITY_STATUS_LABELS.DRAFT, tone: 'neutral' },
+    PENDING_REVIEW: { label: OPPORTUNITY_STATUS_LABELS.PENDING_REVIEW, tone: 'warning' },
+    PUBLISHED: { label: OPPORTUNITY_STATUS_LABELS.PUBLISHED, tone: 'success' },
+    REJECTED: { label: OPPORTUNITY_STATUS_LABELS.REJECTED, tone: 'danger' },
+    CLOSED: { label: OPPORTUNITY_STATUS_LABELS.CLOSED, tone: 'neutral' },
+  },
+  application: {
+    SUBMITTED: { label: APPLICATION_STATUS_LABELS.SUBMITTED, tone: 'info' },
+    UNDER_REVIEW: { label: APPLICATION_STATUS_LABELS.UNDER_REVIEW, tone: 'warning' },
+    ACCEPTED: { label: APPLICATION_STATUS_LABELS.ACCEPTED, tone: 'success' },
+    REJECTED: { label: APPLICATION_STATUS_LABELS.REJECTED, tone: 'danger' },
+    WITHDRAWN: { label: APPLICATION_STATUS_LABELS.WITHDRAWN, tone: 'neutral' },
+  },
+  activity: {
+    DRAFT: { label: ACTIVITY_STATUS_LABELS.DRAFT, tone: 'neutral' },
+    PUBLISHED: { label: ACTIVITY_STATUS_LABELS.PUBLISHED, tone: 'info' },
+    COMPLETED: { label: ACTIVITY_STATUS_LABELS.COMPLETED, tone: 'success' },
+    CANCELLED: { label: ACTIVITY_STATUS_LABELS.CANCELLED, tone: 'danger' },
+  },
+  registration: {
+    REGISTERED: { label: REGISTRATION_STATUS_LABELS.REGISTERED, tone: 'info' },
+    WAITLISTED: { label: REGISTRATION_STATUS_LABELS.WAITLISTED, tone: 'warning' },
+    ATTENDED: { label: REGISTRATION_STATUS_LABELS.ATTENDED, tone: 'success' },
+    NO_SHOW: { label: REGISTRATION_STATUS_LABELS.NO_SHOW, tone: 'danger' },
+    CANCELLED: { label: REGISTRATION_STATUS_LABELS.CANCELLED, tone: 'neutral' },
   },
   file: {
     PENDING: { label: 'قيد الفحص', tone: 'warning' },

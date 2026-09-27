@@ -35,9 +35,11 @@ export default async function CommitteeDashboard({ params }: { params: Promise<{
   const readComplaints = can(user, 'complaints:read', { committeeId: committee.id });
   const readTasks = can(user, 'tasks:read', { committeeId: committee.id });
   const readIdeas = can(user, 'ideas:read_internal', { committeeId: committee.id });
+  // عضو اللجنة يسجّل الحضور ولا يملك activities:update، فيصل لصفحة الحضور من هنا (AC-13)
+  const markAttendance = can(user, 'activities:attendance', { committeeId: committee.id });
   const openWhere = { committeeId: committee.id, status: { in: OPEN_STATUSES } };
 
-  const [complaints, openCount, overdue, tasksInReview, openTasks, ideas, members] = await Promise.all([
+  const [complaints, openCount, overdue, tasksInReview, openTasks, ideas, members, activities] = await Promise.all([
     readComplaints
       ? db.complaint.findMany({
           where: openWhere,
@@ -59,6 +61,14 @@ export default async function CommitteeDashboard({ params }: { params: Promise<{
         })
       : null,
     committeeMembers(db, committee.id),
+    markAttendance
+      ? db.activity.findMany({
+          where: { committeeId: committee.id, status: { in: ['PUBLISHED', 'COMPLETED'] } },
+          orderBy: { startsAt: 'desc' },
+          take: 10,
+          select: { id: true, title: true, status: true, startsAt: true },
+        })
+      : null,
   ]);
 
   return (
@@ -155,25 +165,52 @@ export default async function CommitteeDashboard({ params }: { params: Promise<{
           ) : null}
         </div>
 
-        <Card className="h-fit">
-          <CardHeader>
-            <CardTitle>الأعضاء في الدورة الحالية</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {members.length === 0 ? (
-              <p className="text-sm text-muted-foreground">لا أعضاء معيّنين بعد. يعيّنهم رئيس المجلس من «المستخدمون والأدوار».</p>
-            ) : (
-              <ul className="flex flex-col gap-2 text-sm">
-                {members.map((m) => (
-                  <li key={m.id} className="flex flex-col">
-                    <span>{m.fullName}</span>
-                    <span className="text-xs text-muted-foreground">{m.roles.join('، ')}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
+        <div className="flex flex-col gap-4">
+          {activities ? (
+            <Card className="h-fit">
+              <CardHeader>
+                <CardTitle>أنشطة اللجنة والحضور</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {activities.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">لا أنشطة منشورة للجنة بعد. ينشرها رئيس اللجنة من «الأنشطة».</p>
+                ) : (
+                  <ul className="flex flex-col gap-2 text-sm">
+                    {activities.map((a) => (
+                      <li key={a.id} className="flex flex-col gap-0.5">
+                        <Link href={`/admin/activities/${a.id}/attendance`} className="text-brand hover:underline">
+                          {a.title}
+                        </Link>
+                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                          {formatDate(a.startsAt)} <StatusBadge kind="activity" status={a.status} />
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+          ) : null}
+          <Card className="h-fit">
+            <CardHeader>
+              <CardTitle>الأعضاء في الدورة الحالية</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {members.length === 0 ? (
+                <p className="text-sm text-muted-foreground">لا أعضاء معيّنين بعد. يعيّنهم رئيس المجلس من «المستخدمون والأدوار».</p>
+              ) : (
+                <ul className="flex flex-col gap-2 text-sm">
+                  {members.map((m) => (
+                    <li key={m.id} className="flex flex-col">
+                      <span>{m.fullName}</span>
+                      <span className="text-xs text-muted-foreground">{m.roles.join('، ')}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </>
   );

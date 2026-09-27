@@ -24,12 +24,15 @@ export function ActionForm({
   className,
   resetOnSuccess = false,
   hideSuccess = false,
+  id,
 }: {
   action: Action;
   children: React.ReactNode;
   className?: string;
   resetOnSuccess?: boolean;
   hideSuccess?: boolean;
+  /** لإرسال النموذج من خارجه، مثل قرار ConsentDialog */
+  id?: string;
 }) {
   const flash = useFlash();
   // النجاح يُسجَّل في رسالة الهيكل من داخل الاستدعاء: قد يزول النموذج نفسه مع تحديث الصفحة
@@ -48,6 +51,7 @@ export function ActionForm({
     <FormStateContext value={{ state, pending }}>
       <form
         ref={ref}
+        id={id}
         action={formAction}
         onSubmit={(e) => {
           e.preventDefault();

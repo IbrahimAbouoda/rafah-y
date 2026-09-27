@@ -107,7 +107,7 @@ npm run check       # tsc + lint + prisma validate
 
 ## حالة المشروع
 
-**السبرنت الحالي:** 3 — قيد التنفيذ (Sprint 2 مكتمل عدا النشر التجريبي بانتظار Q14). `PRD.md` v1.1 معتمد، وقرارات 2026-09-23/25 في §19.3 (D1–D30).
+**السبرنت الحالي:** 4 — مكتمل، والتالي 5 (Sprint 2 مكتمل عدا النشر التجريبي بانتظار Q14). `PRD.md` v1.1 معتمد، وقرارات 2026-09-23/27 في §19.3 (D1–D34).
 
 **ثوابت يسهل نسيانها:**
 - الأرقام المرجعية: `next_ref('CMP-2026')` → `RF-CMP-2026-000124` · الأفكار `IDA-2026` · القرارات `next_ref('DEC-2026', 4)`. الدالة تضيف `RF-` بنفسها.
@@ -118,6 +118,8 @@ npm run check       # tsc + lint + prisma validate
 - المبلغ المؤمَّن من `securedTotals()` (قيود واردة معتمدة فقط)، ونطاق «خاص» للمؤسسة = أعضاؤها يُمرَّرون إلى `can()` كـ ownerId (`lib/organizations.ts`).
 - انتقالات المهمة من `lib/tasks/workflow.ts` والفكرة من `lib/ideas/workflow.ts`؛ عضوية اللجنة من `lib/committees.ts` (تعيين فعّال، لا جدول).
 - انتقالات الشكوى من `lib/complaints/workflow.ts` فقط، ونطاق القوائم من `readableComplaints()` — لا شروط حالة أو لجنة مكتوبة في الصفحات.
+- الفرصة وطلبها من `lib/opportunities/workflow.ts`، والنشاط من `lib/activities/workflow.ts`. بيانات المتقدّم لا تُرسل مع الصفحة: `listApplicants()` بلا بيانات شخصية، والملف عبر `viewApplicantAction` بسطر `application.view` (D31). نص `ConsentDialog` = `APPLICANT_DATA_POINTS`.
+- كل نشاط بلجنة (D34). المهارات قائمة مرجعية في البذرة الأساسية (D32).
 
 <!-- BEGIN:nextjs-agent-rules -->
 

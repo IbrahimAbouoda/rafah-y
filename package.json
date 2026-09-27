@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "check": "prisma validate && tsc --noEmit && eslint .",
-    "test": "vitest run",
+    "test": "vitest run --maxWorkers=50%",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "db:generate": "prisma generate",
