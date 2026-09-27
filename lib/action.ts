@@ -3,6 +3,7 @@ import { unstable_rethrow } from 'next/navigation';
 import { z } from 'zod';
 import { Prisma } from '@/lib/generated/prisma/client';
 import { AppError } from '@/lib/errors';
+import { logError } from '@/lib/log';
 
 export type ActionState = {
   ok: boolean;
@@ -54,7 +55,7 @@ function errorState(e: unknown): NonNullable<ActionState> {
   }
   const constraint = constraintMessage(e);
   if (constraint) return { ok: false, message: constraint, at: Date.now() };
-  console.error('[action]', e);
+  logError('action', e);
   return { ok: false, message: 'تعذّر إتمام العملية بسبب خطأ في الخادم. أعد المحاولة بعد قليل.', at: Date.now() };
 }
 

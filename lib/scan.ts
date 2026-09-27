@@ -1,6 +1,7 @@
 import 'server-only';
 import { isProduction } from '@/lib/config';
 import { db } from '@/lib/db';
+import { logError } from '@/lib/log';
 
 // فحص الملفات — PRD §6.5 · D12. الملف لا يُعرض قبل CLEAN.
 // التطوير: خدمة وهمية تنقل الملف إلى CLEAN بعد نصف ثانية — لا تعمل في الإنتاج أبدًا.
@@ -13,6 +14,6 @@ export function scheduleScan(fileId: string): void {
   setTimeout(() => {
     db.fileObject
       .updateMany({ where: { id: fileId, scan: 'PENDING' }, data: { scan: 'CLEAN' } })
-      .catch((e: unknown) => console.error('[scan:mock]', e instanceof Error ? e.message : e));
+      .catch((e: unknown) => logError('scan:mock', e));
   }, MOCK_DELAY_MS);
 }

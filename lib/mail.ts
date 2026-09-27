@@ -1,6 +1,7 @@
 import 'server-only';
 import nodemailer, { type Transporter } from 'nodemailer';
 import { COUNCIL_EMAIL, COUNCIL_SENDER_NAME } from '@/lib/config';
+import { logError } from '@/lib/log';
 
 // البريد الصادر — PRD §8.1 · D19. المرسِل دائمًا بريد المجلس الرسمي.
 // الإنتاج: SMTP الخاص بـ Gmail بكلمة مرور تطبيق. التطوير: Mailpit المحلي من Supabase (بلا مصادقة).
@@ -38,7 +39,7 @@ export async function sendMail(message: MailMessage): Promise<boolean> {
     });
     return true;
   } catch (e) {
-    console.error('[mail]', e instanceof Error ? e.message : e);
+    logError('mail', e);
     return false;
   }
 }

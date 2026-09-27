@@ -4,8 +4,8 @@ import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
 import { formatMoney, SUPPORT_TYPE_LABELS } from '@/lib/initiatives/workflow';
 import { INTERACTION_LABELS, ORG_TYPE_LABELS, STAGE_LABELS } from '@/lib/organization-labels';
+import { organizationProfile } from '@/lib/organizations';
 import { guardPage } from '@/lib/page-guard';
-import { can } from '@/lib/rbac';
 import { formatDate } from '@/lib/utils';
 import { INTERACTION_TYPES, PARTNERSHIP_STAGES } from '@/lib/validation/initiatives';
 import { linkMemberAction, logInteractionAction, setOrganizationStageAction, unlinkMemberAction } from '@/server/actions/organizations';
@@ -26,36 +26,9 @@ export default async function OrganizationPage({ params }: { params: Promise<{ i
   if (!allowed) return <Forbidden backHref={backHref} />;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
-  const org = await db.organization.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      name: true,
-      type: true,
-      country: true,
-      sectors: true,
-      stage: true,
-      website: true,
-      lastContactAt: true,
-      owner: { select: { fullName: true } },
-      members: { select: { isAdmin: true, user: { select: { id: true, fullName: true, email: true } } } },
-      interactions: {
-        orderBy: { occurredAt: 'desc' },
-        take: 50,
-        select: { id: true, type: true, summary: true, occurredAt: true, followUpAt: true, loggedBy: { select: { fullName: true } } },
-      },
-      offers: {
-        orderBy: { createdAt: 'desc' },
-        take: 30,
-        select: { id: true, types: true, amount: true, currency: true, status: true, createdAt: true, initiative: { select: { id: true, title: true } } },
-      },
-      initiativePartners: { select: { role: true, initiative: { select: { id: true, title: true } } } },
-    },
-  });
+  // M-1 · M-2: ما يُجلب محكوم بالصلاحية داخل organizationProfile() — البريد والعروض خارج النطاق لا تُقرأ أصلًا
+  const { org, manage, log, readOffers } = await organizationProfile(db, user, id);
   if (!org) notFound();
-  const manage = can(user, 'organizations:manage');
-  const log = can(user, 'organizations:log');
-  const readOffers = can(user, 'offers:read');
 
   return (
     <>
@@ -187,9 +160,11 @@ export default async function OrganizationPage({ params }: { params: Promise<{ i
                           {m.user.fullName}
                           {m.isAdmin ? <span className="ms-1 text-xs text-muted-foreground">(مسؤول)</span> : null}
                         </span>
-                        <span className="text-xs text-muted-foreground" dir="ltr">
-                          {m.user.email}
-                        </span>
+                        {m.user.email ? (
+                          <span className="text-xs text-muted-foreground" dir="ltr">
+                            {m.user.email}
+                          </span>
+                        ) : null}
                       </span>
                       {manage ? (
                         <ActionButtons

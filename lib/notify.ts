@@ -4,6 +4,7 @@ import type { NotificationType } from '@/lib/generated/prisma/enums';
 import type { PermissionKey } from '@/lib/rbac';
 import { appUrl } from '@/lib/config';
 import { renderMail, sendMail } from '@/lib/mail';
+import { logError } from '@/lib/log';
 
 // الإشعارات — PRD §8.
 // 1) queueNotifications() داخل معاملة الإجراء: سطر IN_APP لكل مستلم، وسطر EMAIL بحالة PENDING لمن يستحقه.
@@ -92,7 +93,7 @@ export async function dispatchEmails(db: Db, ids: string[]): Promise<void> {
       else if (process.env.SMTP_HOST) await db.notification.update({ where: { id: row.id }, data: { status: 'FAILED' } });
     }
   } catch (e) {
-    console.error('[notify]', e instanceof Error ? e.message : e);
+    logError('notify', e);
   }
 }
 
