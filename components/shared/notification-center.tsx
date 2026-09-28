@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Bell, CheckCheck } from 'lucide-react';
-import { markAllReadAction, markReadAction } from '@/server/actions/notifications';
+import { markAllReadAction, markReadAction, openNotificationAction } from '@/server/actions/notifications';
 import { cn, formatDate, formatDateTime } from '@/lib/utils';
 import { ActionForm, SubmitButton } from './action-form';
 import { EmptyState } from './states';
@@ -75,9 +75,13 @@ export function NotificationCenter({
                     <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                       <time dateTime={n.createdAt.toISOString()}>{formatDateTime(n.createdAt)}</time>
                       {n.link ? (
-                        <Link href={n.link} className="text-brand hover:underline">
-                          افتح
-                        </Link>
+                        // يعلّمه مقروءًا ثم ينتقل لرابطه (openNotificationAction)
+                        <ActionForm action={openNotificationAction} hideSuccess className="gap-0">
+                          <input type="hidden" name="notificationId" value={n.id} />
+                          <button type="submit" className="text-brand hover:underline">
+                            افتح
+                          </button>
+                        </ActionForm>
                       ) : null}
                     </div>
                   </div>

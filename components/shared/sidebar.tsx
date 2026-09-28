@@ -9,6 +9,7 @@ import {
   CircleUserRound,
   Sparkles,
   ChartLine,
+  LifeBuoy,
   Handshake,
   Rocket,
   Wallet,
@@ -54,6 +55,7 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   briefcase: BriefcaseBusiness,
   sparkles: Sparkles,
   chart: ChartLine,
+  help: LifeBuoy,
   user: CircleUserRound,
 };
 

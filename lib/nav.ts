@@ -25,6 +25,7 @@ export type NavIcon =
   | 'briefcase'
   | 'sparkles'
   | 'chart'
+  | 'help'
   | 'user';
 
 /**
@@ -64,6 +65,7 @@ export const ADMIN_NAV: NavGroup[] = [
       { href: '/admin/opportunities', label: 'الفرص', permission: 'opportunities:publish', icon: 'briefcase' },
       // activities:update بنطاق لجنة أو الكل؛ عضو اللجنة (حضور فقط) يصل لصفحة الحضور من لوحة لجنته
       { href: '/admin/activities', label: 'الأنشطة', permission: 'activities:update', icon: 'sparkles' },
+      { href: '/admin/support', label: 'الدعم والاستفسارات', permission: 'support:read', icon: 'help' },
       { href: '/admin/reports', label: 'التقارير والمؤشرات', permission: 'reports:read', icon: 'chart' },
       { href: '/admin/audit', label: 'سجل التدقيق', permission: 'audit:read', beyondOwn: true, icon: 'history' },
     ],
@@ -77,6 +79,7 @@ export const ADMIN_NAV: NavGroup[] = [
       { href: '/admin/settings/committees', label: 'اللجان', permission: 'committees:manage', icon: 'layers' },
       { href: '/admin/settings/categories', label: 'تصنيفات الشكاوى', permission: 'settings:manage', icon: 'tags' },
       { href: '/admin/settings/areas', label: 'المناطق والأحياء', permission: 'settings:manage', icon: 'map' },
+      { href: '/admin/settings/faq', label: 'الأسئلة المعتمدة', permission: 'faq:manage', icon: 'help' },
     ],
   },
 ];

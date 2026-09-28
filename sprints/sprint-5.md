@@ -102,15 +102,23 @@
 
 | البند | المرجع | الحالة قبل السبرنت |
 | --- | --- | --- |
-| تفضيلات البريد لكل نوع في `/me/notifications` (إيقاف البريد فقط؛ داخل المنصة لا يُوقف) | §8.3 · `NotificationPreference` | النموذج و `queueNotifications()` يحترمانه؛ لا واجهة |
+| تفضيلات البريد لكل نوع في `/me/notifications` (إيقاف البريد فقط؛ داخل المنصة لا يُوقف) | §8.3 · `NotificationPreference` | **منفّذ 2026-09-28** — بطاقة في `/me/notifications` لأنواع البريد العشرة (`lib/notifications/preferences.ts`)؛ خانة «المنصة» ظاهرة ومقفلة |
 | `TASK_DUE_SOON`: العضو ورئيس اللجنة قبل 24 ساعة، داخل المنصة فقط، مرة واحدة لكل مهمة | §8.2 | غير منفّذ — ينتظر S5-1 |
-| `INQUIRY_UNANSWERED` لفريق الدعم · `INQUIRY_ANSWERED` لصاحب الاستفسار (داخل المنصة + بريد) | §8.2 | مع محور الدعم |
-| إعادة إرسال البريد المعلّق (`PENDING`) حين يُضبط الناقل | §8.3 | يبقى PENDING؛ لا آلية إعادة |
+| `INQUIRY_UNANSWERED` لفريق الدعم · `INQUIRY_ANSWERED` لصاحب الاستفسار (داخل المنصة + بريد) | §8.2 | **منفّذ 2026-09-28** — `INQUIRY_UNANSWERED` داخل المنصة لحاملي `support:respond`، و `INQUIRY_ANSWERED` داخل المنصة + بريد |
+| إعادة إرسال البريد المعلّق (`PENDING`) حين يُضبط الناقل | §8.3 | **منفّذ 2026-09-28** — `retryPendingEmails()` عبر `/api/cron/email-retry` (نفس سرّ S5-1)؛ من أوقف النوع بعد كتابة السطر لا يُرسل له (FAILED). ناقل `MAIL_TRANSPORT=memory` للاختبارات والتطوير، ممنوع في الإنتاج |
 
 ## المحور ٥ — الدعم والأسئلة (§13)
 
 - بوت يطابق من قاعدة FAQ المعتمدة فقط (§13.2، بلا ذكاء اصطناعي)، وما لا يطابق يصبح `SupportInquiry` NEW.
 - الرد البشري من `/admin/support`، مع تحويل الرد إلى FAQ لمن يملك `faq:manage`.
+
+**التقدّم — المحور ٤ (2026-09-28):** «افتح» في مركز الإشعارات يعلّم الإشعار مقروءًا ثم ينتقل لرابطه (داخلي فقط عبر `safeNextPath`). الجرس وعدّاد غير المقروء قائمان من Sprint 1. اختبارات: `tests/integration/notifications.test.ts`.
+- **لم يُنفَّذ بقصد:** إيقاف إشعارات المنصة (يخالف §8.3 صراحة) · بريد تذكير للأنشطة (ليس في مصفوفة §8.2؛ تذكير المهمة داخل المنصة فقط).
+
+**التقدّم — المحور ٥ (2026-09-28):** `lib/support/match.ts` (تطبيع §13.2 + جذع خفيف + ترتيب: كلمة مفتاحية ثم السؤال ثم الإجابة، حد أدنى 0.5، ثلاث نتائج) · `server/actions/support` و `server/actions/faq` · `/help` مع `SupportBotWidget` · `/admin/support` · `/admin/settings/faq` · بذرة FAQ الأساسية (12 سؤالًا مبدئيًا بخمسة تصنيفات، `prisma/faq.seed.ts` — تُراجَع مع Q11) · مُنقّي Markdown `lib/markdown.tsx` (شجرة React من مجموعة فرعية آمنة، بلا HTML) لإجابات FAQ والردود وملخص التقرير. اختبارات: `tests/unit/support.test.ts` · `tests/integration/support.test.ts`.
+- **M9 (قرار 2026-09-28):** نموذج `BotQuery` (افتراض، migration `20260928110000_bot_queries` بـ RLS) — سطر لكل سؤال بلا نصه ولا هوية صاحبه؛ `ANSWERED` أو `UNRESOLVED_ESCALATED` (لم يجد أو «لم تفدني»). M9 = ANSWERED ÷ الكل في الفترة.
+- **استثناء ثانٍ من فحص الهوية:** سؤال البوت وإرسال الاستفسار مفتوحان للزائر (§12 SupportBotWidget) بحد 20/ساعة لكل IP؛ المسجَّل يحتاج `support:ask` للإرسال. وسيلة التواصل تُحفظ للزائر فقط.
+- لا يُعرض اسم صاحب الاستفسار في `/admin/support` (يصله الرد إشعارًا). الحذف من قاعدة FAQ غير منفّذ: التعطيل يكفي ويحفظ السجل.
 
 ## Server Actions وعمليات التدقيق (§6.9)
 
@@ -155,6 +163,7 @@
 | `recharts` (اعتمادية جديدة) | رسوم `TrendChart` — قرار صاحب المشروع 2026-09-27 |
 | `exceljs` · `pdfmake` · `arabic-persian-reshaper` · `bidi-js` | التصدير (S5-2 · S5-3) — قرار صاحب المشروع 2026-09-28؛ على الخادم فقط |
 | `Task.dueSoonNotifiedFor` (migration جديدة) | تذكير S5-1 مرة لكل موعد |
+| `BotQuery` (migration جديدة) | قياس M9 — قرار صاحب المشروع 2026-09-28 |
 | `fontkit` (صريحة؛ كانت عبر pdfkit) وخط IBM Plex Sans Arabic في `lib/pdf/fonts` | قياس الالتفاف بمقاييس الخط نفسه، وخط عربي كامل مع أشكال العرض |
 | `reports:create` (D35) | فصل التوليد عن القراءة — AC-14 |
 | إصلاحات التدقيق الأمني C-1 · H-1 · H-2 · M-1–M-5 (`docs/code-and-security-audit.md`) | قبل أي ميزة في Sprint 5 بقرار صاحب المشروع: migration إغلاق Data API، و `resolveClientIp()`، وفشل مغلق بلا Upstash في الإنتاج، و `organizationProfile()`، وعدّاد الدخول على الحساب، والكلمة الحالية خارج نافذة الاستعادة، و `logError()` |

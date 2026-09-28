@@ -7,6 +7,7 @@ import type { TestProject } from 'vitest/node';
 import { PrismaClient } from '../../lib/generated/prisma/client';
 import { seedCommittees, seedDevReference, seedDevTerm, seedSkills } from '../../prisma/seed';
 import { seedRbac } from '../../prisma/rbac.seed';
+import { seedFaq } from '../../prisma/faq.seed';
 
 declare module 'vitest' {
   export interface ProvidedContext {
@@ -49,6 +50,7 @@ export default async function setup(project: TestProject) {
   await seedRbac(db);
   await seedCommittees(db);
   await seedSkills(db);
+  await seedFaq(db);
   await seedDevTerm(db);
   await seedDevReference(db);
   await db.$disconnect();

@@ -66,7 +66,9 @@ describe('بوابة الشباب ولوحة المجلس — من الصلاح�
       '/admin/organizations',
       '/admin/opportunities',
       '/admin/activities',
+      '/admin/support',
       '/admin/reports',
+      '/admin/settings/faq',
     ]);
   });
 
@@ -96,7 +98,7 @@ describe('بوابة الشباب ولوحة المجلس — من الصلاح�
   it('الرئيس: الوارد والشكاوى والتدقيق والإعدادات', () => {
     const president = asUser([{ key: 'council_president' }, { key: 'youth' }]);
     const admin = hrefs(navFor(president));
-    expect(admin.slice(0, 13)).toEqual([
+    expect(admin.slice(0, 14)).toEqual([
       '/admin',
       '/admin/inbox',
       '/admin/complaints',
@@ -108,6 +110,7 @@ describe('بوابة الشباب ولوحة المجلس — من الصلاح�
       '/admin/finance',
       '/admin/opportunities',
       '/admin/activities',
+      '/admin/support',
       '/admin/reports',
       '/admin/audit',
     ]);

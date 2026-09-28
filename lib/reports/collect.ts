@@ -10,6 +10,7 @@ import {
   METRIC_KEYS,
   METRICS,
   onTimeRate,
+  ratio,
   trackedRate,
   triageMedian,
   type ComplaintFact,
@@ -65,7 +66,7 @@ export async function collectMetrics(period: Period, scope: ReportScope, now = n
   // المهام التي حلّ موعدها فعلًا — المستقبلية لا تُحسب لها ولا عليها
   const dueRange = { gte: range.gte, lt: range.lt < now ? range.lt : now };
 
-  const [complaints, ideas, offers, tasks, youth, published, demo] = await Promise.all([
+  const [complaints, ideas, offers, tasks, youth, published, demo, bot] = await Promise.all([
     db.complaint.findMany({
       where: { createdAt: range, ...inCommittees },
       select: {
@@ -92,6 +93,7 @@ export async function collectMetrics(period: Period, scope: ReportScope, now = n
     scope.all ? countYouth(range.lt) : null,
     scope.all ? db.report.count({ where: { isPublished: true, publishedAt: range } }) : null,
     scope.all ? countDemo() : null,
+    scope.all ? botResolution(range) : null,
   ]);
 
   const facts: ComplaintFact[] = complaints.map((c) => ({
@@ -110,7 +112,7 @@ export async function collectMetrics(period: Period, scope: ReportScope, now = n
     M6: offers,
     M7: onTimeRate(tasks.map((t) => ({ dueAt: t.dueAt!, approvedAt: t.approvedAt, done: t.status === 'DONE' }))),
     M8: published,
-    M9: null,
+    M9: bot,
     M10: demo,
   };
   for (const k of METRIC_KEYS) if (METRICS[k].pending) values[k] = null;
@@ -141,6 +143,15 @@ function countYouth(before: Date) {
     },
   };
   return db.user.count({ where });
+}
+
+/** M9 (قرار 2026-09-28): BotQuery بحالة ANSWERED ÷ كل أسئلة البوت في الفترة — null بلا أسئلة */
+async function botResolution(range: { gte: Date; lt: Date }): Promise<number | null> {
+  const [total, answered] = await Promise.all([
+    db.botQuery.count({ where: { createdAt: range } }),
+    db.botQuery.count({ where: { createdAt: range, status: 'ANSWERED' } }),
+  ]);
+  return ratio(answered, total);
 }
 
 /** M10: كل النماذج التي تحمل isDemo، والمحذوف ناعمًا منها أيضًا (السجل ما زال في القاعدة).

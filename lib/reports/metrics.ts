@@ -97,12 +97,11 @@ export const METRICS: Record<MetricKey, MetricDefinition> = {
   M9: {
     key: 'M9',
     label: 'الاكتفاء الذاتي بالأسئلة',
-    definition: 'استفسارات البوت التي وجدت إجابة معتمدة ÷ كل استفسارات البوت',
+    definition: 'أسئلة البوت التي وجدت إجابة معتمدة (ولم يقل صاحبها إنها لم تفده) ÷ كل أسئلة البوت في الفترة',
     unit: 'ratio',
     window: 'period',
     global: true,
     target: { value: 0.6, direction: 'min' },
-    pending: 'يُحسب بعد تشغيل بوت الاستفسارات',
   },
   M10: {
     key: 'M10',

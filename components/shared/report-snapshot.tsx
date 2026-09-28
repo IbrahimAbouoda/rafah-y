@@ -1,4 +1,5 @@
 import { formatMetric, formatTarget, meetsTarget, METRIC_KEYS, METRICS, type MetricKey, type MetricsSnapshot } from '@/lib/reports/metrics';
+import { Markdown } from '@/lib/markdown';
 import { StatTile } from '@/components/shared/stat-tile';
 import { TrendChart } from '@/components/shared/trend-chart';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
@@ -71,8 +72,7 @@ export function TrendCharts({ snapshot }: { snapshot: MetricsSnapshot }) {
   );
 }
 
-/** ملخص التقرير نصًا خامًا بفقراته — عرض Markdown ينتظر مُنقّي §6.3 (المحور ٥) */
+/** ملخص التقرير — Markdown عبر المُنقّي (§6.3) */
 export function ReportSummary({ text }: { text: string | null }) {
-  if (!text) return null;
-  return <p className="whitespace-pre-line text-sm leading-7">{text}</p>;
+  return <Markdown text={text} />;
 }

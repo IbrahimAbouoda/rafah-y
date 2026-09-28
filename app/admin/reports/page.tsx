@@ -123,7 +123,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
                     <Input type="date" required defaultValue={period.to} max={toDateInput(new Date())} />
                   </Field>
                 </div>
-                <Field name="summary" label="ملخص (اختياري)" hint="نص عادي يظهر مع التقرير المنشور. لا بيانات شخصية.">
+                <Field name="summary" label="ملخص (اختياري)" hint="يدعم **عريض** و*مائل* والقوائم (- بند) والروابط [نص](https://…). لا بيانات شخصية.">
                   <Textarea rows={4} maxLength={5000} />
                 </Field>
                 <SubmitButton>توليد التقرير</SubmitButton>

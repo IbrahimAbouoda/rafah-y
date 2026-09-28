@@ -61,7 +61,7 @@ describe('collectMetrics — M2 · M3 · M4 · M5 والاتجاه', () => {
     expect(s.values.M3).toBe(20);
     expect(s.values.M4).toBe(0.5);
     expect(s.values.M5).toBe(0.5);
-    expect(s.values.M9).toBeNull(); // pending حتى البوت
+    expect(s.values.M9).toBeNull(); // لا أسئلة بوت في الفترة
     expect(s.trend).toEqual([
       { month: '2019-03', complaints: 2, triageMedianHours: 20, closureRate: 0.5 },
       { month: '2019-04', complaints: 2, triageMedianHours: 20, closureRate: 0.5 },
