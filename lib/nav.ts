@@ -24,6 +24,7 @@ export type NavIcon =
   | 'handshake'
   | 'briefcase'
   | 'sparkles'
+  | 'chart'
   | 'user';
 
 /**
@@ -63,6 +64,7 @@ export const ADMIN_NAV: NavGroup[] = [
       { href: '/admin/opportunities', label: 'الفرص', permission: 'opportunities:publish', icon: 'briefcase' },
       // activities:update بنطاق لجنة أو الكل؛ عضو اللجنة (حضور فقط) يصل لصفحة الحضور من لوحة لجنته
       { href: '/admin/activities', label: 'الأنشطة', permission: 'activities:update', icon: 'sparkles' },
+      { href: '/admin/reports', label: 'التقارير والمؤشرات', permission: 'reports:read', icon: 'chart' },
       { href: '/admin/audit', label: 'سجل التدقيق', permission: 'audit:read', beyondOwn: true, icon: 'history' },
     ],
   },

@@ -1420,23 +1420,24 @@ model Decision {
 
 // قيد tasks_no_self_approval في sql/constraints.sql
 model Task {
-  id           String       @id @default(uuid()) @db.Uuid
-  title        String
-  description  String?
-  committeeId  String       @db.Uuid
-  status       TaskStatus   @default(TODO)
-  priority     TaskPriority @default(MEDIUM)
-  dueAt        DateTime?
-  assigneeId   String?      @db.Uuid
-  createdById  String       @db.Uuid
-  approvedById String?      @db.Uuid
-  approvedAt   DateTime?
-  complaintId  String?      @db.Uuid
-  initiativeId String?      @db.Uuid
-  decisionId   String?      @db.Uuid
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  deletedAt    DateTime? // افتراض: ضمن النماذج الاثني عشر للحذف الناعم
+  id                 String       @id @default(uuid()) @db.Uuid
+  title              String
+  description        String?
+  committeeId        String       @db.Uuid
+  status             TaskStatus   @default(TODO)
+  priority           TaskPriority @default(MEDIUM)
+  dueAt              DateTime?
+  dueSoonNotifiedFor DateTime? // افتراض (S5-1): قيمة dueAt التي أُرسل لها تذكير TASK_DUE_SOON — مرة لكل موعد، وتغيير الموعد يسمح بتذكير جديد
+  assigneeId         String?      @db.Uuid
+  createdById        String       @db.Uuid
+  approvedById       String?      @db.Uuid
+  approvedAt         DateTime?
+  complaintId        String?      @db.Uuid
+  initiativeId       String?      @db.Uuid
+  decisionId         String?      @db.Uuid
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  deletedAt          DateTime? // افتراض: ضمن النماذج الاثني عشر للحذف الناعم
 
   committee  Committee     @relation(fields: [committeeId], references: [id])
   assignee   User?         @relation("TaskAssignee", fields: [assigneeId], references: [id])

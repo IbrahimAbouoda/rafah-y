@@ -22,17 +22,28 @@ export function StatTile({
   tone = 'default',
   href,
   emptyWhenZero = false,
+  noData = false,
 }: {
-  /** null = تعذّر الحساب */
-  value: number | null;
+  /** null = تعذّر الحساب · نص = قيمة منسّقة مسبقًا (نسبة، ساعات) */
+  value: number | string | null;
   label: string;
   meta?: string;
   tone?: Tone;
   href?: string;
   /** للعدّادات التي لا معنى لصفرها قبل وجود أي سجل */
   emptyWhenZero?: boolean;
+  /** لا قيمة بعد لسبب مشروع (مقام صفري، مؤشر لم يُفعَّل) — تُعرض «لا بيانات بعد» */
+  noData?: boolean;
 }) {
-  const shown = value === null ? '—' : emptyWhenZero && value === 0 ? null : value.toLocaleString('ar-PS-u-nu-latn');
+  const shown = noData
+    ? null
+    : value === null
+      ? '—'
+      : typeof value === 'string'
+        ? value
+        : emptyWhenZero && value === 0
+          ? null
+          : value.toLocaleString('ar-PS-u-nu-latn');
   const body = (
     <Card className={cn('flex h-full flex-col gap-1 p-4', href && 'transition-colors hover:bg-muted/50')}>
       <p className="text-sm text-muted-foreground">{label}</p>
