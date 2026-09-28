@@ -3,6 +3,8 @@
 import { startTransition, useActionState } from 'react';
 import { Eye, Loader2 } from 'lucide-react';
 import { setApplicationStatusAction, viewApplicantAction } from '@/server/actions/opportunities';
+import { exportApplicantsAction } from '@/server/actions/opportunities/export';
+import { DownloadButton } from '@/components/shared/download-button';
 import type { ApplicationStatus } from '@/lib/generated/prisma/enums';
 import { APPLICATION_STATUS_LABELS, EDUCATION_LABELS, SKILL_LEVEL_LABELS } from '@/lib/opportunities/workflow';
 import { formatDate } from '@/lib/utils';
@@ -22,43 +24,51 @@ export type ApplicantItem = {
 
 // D31: القائمة بلا بيانات شخصية؛ «عرض بيانات المتقدّم» يطلبها صراحةً ويُسجَّل في التدقيق (AC-11 ③).
 // من لم يوافق يظهر طلبه بلا أي بيانات (AC-11 ②) ولا زر عرض له.
-export function ApplicantPanel({ applicants }: { applicants: ApplicantItem[] }) {
+/** opportunityId ⇒ زر تصدير القائمة نفسها (D31: بلا بيانات شخصية) */
+export function ApplicantPanel({ applicants, opportunityId }: { applicants: ApplicantItem[]; opportunityId?: string }) {
   if (applicants.length === 0) {
     return <p className="text-sm text-muted-foreground">لا متقدّمين بعد. تظهر الطلبات هنا فور وصولها.</p>;
   }
   return (
-    <ul className="flex flex-col divide-y rounded-lg border">
-      {applicants.map((a) => (
-        <li key={a.id} className="flex flex-col gap-2 p-3">
-          <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
-            <span className="flex flex-col">
-              <span className="font-medium">متقدّم رقم {a.number}</span>
-              <span className="text-xs text-muted-foreground">
-                {formatDate(a.createdAt)} · {a.shareProfile ? 'وافق على مشاركة ملفه' : 'لم يوافق على مشاركة ملفه'}
+    <div className="flex flex-col gap-2">
+      {opportunityId ? (
+        <div className="flex justify-end">
+          <DownloadButton action={exportApplicantsAction} fields={{ opportunityId }} label="تصدير القائمة (XLSX)" />
+        </div>
+      ) : null}
+      <ul className="flex flex-col divide-y rounded-lg border">
+        {applicants.map((a) => (
+          <li key={a.id} className="flex flex-col gap-2 p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+              <span className="flex flex-col">
+                <span className="font-medium">متقدّم رقم {a.number}</span>
+                <span className="text-xs text-muted-foreground">
+                  {formatDate(a.createdAt)} · {a.shareProfile ? 'وافق على مشاركة ملفه' : 'لم يوافق على مشاركة ملفه'}
+                </span>
               </span>
-            </span>
-            <StatusBadge kind="application" status={a.status} />
-          </div>
-          {a.shareProfile && a.status !== 'WITHDRAWN' ? (
-            <>
-              <ApplicantReveal applicationId={a.id} />
-              {a.nextStatuses.length > 0 ? (
-                <ActionButtons
-                  items={a.nextStatuses.map((to) => ({
-                    action: setApplicationStatusAction,
-                    fields: { applicationId: a.id, toStatus: to },
-                    label: `نقل إلى «${APPLICATION_STATUS_LABELS[to]}»`,
-                    variant: to === 'ACCEPTED' ? 'default' : 'outline',
-                  }))}
-                />
-              ) : null}
-            </>
-          ) : !a.shareProfile ? (
-            <p className="text-xs text-muted-foreground">لا تُعرض أي بيانات لمن لم يوافق، ولا يُدار طلبه من المؤسسة.</p>
-          ) : null}
-        </li>
-      ))}
-    </ul>
+              <StatusBadge kind="application" status={a.status} />
+            </div>
+            {a.shareProfile && a.status !== 'WITHDRAWN' ? (
+              <>
+                <ApplicantReveal applicationId={a.id} />
+                {a.nextStatuses.length > 0 ? (
+                  <ActionButtons
+                    items={a.nextStatuses.map((to) => ({
+                      action: setApplicationStatusAction,
+                      fields: { applicationId: a.id, toStatus: to },
+                      label: `نقل إلى «${APPLICATION_STATUS_LABELS[to]}»`,
+                      variant: to === 'ACCEPTED' ? 'default' : 'outline',
+                    }))}
+                  />
+                ) : null}
+              </>
+            ) : !a.shareProfile ? (
+              <p className="text-xs text-muted-foreground">لا تُعرض أي بيانات لمن لم يوافق، ولا يُدار طلبه من المؤسسة.</p>
+            ) : null}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 

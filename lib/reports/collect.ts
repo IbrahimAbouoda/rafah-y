@@ -31,6 +31,11 @@ export function reportScope(user: SessionUser): ReportScope | null {
   return f.committees.length > 0 ? { all: false, committees: f.committees } : null;
 }
 
+/** التقارير التي يراها المستخدم: نطاق «الكل» يرى كلها؛ نطاق اللجنة يرى ما ولّده هو فقط (اللقطات الأخرى قد تحمل مؤشرات عامة) */
+export function visibleReportsWhere(user: SessionUser, scope: ReportScope): Prisma.ReportWhereInput {
+  return scope.all ? {} : { createdById: user.id };
+}
+
 export type Period = { from: string; to: string };
 
 const DAY = 24 * 60 * 60 * 1000;

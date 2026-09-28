@@ -1,14 +1,14 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { db } from '@/lib/db';
-import type { Prisma } from '@/lib/generated/prisma/client';
 import { guardPage } from '@/lib/page-guard';
 import { can, type SessionUser } from '@/lib/rbac';
-import { collectMetrics, defaultPeriod, periodBounds, reportScope, type Period, type ReportScope } from '@/lib/reports/collect';
+import { collectMetrics, defaultPeriod, periodBounds, reportScope, visibleReportsWhere, type Period, type ReportScope } from '@/lib/reports/collect';
 import { parseSnapshot } from '@/lib/reports/metrics';
 import { formatDate, formatDateTime, toDateInput } from '@/lib/utils';
 import { PERIOD_LABELS, REPORT_PERIODS } from '@/lib/validation/reports';
-import { generateReportAction, publishReportAction } from '@/server/actions/reports';
+import { exportReportAction, generateReportAction, publishReportAction } from '@/server/actions/reports';
+import { DownloadButton } from '@/components/shared/download-button';
 import { ActionButtons } from '@/components/shared/action-buttons';
 import { ActionForm, Field, SubmitButton } from '@/components/shared/action-form';
 import { DataTable } from '@/components/shared/data-table';
@@ -41,12 +41,14 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
   const [snapshot, reports] = await Promise.all([
     collectMetrics(period, scope),
     db.report.findMany({
-      where: visibleReports(user, scope),
+      where: visibleReportsWhere(user, scope),
       orderBy: { createdAt: 'desc' },
       take: 30,
       select: { id: true, title: true, period: true, periodStart: true, periodEnd: true, isPublished: true, createdAt: true },
     }),
   ]);
+  // إخفاء بصري فقط — الحماية في generateReportAction (D35)
+  const canCreate = can(user, 'reports:create');
   const scopeNote = scope.all ? 'كل المنصة' : 'لجانك فقط — المؤشرات العامة لا تُحسب بنطاق لجنة';
 
   return (
@@ -90,50 +92,52 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
         <TrendCharts snapshot={snapshot} />
       </div>
 
-      <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_1.4fr]">
-        <Card>
-          <CardHeader>
-            <CardTitle>توليد تقرير</CardTitle>
-            <CardDescription>
-              يحفظ أرقام الفترة كما هي الآن لقطةً ثابتة: لا تتغيّر لاحقًا حتى لو عُدّلت الشكاوى. يُراجَع ثم يُنشر.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ActionForm action={generateReportAction} resetOnSuccess>
-              <Field name="title" label="عنوان التقرير">
-                <Input required maxLength={200} placeholder="مثال: تقرير الشفافية — أيلول" />
-              </Field>
-              <Field name="period" label="نوع الفترة">
-                <Select defaultValue="MONTHLY">
-                  {REPORT_PERIODS.map((p) => (
-                    <option key={p} value={p}>
-                      {PERIOD_LABELS[p]}
-                    </option>
-                  ))}
-                </Select>
-              </Field>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Field name="from" label="من">
-                  <Input type="date" required defaultValue={period.from} />
+      <div className={canCreate ? 'mt-6 grid gap-4 lg:grid-cols-[1fr_1.4fr]' : 'mt-6'}>
+        {canCreate ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>توليد تقرير</CardTitle>
+              <CardDescription>
+                يحفظ أرقام الفترة كما هي الآن لقطةً ثابتة: لا تتغيّر لاحقًا حتى لو عُدّلت الشكاوى. يُراجَع ثم يُنشر.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ActionForm action={generateReportAction} resetOnSuccess>
+                <Field name="title" label="عنوان التقرير">
+                  <Input required maxLength={200} placeholder="مثال: تقرير الشفافية — أيلول" />
                 </Field>
-                <Field name="to" label="إلى">
-                  <Input type="date" required defaultValue={period.to} max={toDateInput(new Date())} />
+                <Field name="period" label="نوع الفترة">
+                  <Select defaultValue="MONTHLY">
+                    {REPORT_PERIODS.map((p) => (
+                      <option key={p} value={p}>
+                        {PERIOD_LABELS[p]}
+                      </option>
+                    ))}
+                  </Select>
                 </Field>
-              </div>
-              <Field name="summary" label="ملخص (اختياري)" hint="نص عادي يظهر مع التقرير المنشور. لا بيانات شخصية.">
-                <Textarea rows={4} maxLength={5000} />
-              </Field>
-              <SubmitButton>توليد التقرير</SubmitButton>
-            </ActionForm>
-          </CardContent>
-        </Card>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <Field name="from" label="من">
+                    <Input type="date" required defaultValue={period.from} />
+                  </Field>
+                  <Field name="to" label="إلى">
+                    <Input type="date" required defaultValue={period.to} max={toDateInput(new Date())} />
+                  </Field>
+                </div>
+                <Field name="summary" label="ملخص (اختياري)" hint="نص عادي يظهر مع التقرير المنشور. لا بيانات شخصية.">
+                  <Textarea rows={4} maxLength={5000} />
+                </Field>
+                <SubmitButton>توليد التقرير</SubmitButton>
+              </ActionForm>
+            </CardContent>
+          </Card>
+        ) : null}
 
         <section className="flex flex-col gap-2">
           <h2 className="text-base font-semibold">التقارير</h2>
           <DataTable
             rows={reports}
             rowKey={(r) => r.id}
-            empty={{ title: 'لا تقارير بعد', hint: 'ولّد أول تقرير من النموذج المجاور، ثم راجعه وانشره.' }}
+            empty={{ title: 'لا تقارير بعد', hint: canCreate ? 'ولّد أول تقرير من النموذج المجاور، ثم راجعه وانشره.' : 'لم يُولَّد أي تقرير بعد. يولّده رئيس المجلس أو أمين السر.' }}
             columns={[
               {
                 key: 'title',
@@ -155,11 +159,6 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
   );
 }
 
-/** نطاق «الكل» يرى كل التقارير؛ نطاق اللجنة يرى ما ولّده هو فقط (اللقطات الأخرى قد تحمل مؤشرات عامة) */
-function visibleReports(user: SessionUser, scope: ReportScope): Prisma.ReportWhereInput {
-  return scope.all ? {} : { createdById: user.id };
-}
-
 async function ReportReview({ user, scope, reportId }: { user: SessionUser; scope: ReportScope; reportId: string }) {
   const back = (
     <Button asChild variant="outline">
@@ -169,7 +168,7 @@ async function ReportReview({ user, scope, reportId }: { user: SessionUser; scop
   const isUuid = /^[0-9a-f-]{36}$/i.test(reportId);
   const report = isUuid
     ? await db.report.findFirst({
-        where: { id: reportId, ...visibleReports(user, scope) },
+        where: { id: reportId, ...visibleReportsWhere(user, scope) },
         select: {
           id: true,
           title: true,
@@ -202,7 +201,15 @@ async function ReportReview({ user, scope, reportId }: { user: SessionUser; scop
         title={report.title}
         description={`${PERIOD_LABELS[report.period]} · ${snapshot ? `${snapshot.from} ← ${snapshot.to}` : ''} · وُلّد ${formatDateTime(report.createdAt)} بواسطة ${report.createdBy.fullName}`}
       >
-        {back}
+        <div className="flex flex-wrap items-start gap-2">
+          {snapshot && can(user, 'reports:export') ? (
+            <>
+              <DownloadButton action={exportReportAction} fields={{ reportId: report.id, format: 'pdf' }} label="PDF" />
+              <DownloadButton action={exportReportAction} fields={{ reportId: report.id, format: 'xlsx' }} label="XLSX" />
+            </>
+          ) : null}
+          {back}
+        </div>
       </PageHeader>
 
       <Card className="mb-4 p-4">

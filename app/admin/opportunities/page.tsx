@@ -154,7 +154,7 @@ export default async function AdminOpportunitiesPage() {
                       <details>
                         <summary className="cursor-pointer text-sm text-brand">المتقدّمون ({rows.length})</summary>
                         <div className="mt-2">
-                          <ApplicantPanel applicants={rows} />
+                          <ApplicantPanel applicants={rows} opportunityId={o.id} />
                         </div>
                       </details>
                     ) : null}

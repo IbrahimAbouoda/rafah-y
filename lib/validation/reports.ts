@@ -26,3 +26,7 @@ export const GenerateReportSchema = z
   .refine((d) => d.from <= d.to, { path: ['to'], message: 'نهاية الفترة يجب أن تكون في يوم بدايتها أو بعده.' });
 
 export const ReportIdSchema = z.object({ reportId: z.uuid('التقرير غير محدد. حدّث الصفحة وأعد المحاولة.') });
+
+export const ExportReportSchema = ReportIdSchema.extend({
+  format: z.enum(['pdf', 'xlsx'], { error: 'اختر صيغة التصدير: PDF أو XLSX.' }),
+});

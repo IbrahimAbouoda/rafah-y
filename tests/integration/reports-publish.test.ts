@@ -50,7 +50,26 @@ describe('reports/generate', () => {
     expect(res).toMatchObject({ ok: false, fieldErrors: { to: expect.any(Array) } });
   });
 
-  it('الشاب وعضو اللجنة بلا reports:read: رفض قبل لمس المدخلات', async () => {
+  it('D35 · AC-14 ①: من يقرأ التقارير بلا reports:create لا يولّد — ولا يُنشأ سجل', async () => {
+    const before = await db.report.count();
+    for (const key of ['municipality_observer', 'vice_president', 'treasurer'] as const) {
+      const u = await createUser([key]);
+      const res = await generate(u.id);
+      expect(res, key).toMatchObject({ ok: false, message: expect.stringContaining('لا تملك صلاحية') });
+    }
+    const head = await createUser([{ key: 'committee_head', committee: 'health-affairs' }]);
+    expect(await generate(head.id)).toMatchObject({ ok: false });
+    expect(await db.report.count()).toBe(before);
+  });
+
+  it('D35: المدير التقني والرئيس وأمين السر يولّدون', async () => {
+    for (const key of ['super_admin', 'council_president', 'secretary'] as const) {
+      const u = await createUser([key]);
+      expect(await generate(u.id), key).toMatchObject({ ok: true });
+    }
+  });
+
+  it('الشاب وعضو اللجنة بلا reports:read ولا reports:create: رفض قبل لمس المدخلات', async () => {
     for (const roles of [['youth'], [{ key: 'committee_member' as const, committee: 'health-affairs' }]] as const) {
       const u = await createUser([...roles]);
       await actAs(u.id);

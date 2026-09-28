@@ -85,13 +85,18 @@
 
 - لا يُنشر إلا تقرير لقطته بنطاق «الكل» (لقطة اللجنة ناقصة المؤشرات العامة).
 - الملخص نص عادي بفقراته حتى يُبنى مُنقّي Markdown (§6.3) في المحور ٥.
-- **للحسم:** التوليد بـ `reports:read` كما في جدول الإجراءات أدناه يعني أن مراقب البلدية يستطيع توليد مسودة، و AC-14 يقول «بلا أي زر تعديل». المنفّذ الآن يتبع الجدول؛ إن كان المقصود منع المراقب فالحل صلاحية أخرى للتوليد (مثل `reports:export`، ويملكها المراقب أيضًا) أو `reports:publish`.
+- **محسوم (D35، 2026-09-28):** التوليد بصلاحية مستقلة `reports:create` للمدير التقني والرئيس وأمين السر؛ مراقب البلدية يقرأ ويصدّر ولا يولّد (AC-14). migration `20260928100000_reports_create_permission`، ونموذج التوليد مخفي لمن لا يملكها.
 
 ## المحور ٣ — التصدير
 
 - `reports/export`: `XLSX` للإحصاءات، و `PDF` للتقرير الرسمي (D14) — من اللقطة نفسها.
 - `complaints/export`: `XLSX` لسجل الشكاوى بنطاق `complaints:export`، **بنفس قيود الحقول**: لا بيانات تواصل ولا اسم مقدّم مجهول، ولا حقل لا يراه المصدِّر في الواجهة.
 - التصدير يُولَّد على الخادم ويُنزَّل مباشرة؛ لا يُحفظ ملف دائم.
+
+**التقدّم (2026-09-28):** منفّذ — كل تصدير Server Action يولّد الملف على الخادم ويسلّمه base64 إلى `DownloadButton` (لا ملف دائم)، ويكتب سطر تدقيق (بطلب صاحب المشروع؛ الجدول الأصلي بلا سطر).
+- **PDF (S5-2):** `lib/pdf/arabic.ts` — التفاف منطقي بقياس fontkit ← تشكيل `arabic-persian-reshaper` ← ترتيب بصري `bidi-js` (RTL) ← قطع كلمة/مسافة تعوّض قلب fontkit للكلمة العربية. تُحذف الحركات. تحقّق ترتيب الحروف على الصفحة بـ pdfium مقابل مخرج bidi (لا بقراءة الصورة). الخط IBM Plex Sans Arabic (OFL) في `lib/pdf/fonts`.
+- **XLSX (S5-3):** `lib/export/xlsx.ts` — أوراق RTL بأعمدة صريحة. التقرير (مؤشرات + اتجاه + بيانات اللقطة)، والشكاوى (أعمدة `/admin/complaints` ومرشّحاتها عبر `complaintListFilters()`، سقف 10,000 صف)، وإضافتان خارج نص السبرنت بقرار 2026-09-28: **المتقدّمون** (حقول `listApplicants` فقط — D31)، و**الحضور** (أعمدة صفحة الحضور؛ التقييمات غير مربوطة بالأسماء فلا تُصدَّر).
+- الأزرار: مراجعة التقرير (PDF · XLSX)، `/admin/complaints`، لوحة المتقدّمين في `/admin/opportunities` و `/partner/opportunities`، صفحة الحضور. اختبارات: `tests/unit/pdf-arabic.test.ts` · `tests/integration/exports.test.ts`.
 
 ## المحور ٤ — الإشعارات (ما تبقّى من §8)
 
@@ -111,10 +116,12 @@
 
 | Action | الصلاحية | سطر التدقيق |
 | --- | --- | --- |
-| `reports/generate` (لقطة `metrics`) | `reports:read` | — |
-| `reports/export` (XLSX · PDF) | `reports:export` | — |
+| `reports/generate` (لقطة `metrics`) | `reports:create` (D35) | — |
+| `reports/export` (XLSX · PDF) | `reports:export` | `report.export` |
 | `reports/publish` | `reports:publish` | `report.publish` |
-| `complaints/export` (XLSX) | `complaints:export` | — |
+| `complaints/export` (XLSX) | `complaints:export` | `complaint.export` |
+| `opportunities/exportApplicants` (XLSX) — إضافة | `opportunities:applicants` | `application.export` |
+| `activities/exportAttendance` (XLSX) — إضافة | `activities:attendance` (لجنة النشاط) | `attendance.export` |
 | `notifications/setPreference` | تسجيل دخول (تفضيلاته فقط) | — |
 | `notifications/dueSoon` (مجدول — S5-1) | سرّ الجدولة، لا مستخدم | — |
 | `faq/create` · `faq/update` · `faq/disable` | `faq:manage` | `faq.create` · `faq.update` · `faq.disable` |
@@ -148,4 +155,6 @@
 | `recharts` (اعتمادية جديدة) | رسوم `TrendChart` — قرار صاحب المشروع 2026-09-27 |
 | `exceljs` · `pdfmake` · `arabic-persian-reshaper` · `bidi-js` | التصدير (S5-2 · S5-3) — قرار صاحب المشروع 2026-09-28؛ على الخادم فقط |
 | `Task.dueSoonNotifiedFor` (migration جديدة) | تذكير S5-1 مرة لكل موعد |
+| `fontkit` (صريحة؛ كانت عبر pdfkit) وخط IBM Plex Sans Arabic في `lib/pdf/fonts` | قياس الالتفاف بمقاييس الخط نفسه، وخط عربي كامل مع أشكال العرض |
+| `reports:create` (D35) | فصل التوليد عن القراءة — AC-14 |
 | إصلاحات التدقيق الأمني C-1 · H-1 · H-2 · M-1–M-5 (`docs/code-and-security-audit.md`) | قبل أي ميزة في Sprint 5 بقرار صاحب المشروع: migration إغلاق Data API، و `resolveClientIp()`، وفشل مغلق بلا Upstash في الإنتاج، و `organizationProfile()`، وعدّاد الدخول على الحساب، والكلمة الحالية خارج نافذة الاستعادة، و `logError()` |

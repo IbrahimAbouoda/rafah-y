@@ -1,22 +1,15 @@
 'use client';
 
+import { formatTrendValue, type TrendUnit } from '@/lib/reports/format';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, type DotItemDotProps } from 'recharts';
 
 // TrendChart — PRD §12. البيانات تُحسب على الخادم وتصل مجمّعة بلا أي بيانات شخصية.
 // المحور الزمني يُقرأ من اليمين (reversed)، والألوان من tokens في app/globals.css فتتبع الوضع الداكن.
 // أقل من نقطتين ⇒ رسالة لا رسم · جدول بديل لقارئ الشاشة إلزامي.
 
-export type TrendUnit = 'count' | 'hours' | 'ratio';
 type Row = Record<string, string | number | null>;
 
 const num = new Intl.NumberFormat('ar-PS-u-nu-latn');
-
-export function formatTrendValue(v: number | null | undefined, unit: TrendUnit): string {
-  if (v === null || v === undefined) return 'لا بيانات';
-  if (unit === 'ratio') return `${Math.round(v * 100)}%`;
-  if (unit === 'hours') return `${num.format(Math.round(v))} ساعة`;
-  return num.format(v);
-}
 
 /** عدد النقاط القابلة للرسم — مُصدَّرة للاختبار */
 export const plottablePoints = (series: readonly Row[], yKey: string) =>

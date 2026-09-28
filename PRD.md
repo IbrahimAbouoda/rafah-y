@@ -154,7 +154,7 @@
 ### P2 — رئيس المجلس · `council_president`
 
 - **الهدف:** يرى الصورة الكاملة، ويتخذ الاعتمادات النهائية، ويمثّل المجلس أمام الشركاء والبلدية.
-- **الصلاحيات:** 49 صلاحية، أبرزها الحصرية: `ideas:approve` `initiatives:approve` `offers:decide` `concept_notes:approve` `finance:approve` `reports:publish` `media:approve_final` `volunteer:certify`.
+- **الصلاحيات:** 50 صلاحية، أبرزها الحصرية: `ideas:approve` `initiatives:approve` `offers:decide` `concept_notes:approve` `finance:approve` `reports:publish` `media:approve_final` `volunteer:certify`.
 - **الشاشات:** `/admin` · `/admin/complaints` · `/admin/initiatives` · `/admin/reports` · `/admin/audit` · `/admin/settings/users`.
 - **الإجراءات:** اعتماد فكرة أو مبادرة · قبول عرض دعم · اعتماد قيد مالي · نشر تقرير · تعيين الأدوار · اعتماد مسودة Concept Note قبل إرسالها.
 - **القيود:** لا يسجّل قيدًا ماليًا بنفسه (يعتمده فقط) · كل اعتماد يُكتب في سجل التدقيق باسمه.
@@ -170,7 +170,7 @@
 ### P4 — أمين السر · `secretary`
 
 - **الهدف:** يدير الوارد والمراسلات ويضمن ألا يبقى طلب بلا مسار.
-- **الصلاحيات:** 32 صلاحية، أبرزها `complaints:triage` `complaints:refer` `complaints:close` `ideas:review` `organizations:manage` `opportunities:publish` `decisions:create` `faq:manage` `support:respond`.
+- **الصلاحيات:** 33 صلاحية، أبرزها `complaints:triage` `complaints:refer` `complaints:close` `ideas:review` `organizations:manage` `opportunities:publish` `decisions:create` `faq:manage` `support:respond`.
 - **الشاشات:** `/admin/inbox` · `/admin/complaints` · `/admin/ideas` · `/admin/organizations` · `/admin/support`.
 - **الإجراءات:** فرز كل وارد جديد · تحويله للجنة المختصة بتعليق وموعد متابعة · نشر الفرص · إدارة قاعدة FAQ.
 - **القيود:** لا يعتمد الأفكار ولا المبادرات ولا القيود المالية · لا يقرأ سجل التدقيق.
@@ -202,7 +202,7 @@
 ### P8 — المدير التقني · `super_admin`
 
 - **الهدف:** يبقي النظام يعمل: المستخدمون والأدوار واللجان والإعدادات والنسخ الاحتياطي.
-- **الصلاحيات:** 6 فقط: `users:manage_roles` `settings:manage` `committees:manage` `audit:read` `reports:read` `committees:read`.
+- **الصلاحيات:** 7 فقط: `users:manage_roles` `settings:manage` `committees:manage` `audit:read` `reports:read` `reports:create` (D35) `committees:read`.
 - **الشاشات:** `/admin/settings/*` · `/admin/audit`.
 - **الإجراءات:** إنشاء لجنة · ضبط التصنيفات والمناطق · تعيين الأدوار · مراجعة سجل التدقيق.
 - **القيود:** **لا يدير محتوى المجلس:** لا يغيّر حالة شكوى ولا يعتمد شيئًا ولا يقرأ بيانات التواصل المشفّرة. إدارة النظام شيء وقرارات المجلس شيء آخر.
@@ -287,7 +287,7 @@ can(user, 'complaints:update_status', { committeeId, ownerId }): boolean
 
 ### 3.3 المصفوفة النهائية
 
-هذه المصفوفة مولَّدة آليًا من `prisma/rbac.seed.ts` — قابلة للتحويل المباشر إلى Seed Data دون إعادة كتابة: **10 أدوار × 69 صلاحية = 202 منحة**.
+هذه المصفوفة مولَّدة آليًا من `prisma/rbac.seed.ts` — قابلة للتحويل المباشر إلى Seed Data دون إعادة كتابة: **10 أدوار × 70 صلاحية = 205 منحة**.
 
 | الصلاحية | مدير تقني | رئيس | نائب | أمين سر | صندوق | ر. لجنة | ع. لجنة | بلدية | مؤسسة | شاب |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -340,6 +340,7 @@ can(user, 'complaints:update_status', { committeeId, ownerId }): boolean
 | `profiles:update` تعديل الملف الشخصي والمهارات والموافقات | — | — | — | — | — | — | — | — | — | خاص |
 | `profiles:read_consented` البحث في ملفات الشباب الموافقين على المشاركة (م٢) | — | — | — | — | — | — | — | — | الكل | — |
 | `reports:read` عرض التقارير والمؤشرات الداخلية | الكل | الكل | الكل | الكل | الكل | الكل | — | الكل | — | — |
+| `reports:create` توليد تقرير — لقطة مؤشرات (D35) | الكل | الكل | — | الكل | — | — | — | — | — | — |
 | `reports:export` تصدير التقارير | — | الكل | الكل | الكل | الكل | — | — | الكل | — | — |
 | `reports:publish` نشر تقرير في صفحة الشفافية | — | الكل | — | — | — | — | — | — | — | — |
 | `audit:read` عرض سجل التدقيق | الكل | الكل | الكل | — | — | — | — | — | — | — |
@@ -367,7 +368,7 @@ can(user, 'complaints:update_status', { committeeId, ownerId }): boolean
 
 | القاعدة | التطبيق |
 | --- | --- |
-| المدير التقني لا يدير المحتوى | 6 صلاحيات إدارة نظام فقط، بلا اعتماد وبلا بيانات تواصل |
+| المدير التقني لا يدير المحتوى | 7 صلاحيات إدارة نظام فقط (منها توليد لقطة تقرير — D35)، بلا اعتماد ولا نشر وبلا بيانات تواصل |
 | فصل المهام المالية | `finance:record` لأمين الصندوق و `finance:approve` للرئيس، مع قيد `funding_four_eyes` في قاعدة البيانات |
 | لا اعتماد ذاتي للمهام | `tasks:approve` للرئيس والنائب بنطاق الكل، ولرئيس اللجنة بنطاق لجنته — ولا يملكها عضو اللجنة، مع قيد `tasks_no_self_approval` |
 | الإنابة بالتعيين لا بالكود | دور الرئيس يُمنح للنائب بتعيين له `endsAt` |
@@ -1316,7 +1317,7 @@ flowchart LR
 - **Preconditions:** بيانات فترة محددة.
 - **Steps:** `/admin/reports` ← اختيار الفترة ← توليد المؤشرات ← مراجعة ← نشر.
 - **Expected Result:** `Report` مع `metrics` كلقطة ثابتة، ويظهر في `/transparency`. التصدير: `XLSX` للإحصاءات والبيانات، و `PDF` للتقرير الرسمي.
-- **Permission:** `reports:read` · `reports:publish`(الرئيس).
+- **Permission:** `reports:read` · `reports:create` للتوليد (D35) · `reports:publish`(الرئيس).
 - **Security:** التقرير المنشور لا يحتوي بيانات شخصية · اللقطة لا تتغيّر بتغيّر البيانات لاحقًا.
 - **Acceptance:** ① الأرقام تطابق قاعدة البيانات لحظة التوليد ② تعديل شكوى بعد النشر لا يغيّر التقرير المنشور ③ الصفحة العامة تعمل بلا تسجيل دخول ④ سطر تدقيق بالنشر.
 
@@ -1544,4 +1545,5 @@ flowchart LR
 | D32 | قائمة المهارات | قائمة مرجعية عامة (22 مهارة في خمس فئات) في البذرة الأساسية مع اللجان، أي في الإنتاج أيضًا. لا مسار لإدارتها في §11.2؛ تعديلها بقرار موثّق | §4.4 |
 | D33 | حالة طلب الفرصة | `opportunities/setApplicationStatus` بـ `opportunities:applicants` (نطاق المؤسسة): SUBMITTED ← UNDER_REVIEW ← ACCEPTED أو REJECTED، للطلب الموافق صاحبه فقط، ويُشعَر المتقدّم (§8.2 داخل المنصة وبالبريد). المتقدّم يسحب طلبه غير المحسوم (`opportunities/withdraw` بـ `opportunities:apply`) | §5.4 · §8.2 |
 | D34 | لجنة النشاط | كل نشاط تتبعه لجنة (إلزامي في التحقق، لا في المخطط): `activities:attendance` ممنوحة بنطاق اللجنة وحده، فنشاط بلا لجنة لا يسجّل حضوره أحد. عضو اللجنة يصل لصفحة الحضور من لوحة لجنته | §5.5 · AC-13 |
+| D35 | توليد التقرير (2026-09-28) | صلاحية مستقلة `reports:create` للتوليد (لقطة `metrics`)، لا `reports:read`: للمدير التقني والرئيس وأمين السر بنطاق الكل. مراقب البلدية يقرأ ويصدّر ولا يولّد (AC-14 «بلا أي زر تعديل») | §3.3 · AC-14 · AC-15 |
 

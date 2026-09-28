@@ -8,6 +8,8 @@ import { can } from '@/lib/rbac';
 import { formatDateTime } from '@/lib/utils';
 import { AttendanceForm } from '@/components/activities/attendance-form';
 import { PageHeader } from '@/components/shared/page-header';
+import { DownloadButton } from '@/components/shared/download-button';
+import { exportAttendanceAction } from '@/server/actions/activities/export';
 import { EmptyState, Forbidden } from '@/components/shared/states';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Alert, Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
@@ -50,6 +52,9 @@ export default async function AttendancePage({ params }: { params: Promise<{ id:
       <PageHeader title={`الحضور: ${activity.title}`} description={`${activity.committee?.nameAr ?? ''} · ${formatDateTime(activity.startsAt)}`}>
         <div className="flex items-center gap-2">
           <StatusBadge kind="activity" status={activity.status} size="md" />
+          {registrations.length > 0 ? (
+            <DownloadButton action={exportAttendanceAction} fields={{ activityId: activity.id }} label="تصدير (XLSX)" />
+          ) : null}
           {activity.committee ? (
             <Link href={`/admin/committees/${activity.committee.slug}`} className="text-sm text-brand hover:underline">
               لوحة اللجنة
