@@ -8,10 +8,10 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
     <div className="flex min-h-[calc(100dvh-1.5rem)] flex-col">
       <header className="border-b bg-surface">
         <div className="mx-auto flex h-14 max-w-4xl items-center gap-3 px-4">
-          <span className="flex items-baseline gap-2">
+          <Link href="/" className="flex items-baseline gap-2">
             <span className="text-lg font-bold text-brand">نبض رفح</span>
             <span className="hidden text-xs text-muted-foreground sm:inline">صوت الشباب... فكرة تتحول إلى أثر</span>
-          </span>
+          </Link>
           <nav aria-label="روابط عامة" className="ms-auto flex items-center gap-0.5 overflow-x-auto text-sm">
             <Link href="/initiatives" className="rounded-lg px-2 py-1.5 hover:bg-muted">
               المبادرات
