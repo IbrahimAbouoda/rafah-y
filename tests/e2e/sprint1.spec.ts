@@ -51,6 +51,20 @@ async function staff(browser: Browser, name: string, grant: string): Promise<Pag
   return page;
 }
 
+/**
+ * صندوق الوارد مرتّب الأقدم أولًا بصفحات من 25 (لا تنتظر شكوى أطول من غيرها)، وقاعدة الاختبار المحلية تتراكم فيها
+ * شكاوى التشغيلات السابقة — فالشكوى الجديدة قد تكون في صفحة لاحقة. نتنقّل بين الصفحات حتى نجدها.
+ */
+async function openFromInbox(page: Page, title: string, reference: string) {
+  for (let n = 1; n <= 40; n++) {
+    await page.goto(`/admin/inbox?page=${n}`);
+    const link = page.getByRole('link', { name: title }).filter({ hasText: reference });
+    if ((await link.count()) > 0) return link.click();
+    if ((await page.getByRole('link', { name: 'التالية' }).count()) === 0) break;
+  }
+  throw new Error(`لم تظهر الشكوى ${reference} في أي صفحة من صندوق الوارد`);
+}
+
 async function trackStatus(page: Page, reference: string, code: string) {
   await page.goto(`/track?ref=${reference}`);
   await page.getByLabel('رمز المتابعة').fill(code);
@@ -92,8 +106,7 @@ test('شكوى زائر مجهولة ← فرز ← تحويل ← حل ← إغ
   const president = await staff(browser, 'رئيس-تجريبي', 'council_president');
   const head = await staff(browser, 'رئيس-لجنة-تجريبي', 'committee_head logistical-support');
 
-  await president.goto('/admin/inbox');
-  await president.getByRole('link', { name: 'انقطاع الإنارة في شارع تجريبي' }).filter({ hasText: reference }).click();
+  await openFromInbox(president, 'انقطاع الإنارة في شارع تجريبي', reference);
   await president.waitForURL(/\/admin\/complaints\/[0-9a-f-]{36}$/);
   const complaintUrl = president.url();
   await president.getByRole('button', { name: 'فتح للفرز' }).click();
