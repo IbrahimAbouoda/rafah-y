@@ -1,5 +1,5 @@
 // الأدوار والصلاحيات والمنح — مصدر الحقيقة لمصفوفة PRD §3.3.
-// المصفوفة أدناه مولَّدة آليًا من جدول §3.3 (10 أدوار × 69 صلاحية = 202 منحة).
+// المصفوفة أدناه مولَّدة آليًا من جدول §3.3 (10 أدوار × 70 صلاحية = 205 منحة).
 // إضافة صلاحية = تعديل هذا الملف + تحديث PRD §3.3 + migration للـ seed، ثلاثتها معًا (§3.1 قاعدة 5).
 import type { PrismaClient } from '../lib/generated/prisma/client';
 
@@ -78,6 +78,8 @@ export const PERMISSIONS = [
   { key: 'profiles:update', descriptionAr: 'تعديل الملف الشخصي والمهارات والموافقات', grants: { youth: 'OWN' } },
   { key: 'profiles:read_consented', descriptionAr: 'البحث في ملفات الشباب الموافقين على المشاركة', isPhase2: true, grants: { partner: 'ALL' } },
   { key: 'reports:read', descriptionAr: 'عرض التقارير والمؤشرات الداخلية', grants: { super_admin: 'ALL', council_president: 'ALL', vice_president: 'ALL', secretary: 'ALL', treasurer: 'ALL', committee_head: 'ALL', municipality_observer: 'ALL' } },
+  // D35 (2026-09-28): توليد لقطة التقرير منفصل عن القراءة — مراقب البلدية يقرأ ويصدّر ولا يولّد (AC-14)
+  { key: 'reports:create', descriptionAr: 'توليد تقرير (لقطة مؤشرات لفترة)', grants: { super_admin: 'ALL', council_president: 'ALL', secretary: 'ALL' } },
   { key: 'reports:export', descriptionAr: 'تصدير التقارير', grants: { council_president: 'ALL', vice_president: 'ALL', secretary: 'ALL', treasurer: 'ALL', municipality_observer: 'ALL' } },
   { key: 'reports:publish', descriptionAr: 'نشر تقرير في صفحة الشفافية', grants: { council_president: 'ALL' } },
   { key: 'audit:read', descriptionAr: 'عرض سجل التدقيق', grants: { super_admin: 'ALL', council_president: 'ALL', vice_president: 'ALL' } },

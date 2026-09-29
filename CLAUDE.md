@@ -107,7 +107,7 @@ npm run check       # tsc + lint + prisma validate
 
 ## حالة المشروع
 
-**السبرنت الحالي:** 4 — مكتمل، والتالي 5 (Sprint 2 مكتمل عدا النشر التجريبي بانتظار Q14). `PRD.md` v1.1 معتمد، وقرارات 2026-09-23/27 في §19.3 (D1–D34).
+**السبرنت الحالي:** 5 — **مكتمل وجاهز للمراجعة النهائية (2026-09-28، الفرع `sprint-5`)**: كل المحاور الخمسة منفّذة، و `npm run check` و `npm run test` و `npm run test:e2e` تمر كاملة. Sprints 0–5 مكتملة عدا النشر التجريبي بانتظار Q14، ومحتوى ينتظر المجلس: أهداف المؤشرات (Q10) ونصوص إجابات FAQ المبدئية (Q11). `PRD.md` v1.1 معتمد، والقرارات في §19.3 (D1–D39).
 
 **ثوابت يسهل نسيانها:**
 - الأرقام المرجعية: `next_ref('CMP-2026')` → `RF-CMP-2026-000124` · الأفكار `IDA-2026` · القرارات `next_ref('DEC-2026', 4)`. الدالة تضيف `RF-` بنفسها.
@@ -120,6 +120,11 @@ npm run check       # tsc + lint + prisma validate
 - انتقالات الشكوى من `lib/complaints/workflow.ts` فقط، ونطاق القوائم من `readableComplaints()` — لا شروط حالة أو لجنة مكتوبة في الصفحات.
 - الفرصة وطلبها من `lib/opportunities/workflow.ts`، والنشاط من `lib/activities/workflow.ts`. بيانات المتقدّم لا تُرسل مع الصفحة: `listApplicants()` بلا بيانات شخصية، والملف عبر `viewApplicantAction` بسطر `application.view` (D31). نص `ConsentDialog` = `APPLICANT_DATA_POINTS`.
 - كل نشاط بلجنة (D34). المهارات قائمة مرجعية في البذرة الأساسية (D32).
+- المؤشرات M1–M10 من `lib/reports/collect.ts` (منطقها الخالص في `metrics.ts`)؛ التقرير لقطة ثابتة في `Report.metrics`. التوليد بـ `reports:create` لا `reports:read` (D35)، والنشر للرئيس وحده.
+- كل تصدير Server Action يولّد الملف على الخادم ويكتب سطر تدقيق (`*.export`). PDF العربي عبر `lib/pdf/arabic.ts` فقط — لا تمرّر نصًا عربيًا خامًا إلى pdfmake.
+- Markdown يُعرض عبر `<Markdown>` من `lib/markdown.tsx` فقط — لا `dangerouslySetInnerHTML`.
+- البوت: `lib/support/match.ts`، مفتوح للزائر بحد معدل (D36)، وكل سؤال سطر `BotQuery` بلا نص ولا هوية (D39). التعطيل بدل الحذف في FAQ (D37). إشعار المنصة لا يُوقف (D38).
+- الجدولة: `/api/cron/*` عبر `cronHandler()` في `lib/cron.ts` بسرّ `CRON_SECRET`.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

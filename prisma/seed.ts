@@ -7,6 +7,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../lib/generated/prisma/client';
 import { formatAccessCode, generateAccessCode, hashAccessCode } from '../lib/complaints/access-code';
 import { seedRbac, PERMISSIONS, ROLES } from './rbac.seed';
+import { BASE_FAQ, seedFaq } from './faq.seed';
 
 // PRD §4.3
 export const INITIAL_COMMITTEES = [
@@ -318,6 +319,7 @@ async function main() {
     await seedRbac(db);
     await seedCommittees(db);
     await seedSkills(db);
+    await seedFaq(db);
     const dev = process.env.NODE_ENV !== 'production';
     let demo: { reference: string; code: string }[] = [];
     let ideas: string[] = [];
@@ -334,7 +336,7 @@ async function main() {
 
     const grants = PERMISSIONS.reduce((n, p) => n + Object.keys(p.grants).length, 0);
     console.log(`✓ ${ROLES.length} أدوار · ${PERMISSIONS.length} صلاحية · ${grants} منحة`);
-    console.log(`✓ ${INITIAL_COMMITTEES.length} لجان · ${BASE_SKILLS.length} مهارة`);
+    console.log(`✓ ${INITIAL_COMMITTEES.length} لجان · ${BASE_SKILLS.length} مهارة · ${BASE_FAQ.length} سؤالًا شائعًا (مبدئية — Q11)`);
     if (dev) console.log(`✓ تطوير: ${DEV_CATEGORIES.length} تصنيفات · ${DEV_AREAS.length} مناطق تجريبية`);
     for (const d of demo) console.log(`  شكوى عرض ${d.reference} · رمز ${d.code}`);
     if (ideas.length) console.log(`  أفكار عرض: ${ideas.join(' · ')}`);

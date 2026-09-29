@@ -11,7 +11,10 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  serverExternalPackages: ['pg', '@prisma/adapter-pg'],
+  // مكتبات التصدير (S5-2 · S5-3) تعمل على الخادم فقط وتقرأ ملفات بياناتها وقت التشغيل — لا تُحزَم
+  serverExternalPackages: ['pg', '@prisma/adapter-pg', 'pdfmake', 'pdfkit', 'fontkit', 'exceljs'],
+  // خط PDF التقرير يُقرأ من القرص (lib/pdf/report-pdf.ts) — يُضمَّن في مخرجات الخادم للصفحة التي تستدعي التصدير
+  outputFileTracingIncludes: { '/admin/reports': ['./lib/pdf/fonts/**'] },
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }];
   },

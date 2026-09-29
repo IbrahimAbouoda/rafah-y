@@ -66,6 +66,9 @@ describe('بوابة الشباب ولوحة المجلس — من الصلاح�
       '/admin/organizations',
       '/admin/opportunities',
       '/admin/activities',
+      '/admin/support',
+      '/admin/reports',
+      '/admin/settings/faq',
     ]);
   });
 
@@ -80,13 +83,14 @@ describe('بوابة الشباب ولوحة المجلس — من الصلاح�
       '/admin/initiatives',
       '/admin/organizations',
       '/admin/activities',
+      '/admin/reports',
     ]);
     expect(scopeFilter(head, 'complaints:read')).toEqual({ all: false, committees: [COMMITTEE], own: false });
   });
 
   it('مراقب البلدية: الشكاوى قراءةً بنطاق الكل، بلا تدقيق (§3.4)', () => {
     const observer = asUser([{ key: 'municipality_observer' }]);
-    expect(hrefs(navFor(observer))).toEqual(['/admin', '/admin/complaints', '/admin/committees', '/admin/tasks', '/admin/organizations', '/admin/finance']);
+    expect(hrefs(navFor(observer))).toEqual(['/admin', '/admin/complaints', '/admin/committees', '/admin/tasks', '/admin/organizations', '/admin/finance', '/admin/reports']);
     expect(scopeFilter(observer, 'complaints:read')).toEqual({ all: true });
     expect(canBeyondOwn(observer, 'complaints:read_contact')).toBe(false);
   });
@@ -94,7 +98,7 @@ describe('بوابة الشباب ولوحة المجلس — من الصلاح�
   it('الرئيس: الوارد والشكاوى والتدقيق والإعدادات', () => {
     const president = asUser([{ key: 'council_president' }, { key: 'youth' }]);
     const admin = hrefs(navFor(president));
-    expect(admin.slice(0, 12)).toEqual([
+    expect(admin.slice(0, 14)).toEqual([
       '/admin',
       '/admin/inbox',
       '/admin/complaints',
@@ -106,6 +110,8 @@ describe('بوابة الشباب ولوحة المجلس — من الصلاح�
       '/admin/finance',
       '/admin/opportunities',
       '/admin/activities',
+      '/admin/support',
+      '/admin/reports',
       '/admin/audit',
     ]);
     expect(admin).toContain('/admin/settings/users');

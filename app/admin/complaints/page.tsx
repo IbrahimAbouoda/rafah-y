@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { readableComplaints } from '@/lib/complaints/queries';
-import { OPEN_STATUSES, STATUS_LABELS } from '@/lib/complaints/workflow';
+import { complaintListFilters, readableComplaints } from '@/lib/complaints/queries';
+import { STATUS_LABELS } from '@/lib/complaints/workflow';
 import { db } from '@/lib/db';
 import type { Prisma } from '@/lib/generated/prisma/client';
 import { guardPage } from '@/lib/page-guard';
-import { scopeFilter } from '@/lib/rbac';
+import { can, scopeFilter } from '@/lib/rbac';
+import { exportComplaintsAction } from '@/server/actions/complaints/export';
+import { DownloadButton } from '@/components/shared/download-button';
 import { formatDate } from '@/lib/utils';
 import { COMPLAINT_STATUSES } from '@/lib/validation/complaints';
 import { DataTable } from '@/components/shared/data-table';
@@ -39,17 +41,7 @@ export default async function ComplaintsPage({ searchParams }: { searchParams: P
   const page = Math.max(1, Number(params.page) || 1);
   const q = params.q?.trim() ?? '';
   const status = params.status ?? '';
-  const filters: Prisma.ComplaintWhereInput[] = [scope];
-  if (status === 'open') filters.push({ status: { in: OPEN_STATUSES } });
-  else if ((COMPLAINT_STATUSES as readonly string[]).includes(status)) {
-    filters.push({ status: status as (typeof COMPLAINT_STATUSES)[number] });
-  }
-  if (params.committee) filters.push({ committeeId: params.committee });
-  if (q) {
-    filters.push({
-      OR: [{ reference: { contains: q.toUpperCase() } }, { title: { contains: q, mode: 'insensitive' } }],
-    });
-  }
+  const filters: Prisma.ComplaintWhereInput[] = [scope, ...complaintListFilters(params)];
   const where: Prisma.ComplaintWhereInput = { AND: filters };
 
   // قائمة اللجان في الفلتر: لجانه فقط ما لم يملك نطاق «الكل»
@@ -82,7 +74,15 @@ export default async function ComplaintsPage({ searchParams }: { searchParams: P
 
   return (
     <>
-      <PageHeader title="الشكاوى" description="كل الشكاوى التي يحق لك رؤيتها بحسب دورك. بيانات التواصل لا تظهر هنا." />
+      <PageHeader title="الشكاوى" description="كل الشكاوى التي يحق لك رؤيتها بحسب دورك. بيانات التواصل لا تظهر هنا.">
+        {can(user, 'complaints:export') ? (
+          <DownloadButton
+            action={exportComplaintsAction}
+            fields={{ status, committee: params.committee, q }}
+            label={filtered ? 'تصدير النتائج (XLSX)' : 'تصدير السجل (XLSX)'}
+          />
+        ) : null}
+      </PageHeader>
 
       <Card className="mb-4 p-3">
         <form action="/admin/complaints" className="grid gap-3 sm:grid-cols-[1fr_1fr_1.4fr_auto] sm:items-end" role="search">

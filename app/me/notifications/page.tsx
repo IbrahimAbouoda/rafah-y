@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { db } from '@/lib/db';
 import { guardPage } from '@/lib/page-guard';
+import { disabledSet } from '@/lib/notifications/preferences';
+import { EmailPreferences } from '@/components/notifications/email-preferences';
 import { NotificationCenter } from '@/components/shared/notification-center';
 import { PageHeader } from '@/components/shared/page-header';
 
@@ -16,7 +18,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
 
   // الشرط userId هو النطاق: لا يُجلب إشعار غيره أصلًا
   const where = { userId: user.id, channel: 'IN_APP' as const };
-  const [notifications, total, unread] = await Promise.all([
+  const [notifications, total, unread, prefs] = await Promise.all([
     db.notification.findMany({
       where,
       orderBy: { createdAt: 'desc' },
@@ -25,16 +27,22 @@ export default async function NotificationsPage({ searchParams }: { searchParams
     }),
     db.notification.count({ where }),
     db.notification.count({ where: { ...where, readAt: null } }),
+    db.notificationPreference.findMany({ where: { userId: user.id, channel: 'EMAIL' }, select: { type: true, enabled: true } }),
   ]);
 
   return (
     <>
       <PageHeader title="الإشعارات" description="تحديثات شكاواك وما يخصّك في المنصة. من لديه بريد تصله الأحداث المهمة بريديًا أيضًا." />
-      <NotificationCenter
-        notifications={notifications}
-        unreadCount={unread}
-        moreHref={total > take && take < MAX ? `/me/notifications?n=${take + BATCH}` : null}
-      />
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
+        <NotificationCenter
+          notifications={notifications}
+          unreadCount={unread}
+          moreHref={total > take && take < MAX ? `/me/notifications?n=${take + BATCH}` : null}
+        />
+        <div className="lg:sticky lg:top-20 lg:self-start">
+          <EmailPreferences disabled={disabledSet(prefs)} email={user.email} />
+        </div>
+      </div>
     </>
   );
 }

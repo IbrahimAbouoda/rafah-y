@@ -102,7 +102,7 @@ export default async function PartnerOpportunitiesPage() {
                     <details open={rows.length > 0}>
                       <summary className="cursor-pointer text-sm font-medium text-brand">المتقدّمون ({rows.length})</summary>
                       <div className="mt-3">
-                        <ApplicantPanel applicants={rows} />
+                        <ApplicantPanel applicants={rows} opportunityId={o.id} />
                       </div>
                     </details>
                   ) : null}

@@ -1,4 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { provisionUser } from '@/lib/auth';
+import { markRecovery } from '@/lib/rate-limit';
 import { supabaseServer } from '@/lib/supabase/server';
 
 // معالج رابط البريد (ليس صفحة): يبادل رمز الاستعادة بجلسة ثم يعيد إلى خطوة كلمة المرور الجديدة.
@@ -10,8 +12,10 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const supabase = await supabaseServer();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error && data.user) {
+      // M-4: رابط البريد وحده يفتح نافذة تغيير كلمة المرور بلا الكلمة الحالية (15 دقيقة، مرة واحدة)
+      await markRecovery(await provisionUser(data.user));
       target.searchParams.set('step', 'new');
       return NextResponse.redirect(target);
     }

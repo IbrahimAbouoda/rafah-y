@@ -37,7 +37,12 @@ export type AuditAction =
   | 'media.publish'
   | 'conceptnote.approve'
   | 'conceptnote.send'
-  | 'file.download';
+  | 'file.download'
+  // التصدير (Sprint 5 — المحور ٣، بطلب صاحب المشروع 2026-09-28): كل ملف مُصدَّر يُسجَّل بمن صدّره ونطاقه
+  | 'report.export'
+  | 'complaint.export'
+  | 'application.export'
+  | 'attendance.export';
 
 type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
 

@@ -348,6 +348,12 @@ enum AiSuggestionStatus {
 }
 
 // §13.3
+// M9 (قرار صاحب المشروع 2026-09-28): نتيجة سؤال البوت — وجد إجابة معتمدة، أو لم يجد/لم تُفد (وعُرض التحويل للفريق)
+enum BotQueryStatus {
+  ANSWERED
+  UNRESOLVED_ESCALATED
+}
+
 enum InquiryStatus {
   NEW
   IN_PROGRESS
@@ -1420,23 +1426,24 @@ model Decision {
 
 // قيد tasks_no_self_approval في sql/constraints.sql
 model Task {
-  id           String       @id @default(uuid()) @db.Uuid
-  title        String
-  description  String?
-  committeeId  String       @db.Uuid
-  status       TaskStatus   @default(TODO)
-  priority     TaskPriority @default(MEDIUM)
-  dueAt        DateTime?
-  assigneeId   String?      @db.Uuid
-  createdById  String       @db.Uuid
-  approvedById String?      @db.Uuid
-  approvedAt   DateTime?
-  complaintId  String?      @db.Uuid
-  initiativeId String?      @db.Uuid
-  decisionId   String?      @db.Uuid
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  deletedAt    DateTime? // افتراض: ضمن النماذج الاثني عشر للحذف الناعم
+  id                 String       @id @default(uuid()) @db.Uuid
+  title              String
+  description        String?
+  committeeId        String       @db.Uuid
+  status             TaskStatus   @default(TODO)
+  priority           TaskPriority @default(MEDIUM)
+  dueAt              DateTime?
+  dueSoonNotifiedFor DateTime? // افتراض (S5-1): قيمة dueAt التي أُرسل لها تذكير TASK_DUE_SOON — مرة لكل موعد، وتغيير الموعد يسمح بتذكير جديد
+  assigneeId         String?      @db.Uuid
+  createdById        String       @db.Uuid
+  approvedById       String?      @db.Uuid
+  approvedAt         DateTime?
+  complaintId        String?      @db.Uuid
+  initiativeId       String?      @db.Uuid
+  decisionId         String?      @db.Uuid
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  deletedAt          DateTime? // افتراض: ضمن النماذج الاثني عشر للحذف الناعم
 
   committee  Committee     @relation(fields: [committeeId], references: [id])
   assignee   User?         @relation("TaskAssignee", fields: [assigneeId], references: [id])
@@ -1693,6 +1700,7 @@ model FaqEntry {
   createdBy        User?            @relation("FaqCreator", fields: [createdById], references: [id])
   updatedBy        User?            @relation("FaqUpdater", fields: [updatedById], references: [id])
   matchedInquiries SupportInquiry[] @relation("InquiryMatchedFaq")
+  botQueries       BotQuery[]
   promotedFrom     SupportInquiry[] @relation("InquiryPromotedFaq")
 
   @@index([isActive, categoryId])
@@ -1721,8 +1729,26 @@ model SupportInquiry {
   answeredBy  User?     @relation("InquiryAnsweredBy", fields: [answeredById], references: [id])
   matchedFaq  FaqEntry? @relation("InquiryMatchedFaq", fields: [matchedFaqId], references: [id])
   promotedFaq FaqEntry? @relation("InquiryPromotedFaq", fields: [promotedFaqId], references: [id])
+  botQuery    BotQuery?
 
   @@index([status, createdAt])
   @@index([assigneeId])
   @@map("support_inquiries")
+}
+
+// افتراض (قرار 2026-09-28 لقياس M9): سطر لكل سؤال للبوت. بلا نص السؤال ولا هوية السائل (§6.8 تقليل البيانات):
+// النص يُحفظ فقط إن أُرسل للفريق، في SupportInquiry. M9 = ANSWERED ÷ الكل في الفترة.
+model BotQuery {
+  id           String         @id @default(uuid()) @db.Uuid
+  status       BotQueryStatus
+  matchedFaqId String?        @db.Uuid
+  inquiryId    String?        @unique @db.Uuid
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  matchedFaq FaqEntry?       @relation(fields: [matchedFaqId], references: [id])
+  inquiry    SupportInquiry? @relation(fields: [inquiryId], references: [id])
+
+  @@index([createdAt, status])
+  @@map("bot_queries")
 }

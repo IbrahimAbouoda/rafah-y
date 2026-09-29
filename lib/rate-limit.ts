@@ -80,10 +80,28 @@ class UpstashStore implements Store {
 
 const globalForLimit = globalThis as unknown as { rateLimitStore?: Store };
 
+export type StoreChoice = { kind: 'upstash'; url: string; token: string } | { kind: 'memory' };
+
+/**
+ * H-2 (docs/code-and-security-audit.md) · D11: في الإنتاج Upstash إلزامي. ذاكرة العملية تعدّ لكل نسخة على حدة
+ * وتُصفَّر مع كل تشغيل بارد، فتصير الحدود بلا أثر على الاستضافة بلا خادم — لذا لا رجوع صامت إليها.
+ * RATE_LIMIT_STORE=memory يسمح بها صراحةً لتجربة بناء الإنتاج محليًا فقط.
+ */
+export function chooseStore(env: Record<string, string | undefined>): StoreChoice {
+  const { UPSTASH_REDIS_REST_URL: url, UPSTASH_REDIS_REST_TOKEN: token } = env;
+  if (url && token) return { kind: 'upstash', url, token };
+  if (env.NODE_ENV !== 'production' || env.RATE_LIMIT_STORE === 'memory') return { kind: 'memory' };
+  throw new Error(
+    'Rate limiting requires UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN in production (D11). ' +
+      'Set RATE_LIMIT_STORE=memory only for a local production build.',
+  );
+}
+
 function store(): Store {
   if (!globalForLimit.rateLimitStore) {
-    const { UPSTASH_REDIS_REST_URL: url, UPSTASH_REDIS_REST_TOKEN: token } = process.env;
-    globalForLimit.rateLimitStore = url && token ? new UpstashStore(url, token) : new MemoryStore();
+    // يُلقى الخطأ هنا عند أول استخدام، فيُرفض الإجراء (فشل مغلق) ويُسجَّل السبب
+    const choice = chooseStore(process.env);
+    globalForLimit.rateLimitStore = choice.kind === 'upstash' ? new UpstashStore(choice.url, choice.token) : new MemoryStore();
   }
   return globalForLimit.rateLimitStore;
 }
@@ -100,11 +118,13 @@ export const LIMITS = {
   track: { max: 10, windowSec: 3600 },
   /** رفع ملف — لكل IP (§6.4) */
   upload: { max: 10, windowSec: 3600 },
+  /** سؤال البوت وإرسال الاستفسار — لكل حساب أو IP (§6.4) */
+  bot: { max: 20, windowSec: 3600 },
 } as const;
 
 export type LimitResult = { allowed: boolean; retryAfterSec: number };
 
-type Bucket = 'register' | 'resetPassword' | 'complaint' | 'publicComplaint' | 'track' | 'upload';
+type Bucket = 'register' | 'resetPassword' | 'complaint' | 'publicComplaint' | 'track' | 'upload' | 'bot';
 
 export async function limit(bucket: Bucket, id: string): Promise<LimitResult> {
   const { max, windowSec } = LIMITS[bucket];
@@ -130,4 +150,23 @@ export async function recordLoginFailure(id: string): Promise<void> {
 
 export async function clearLoginFailures(id: string): Promise<void> {
   await store().del(`rl:loginFailures:${id}`, `rl:loginBlock:${id}`);
+}
+
+// ─── نافذة الاستعادة — M-4 ─────────────────────────────────────────────
+// تغيير كلمة المرور بلا الكلمة الحالية مسموح فقط بعد فتح رابط الاستعادة من البريد.
+// الجلسة وحدها لا تميّزه (amr = otp كأي رمز لمرة واحدة)، فتُسجَّل النافذة على الخادم عند نجاح تبادل الرابط.
+
+export const RECOVERY_WINDOW_SEC = 15 * 60;
+
+export async function markRecovery(userId: string): Promise<void> {
+  await store().set(`rl:recovery:${userId}`, RECOVERY_WINDOW_SEC);
+}
+
+export async function recoveryActive(userId: string): Promise<boolean> {
+  return (await store().ttl(`rl:recovery:${userId}`)) > 0;
+}
+
+/** تُستهلك النافذة مع أول تغيير ناجح: الرابط الواحد يغيّر كلمة المرور مرة واحدة */
+export async function consumeRecovery(userId: string): Promise<void> {
+  await store().del(`rl:recovery:${userId}`);
 }

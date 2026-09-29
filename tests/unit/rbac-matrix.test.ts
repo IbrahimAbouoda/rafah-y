@@ -7,19 +7,19 @@ const grants = (key: string) => (PERMISSIONS.find((p) => p.key === key)?.grants 
 const holders = (key: string) => Object.keys(grants(key)).sort();
 
 describe('مصفوفة الصلاحيات', () => {
-  it('10 أدوار × 69 صلاحية = 202 منحة', () => {
+  it('10 أدوار × 70 صلاحية = 205 منحة', () => {
     expect(ROLES).toHaveLength(10);
-    expect(PERMISSIONS).toHaveLength(69);
-    expect(new Set(PERMISSIONS.map((p) => p.key)).size).toBe(69);
-    expect(PERMISSIONS.reduce((n, p) => n + Object.keys(p.grants).length, 0)).toBe(202);
+    expect(PERMISSIONS).toHaveLength(70);
+    expect(new Set(PERMISSIONS.map((p) => p.key)).size).toBe(70);
+    expect(PERMISSIONS.reduce((n, p) => n + Object.keys(p.grants).length, 0)).toBe(205);
   });
 
   it('عدد صلاحيات كل دور يطابق PRD §2', () => {
     const expected: Record<RoleKey, number> = {
-      super_admin: 6,
-      council_president: 49,
+      super_admin: 7,
+      council_president: 50,
       vice_president: 34,
-      secretary: 32,
+      secretary: 33,
       treasurer: 11,
       committee_head: 31,
       committee_member: 12,
@@ -35,7 +35,8 @@ describe('مصفوفة الصلاحيات', () => {
   it('المدير التقني لا يدير المحتوى ولا يرى بيانات التواصل', () => {
     const own = PERMISSIONS.filter((p) => 'super_admin' in p.grants).map((p) => p.key).sort();
     expect(own).toEqual(
-      ['audit:read', 'committees:manage', 'committees:read', 'reports:read', 'settings:manage', 'users:manage_roles'].sort(),
+      // reports:create بقرار D35 — لقطة أرقام، لا محتوى ولا اعتماد
+      ['audit:read', 'committees:manage', 'committees:read', 'reports:create', 'reports:read', 'settings:manage', 'users:manage_roles'].sort(),
     );
   });
 

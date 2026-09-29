@@ -8,6 +8,8 @@ import {
   Building2,
   CircleUserRound,
   Sparkles,
+  ChartLine,
+  LifeBuoy,
   Handshake,
   Rocket,
   Wallet,
@@ -52,6 +54,8 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   handshake: Handshake,
   briefcase: BriefcaseBusiness,
   sparkles: Sparkles,
+  chart: ChartLine,
+  help: LifeBuoy,
   user: CircleUserRound,
 };
 
