@@ -4,9 +4,11 @@ import { logoutAction } from '@/server/actions/auth';
 import type { NavGroup } from '@/lib/nav';
 import type { SerializedGrants, SessionUser } from '@/lib/rbac';
 import { Button } from '@/components/ui/button';
+import { BrandMark } from './brand-mark';
 import { FlashProvider } from './flash';
 import { PermissionsProvider } from './permission-gate';
 import { Sidebar } from './sidebar';
+import { SiteFooter } from './site-footer';
 import { ThemeToggle } from './theme-toggle';
 
 type Term = { name: string } | null;
@@ -52,9 +54,8 @@ export function AppShell({
     <PermissionsProvider userId={user.id} grants={grants}>
       <header className="sticky top-0 z-20 border-b bg-surface/95 backdrop-blur">
         <div className="flex h-14 items-center gap-3 px-4">
-          <Link href={home} className="flex items-baseline gap-2">
-            <span className="text-lg font-bold text-brand">نبض رفح</span>
-            <span className="hidden text-xs text-muted-foreground sm:inline">منصة الشباب</span>
+          <Link href={home} className="min-w-0 shrink-0">
+            <BrandMark />
           </Link>
           <div className="ms-auto flex items-center gap-1">
             <div className="hidden text-end leading-tight sm:block">
@@ -100,6 +101,7 @@ export function AppShell({
           <FlashProvider>{children}</FlashProvider>
         </main>
       </div>
+      <SiteFooter />
     </PermissionsProvider>
   );
 }

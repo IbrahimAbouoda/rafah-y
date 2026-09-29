@@ -83,9 +83,9 @@ export function renderMail(opts: { title: string; lines: string[]; link?: { href
     '\n',
   );
   const html = `<!doctype html><html lang="ar" dir="rtl"><body style="font-family:Tahoma,Arial,sans-serif;line-height:1.7;color:#1a1a1a;direction:rtl;text-align:right">
-<h2 style="color:#0b5c4b;font-size:18px">${escapeHtml(opts.title)}</h2>
+<h2 style="color:#0b568f;font-size:18px">${escapeHtml(opts.title)}</h2>
 ${opts.lines.map((l) => `<p style="margin:0 0 8px">${escapeHtml(l)}</p>`).join('\n')}
-${opts.link ? `<p><a href="${escapeHtml(opts.link.href)}" style="color:#0b5c4b">${escapeHtml(opts.link.label)}</a></p>` : ''}
+${opts.link ? `<p><a href="${escapeHtml(opts.link.href)}" style="color:#0b568f">${escapeHtml(opts.link.label)}</a></p>` : ''}
 <p style="color:#666;font-size:12px;margin-top:24px">${escapeHtml(COUNCIL_SENDER_NAME)} · ${COUNCIL_EMAIL}</p>
 </body></html>`;
   return { text, html };

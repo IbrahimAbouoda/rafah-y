@@ -5,15 +5,16 @@
 
 /*
  * Design tokens — PRD §12. ألوان العلامة منفصلة عن ألوان الحالة.
- * افتراض: الدرجات المشتقة (الفاتحة والداكنة) محسوبة هنا؛ النموذج التفاعلي المرجعي غير متاح في المستودع.
+ * العلامة من شعار «المجلس الشبابي البلدي - رفح» (D40): أزرق أساسي، أخضر ثانوي، أحمر للتنبيه.
+ * درجات الوضع الداكن مفتّحة هنا لتُقرأ على الخلفية الداكنة؛ الدرجات الرسمية الثابتة في council-* أدناه.
  */
 :root {
-  --brand: #0b5c4b; /* أخضر زيتوني — أساسي */
+  --brand: #0b568f; /* أزرق المجلس — أساسي */
   --brand-foreground: #ffffff;
-  --brand-soft: #e6f0ed;
-  --accent: #a87d1f; /* ذهبي — ثانوي */
+  --brand-soft: #e7f0f7;
+  --accent: #3e8e28; /* أخضر المجلس — ثانوي */
   --accent-foreground: #ffffff;
-  --alert: #9e2b25; /* أحمر تطريز — للتنبيه */
+  --alert: #c81d25; /* أحمر المجلس — للتنبيه */
   --alert-foreground: #ffffff;
 
   --success: #1f7a3d;
@@ -31,17 +32,17 @@
   --muted: #f1efe9;
   --muted-foreground: #5d6560;
   --border: #e2ded4;
-  --ring: #0b5c4b;
+  --ring: #0b568f;
 }
 
 .dark {
-  --brand: #3fa58c;
-  --brand-foreground: #06201a;
-  --brand-soft: #12342c;
-  --accent: #d4a94a;
-  --accent-foreground: #221803;
-  --alert: #e0645c;
-  --alert-foreground: #230604;
+  --brand: #6fb3e8;
+  --brand-foreground: #04213a;
+  --brand-soft: #0f2a40;
+  --accent: #6cc04f;
+  --accent-foreground: #0d2107;
+  --alert: #f0676e;
+  --alert-foreground: #2a0507;
 
   --success: #5cc27f;
   --success-soft: #133222;
@@ -58,7 +59,7 @@
   --muted: #1f2824;
   --muted-foreground: #a0aba5;
   --border: #2b3631;
-  --ring: #3fa58c;
+  --ring: #6fb3e8;
 }
 
 @theme inline {
@@ -84,6 +85,18 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
   --color-ring: var(--ring);
+
+  /* ألوان الشعار الرسمية — ثابتة في الوضعين (bg-council-blue · text-council-green-dark …) */
+  --color-council-blue: #0b568f;
+  --color-council-blue-light: #136eb3;
+  --color-council-blue-dark: #073b63;
+  --color-council-green: #3e8e28;
+  --color-council-green-light: #4ead33;
+  --color-council-green-dark: #2c661d;
+  --color-council-red: #c81d25;
+  --color-council-red-light: #e02d36;
+  --color-council-red-dark: #931218;
+
   --font-sans: var(--font-arabic), system-ui, sans-serif;
 }
 

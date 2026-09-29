@@ -5,6 +5,7 @@ import * as fontkit from 'fontkit';
 import pdfmake, { type Content } from 'pdfmake';
 import { formatMetric, formatTarget, METRIC_KEYS, METRICS, type MetricsSnapshot } from '@/lib/reports/metrics';
 import { formatTrendValue } from '@/lib/reports/format';
+import { COUNCIL_NAME_AR } from '@/lib/config';
 import { pdfLines } from './arabic';
 
 // PDF التقرير الرسمي (D14) من اللقطة المحفوظة نفسها — لا أرقام حيّة. الخط IBM Plex Sans Arabic (خط الواجهة، OFL)
@@ -61,7 +62,7 @@ function rtlTable(widths: number[], header: string[], rows: string[][]): Content
       vLineWidth: () => 0.5,
       hLineColor: () => '#d9d4c7',
       vLineColor: () => '#d9d4c7',
-      fillColor: (row: number) => (row === 0 ? '#e6f0ed' : null),
+      fillColor: (row: number) => (row === 0 ? '#e7f0f7' : null),
     },
     margin: [0, 4, 0, 14],
   };
@@ -93,7 +94,7 @@ export async function buildReportPdf(input: ReportPdfInput): Promise<Buffer> {
   ]);
 
   const content: Content[] = [
-    rtl('نبض رفح — المجلس البلدي الشبابي في رفح', CONTENT_WIDTH, { size: 9, color: '#0b5c4b' }),
+    rtl(`نبض رفح — ${COUNCIL_NAME_AR}`, CONTENT_WIDTH, { size: 9, color: '#0b568f' }),
     { ...(rtl(input.title, CONTENT_WIDTH, { size: 17, bold: true }) as object), margin: [0, 6, 0, 2] },
     rtl(`${input.periodLabel} · ${snapshot.from} ← ${snapshot.to} · ${input.status}`, CONTENT_WIDTH, { size: 10, color: '#5d6560' }),
     rtl(`الأرقام لقطة محفوظة وقت إعداد التقرير (${input.generatedAt})، ولا تتغيّر بتغيّر البيانات بعده.`, CONTENT_WIDTH, {

@@ -19,7 +19,10 @@ export const CURRENCIES = ['ILS', 'USD'] as const;
 
 /** البريد الرسمي للمجلس — مرسِل كل الإشعارات والقوالب (PRD §19.3 D19، مؤقت حتى النطاق الدائم Q8) */
 export const COUNCIL_EMAIL = 'info.rafahyouth@gmail.com';
-export const COUNCIL_SENDER_NAME = 'نبض رفح — المجلس البلدي الشبابي';
+/** الاسم الرسمي كما في الشعار (public/logo.png) */
+export const COUNCIL_NAME_AR = 'المجلس الشبابي البلدي - رفح';
+export const COUNCIL_NAME_EN = 'Municipal Youth Council - Rafah';
+export const COUNCIL_SENDER_NAME = `نبض رفح — ${COUNCIL_NAME_AR}`;
 
 /** أساس الروابط في البريد ورسائل المشاركة */
 export const appUrl = () => (process.env.APP_URL ?? 'http://localhost:3000').replace(/\/$/, '');

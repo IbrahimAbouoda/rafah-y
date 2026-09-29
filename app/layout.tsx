@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 import { ThemeProvider } from 'next-themes';
 import { DemoBadge } from '@/components/shared/demo-badge';
 import { ServiceWorkerRegister } from '@/components/shared/sw-register';
+import { COUNCIL_NAME_AR } from '@/lib/config';
 import './globals.css';
 
 const arabic = IBM_Plex_Sans_Arabic({
@@ -15,7 +16,7 @@ const arabic = IBM_Plex_Sans_Arabic({
 
 export const metadata: Metadata = {
   title: { default: 'نبض رفح | منصة الشباب', template: '%s · نبض رفح' },
-  description: 'صوت الشباب... فكرة تتحول إلى أثر — منصة المجلس البلدي الشبابي في رفح',
+  description: `صوت الشباب... فكرة تتحول إلى أثر — منصة ${COUNCIL_NAME_AR}`,
   manifest: '/manifest.webmanifest',
   icons: { icon: '/icon.svg' },
 };
@@ -24,7 +25,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#0b5c4b' },
+    { media: '(prefers-color-scheme: light)', color: '#0b568f' },
     { media: '(prefers-color-scheme: dark)', color: '#0f1412' },
   ],
 };

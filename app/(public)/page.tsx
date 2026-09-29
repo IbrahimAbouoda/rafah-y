@@ -8,6 +8,7 @@ import { formatDate } from '@/lib/utils';
 import { StatTile } from '@/components/shared/stat-tile';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
+import { COUNCIL_NAME_AR } from '@/lib/config';
 
 export const metadata: Metadata = { title: 'نبض رفح — منصة الشباب' };
 export const dynamic = 'force-dynamic';
@@ -42,7 +43,7 @@ export default async function HomePage() {
       <section className="flex flex-col gap-4 rounded-2xl bg-brand-soft p-6 sm:p-8">
         <h1 className="text-2xl font-bold text-brand sm:text-3xl">نبض رفح</h1>
         <p className="max-w-2xl text-base leading-8">
-          منصة المجلس البلدي الشبابي في رفح: شكاوى الشباب وأفكارهم ومبادراتهم تدخل بمسار موثّق، تعمل عليها تسع لجان، وتُنشر
+          منصة {COUNCIL_NAME_AR}: شكاوى الشباب وأفكارهم ومبادراتهم تدخل بمسار موثّق، تعمل عليها تسع لجان، وتُنشر
           نتائجها للجميع.
         </p>
         <div className="flex flex-wrap gap-2">

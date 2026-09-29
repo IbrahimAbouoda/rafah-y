@@ -1,6 +1,6 @@
 // Service Worker — PRD §7: هدف واحد، ألا يفقد الشاب ما كتبه حين ينقطع الاتصال.
 // · صفحات النموذج والتتبّع: الشبكة أولًا، ثم آخر نسخة محفوظة عند الانقطاع (لتُفتح الصفحة وتُكمل المسودة من IndexedDB).
-// · الأصول الثابتة المُجزّأة (/_next/static): المحفوظ أولًا — أسماؤها تتغيّر مع كل بناء.
+// · الأصول الثابتة المُجزّأة (/_next/static) وصور next/image (الشعار): المحفوظ أولًا — أسماؤها تتغيّر مع كل بناء.
 // · لا يُحفظ أي طلب بيانات ولا Server Action ولا صفحة إدارة (§7.2).
 const PAGES = 'rafah-pages-v2';
 const ASSETS = 'rafah-assets-v1';
@@ -24,7 +24,7 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
-  if (url.pathname.startsWith('/_next/static/')) {
+  if (url.pathname.startsWith('/_next/static/') || url.pathname === '/_next/image') {
     event.respondWith(
       caches.open(ASSETS).then(async (cache) => {
         const hit = await cache.match(req);

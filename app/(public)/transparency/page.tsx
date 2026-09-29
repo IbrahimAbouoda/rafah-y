@@ -8,6 +8,7 @@ import { PageHeader } from '@/components/shared/page-header';
 import { MetricTiles } from '@/components/shared/report-snapshot';
 import { EmptyState } from '@/components/shared/states';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
+import { COUNCIL_NAME_AR } from '@/lib/config';
 
 export const metadata: Metadata = { title: 'شفافية المجلس' };
 export const dynamic = 'force-dynamic';
@@ -27,7 +28,7 @@ export default async function TransparencyPage() {
     <>
       <PageHeader
         title="شفافية المجلس"
-        description="تقارير دورية بأرقام المجلس البلدي الشبابي كما وُثّقت لحظة إعدادها: الشكاوى وسرعة التعامل معها، والأفكار، والدعم، وانضباط اللجان."
+        description={`تقارير دورية بأرقام ${COUNCIL_NAME_AR} كما وُثّقت لحظة إعدادها: الشكاوى وسرعة التعامل معها، والأفكار، والدعم، وانضباط اللجان.`}
       />
       {reports.length === 0 ? (
         <Card>

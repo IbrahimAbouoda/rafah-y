@@ -172,7 +172,7 @@ describe('faq/create · update · disable — AC-18 ⑤⑥', () => {
     const secretary = await createUser(['secretary']);
     await actAs(secretary.id);
     const cat = await db.faqCategory.findFirstOrThrow({ where: { slug: 'about' } });
-    const question = 'أين مقر المجلس البلدي الشبابي في رفح؟';
+    const question = 'أين مقر المجلس الشبابي البلدي - رفح؟';
     expect(await saveFaqAction(null, form({ categoryId: cat.id, question, answer: 'في مبنى البلدية، الطابق الثاني.', keywords: 'مقر المجلس' }))).toMatchObject({ ok: true });
     const faq = await db.faqEntry.findFirstOrThrow({ where: { question } });
     expect(await db.auditLog.count({ where: { action: 'faq.create', entityId: faq.id } })).toBe(1);

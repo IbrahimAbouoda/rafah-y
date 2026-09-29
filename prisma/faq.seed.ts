@@ -14,12 +14,14 @@ export const FAQ_CATEGORIES = [
 
 type Slug = (typeof FAQ_CATEGORIES)[number]['slug'];
 
-export const BASE_FAQ: { category: Slug; question: string; answerMd: string; keywords: string[] }[] = [
+/** formerQuestions: صياغات سابقة للسؤال — تمنع تكرار البذرة في قاعدة بُذرت قبل تغيير الصياغة */
+export const BASE_FAQ: { category: Slug; question: string; formerQuestions?: string[]; answerMd: string; keywords: string[] }[] = [
   {
     category: 'about',
-    question: 'ما هو المجلس البلدي الشبابي؟',
+    question: 'ما هو المجلس الشبابي البلدي - رفح؟',
+    formerQuestions: ['ما هو المجلس البلدي الشبابي؟'],
     answerMd: 'مجلس من شباب رفح يعمل مع البلدية لإيصال صوت الشباب: يستقبل شكاواهم وأفكارهم، وتعمل عليها تسع لجان متخصصة، وتُنشر نتائج عمله للعامة في [صفحة الشفافية](/transparency).',
-    keywords: ['المجلس', 'المجلس البلدي الشبابي', 'من انتم', 'تعريف'],
+    keywords: ['المجلس', 'المجلس الشبابي البلدي', 'المجلس البلدي الشبابي', 'من انتم', 'تعريف'],
   },
   {
     category: 'about',
@@ -96,7 +98,7 @@ export async function seedFaq(db: PrismaClient) {
     ids.set(c.slug, row.id);
   }
   for (const f of BASE_FAQ) {
-    const exists = await db.faqEntry.findFirst({ where: { question: f.question }, select: { id: true } });
+    const exists = await db.faqEntry.findFirst({ where: { question: { in: [f.question, ...(f.formerQuestions ?? [])] } }, select: { id: true } });
     if (exists) continue;
     await db.faqEntry.create({
       data: { categoryId: ids.get(f.category)!, question: f.question, answerMd: f.answerMd, keywords: f.keywords },

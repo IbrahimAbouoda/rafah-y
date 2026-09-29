@@ -1,6 +1,8 @@
 // مسودة Concept Note من قالب ثابت — AC-12. بلا ذكاء اصطناعي (C16 · §10): النص من بيانات الاستطلاع وحدها،
 // والأرقام من قاعدة البيانات لا مولَّدة. تبدأ DRAFT دائمًا، ولا تُرسل قبل اعتماد الرئيس (C15).
 
+import { COUNCIL_NAME_AR } from '@/lib/config';
+
 export function conceptNoteDraft(input: {
   pollTitle: string;
   pollDescription: string | null;
@@ -16,7 +18,7 @@ export function conceptNoteDraft(input: {
     `# ${title}`,
     '',
     '## الخلفية',
-    `طرح المجلس البلدي الشبابي في رفح استطلاع «${input.pollTitle}» على شباب المنصة لتحديد مجالات التدريب الأكثر طلبًا.`,
+    `طرح ${COUNCIL_NAME_AR} استطلاع «${input.pollTitle}» على شباب المنصة لتحديد مجالات التدريب الأكثر طلبًا.`,
     ...(input.pollDescription ? ['', input.pollDescription] : []),
     '',
     '## الطلب الموثّق',

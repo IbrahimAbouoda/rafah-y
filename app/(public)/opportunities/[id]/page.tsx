@@ -12,6 +12,7 @@ import { PageHeader } from '@/components/shared/page-header';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Button } from '@/components/ui/button';
 import { Alert, Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
+import { COUNCIL_NAME_AR } from '@/lib/config';
 
 export const metadata: Metadata = { title: 'فرصة' };
 export const dynamic = 'force-dynamic';
@@ -53,7 +54,7 @@ export default async function OpportunityPage({ params }: { params: Promise<{ id
         })
       : null;
   const blocker = applyBlocker(o);
-  const recipient = o.organization?.name ?? 'المجلس البلدي الشبابي';
+  const recipient = o.organization?.name ?? COUNCIL_NAME_AR;
 
   return (
     <>
