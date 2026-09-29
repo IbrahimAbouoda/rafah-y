@@ -22,6 +22,9 @@ export const EDITABLE_ACTIVITY_STATUSES: ActivityStatus[] = ['DRAFT', 'PUBLISHED
 export const PUBLIC_ACTIVITY_STATUSES: ActivityStatus[] = ['PUBLISHED', 'COMPLETED'];
 
 /** يشغل مقعدًا: المسجّل والحاضر. قائمة الانتظار والغائب والملغى لا */
+/** الأنشطة القادمة المعروضة للعامة — /activities و«آخر المستجدات» في الرئيسية */
+export const upcomingActivityWhere = (now = new Date()) => ({ status: 'PUBLISHED' as const, startsAt: { gte: now } });
+
 export const SEAT_HOLDING: RegistrationStatus[] = ['REGISTERED', 'ATTENDED'];
 
 /**

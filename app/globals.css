@@ -26,12 +26,13 @@
   --danger: #b42318;
   --danger-soft: #fdecea;
 
-  --background: #fbfaf7;
+  /* محايدات slate: خلفية فاتحة مريحة ونص ثانوي slate-600 (تباين ≥ 4.5:1) */
+  --background: #f8fafc;
   --surface: #ffffff;
-  --foreground: #1b1f1d;
-  --muted: #f1efe9;
-  --muted-foreground: #5d6560;
-  --border: #e2ded4;
+  --foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #475569;
+  --border: #e2e8f0;
   --ring: #0b568f;
 }
 
@@ -53,12 +54,12 @@
   --danger: #f07b70;
   --danger-soft: #3a1512;
 
-  --background: #0f1412;
-  --surface: #161d1a;
-  --foreground: #e8ece9;
-  --muted: #1f2824;
-  --muted-foreground: #a0aba5;
-  --border: #2b3631;
+  --background: #0b1120;
+  --surface: #111a2e;
+  --foreground: #e2e8f0;
+  --muted: #1a2438;
+  --muted-foreground: #a4b0c3;
+  --border: #26324a;
   --ring: #6fb3e8;
 }
 
@@ -100,6 +101,23 @@
   --font-sans: var(--font-arabic), system-ui, sans-serif;
 }
 
+/* الحركة — CSS فقط، وتُستعمل عبر motion-safe: فتتوقف لمن طلب تقليل الحركة */
+@theme {
+  --animate-page-in: page-in 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes page-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    /* none لا translateY(0): لا يبقى transform يحبس العناصر الثابتة داخل الصفحة */
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
 @layer base {
   * {
     border-color: var(--border);
@@ -110,10 +128,25 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
+  /* تسلسل الأوزان: IBM Plex Sans Arabic أثقل أوزانه 700، فالعناوين الرئيسية والفرعية 700 */
+  h1,
+  h2 {
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  h3,
+  h4 {
+    font-weight: 600;
+  }
   :focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
   }
+}
+
+/* القائمة الجانبية على الجوال (<dialog>) تمنع تمرير الصفحة خلفها */
+html:has(dialog[open]) {
+  overflow: hidden;
 }
 
 /* الأيقونات الاتجاهية تنعكس في RTL (PRD §12) */

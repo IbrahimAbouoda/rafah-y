@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { db } from '@/lib/db';
 import type { OpportunityType } from '@/lib/generated/prisma/enums';
-import { OPPORTUNITY_TYPE_LABELS } from '@/lib/opportunities/workflow';
+import { OPPORTUNITY_TYPE_LABELS, openOpportunityWhere } from '@/lib/opportunities/workflow';
 import { OPPORTUNITY_TYPES } from '@/lib/validation/opportunities';
 import { formatDate } from '@/lib/utils';
 import { PageHeader } from '@/components/shared/page-header';
@@ -18,7 +18,7 @@ export default async function OpportunitiesPage({ searchParams }: { searchParams
   const type = OPPORTUNITY_TYPES.includes(raw as OpportunityType) ? (raw as OpportunityType) : undefined;
   const now = new Date();
   const opportunities = await db.opportunity.findMany({
-    where: { status: 'PUBLISHED', OR: [{ deadline: null }, { deadline: { gte: now } }], ...(type ? { type } : {}) },
+    where: { ...openOpportunityWhere(now), ...(type ? { type } : {}) },
     orderBy: [{ deadline: { sort: 'asc', nulls: 'last' } }, { publishedAt: 'desc' }],
     take: 100,
     select: {

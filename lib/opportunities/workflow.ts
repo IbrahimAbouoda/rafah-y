@@ -30,6 +30,12 @@ export function publishBlocker(o: { deadline: Date | null }, now = new Date()): 
 }
 
 /** إغلاق فرصة منشورة — من المؤسسة صاحبتها أو ممن يملك opportunities:publish */
+/** مرآة isOpenOpportunity في الاستعلام — /opportunities و«آخر المستجدات» في الرئيسية */
+export const openOpportunityWhere = (now = new Date()) => ({
+  status: 'PUBLISHED' as const,
+  OR: [{ deadline: null }, { deadline: { gte: now } }],
+});
+
 export const CLOSABLE_OPPORTUNITY_STATUSES: OpportunityStatus[] = ['PUBLISHED'];
 
 /**

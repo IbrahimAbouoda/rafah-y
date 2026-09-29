@@ -129,7 +129,8 @@ export function StatusBadge({ kind, status, size = 'sm' }: { kind: string; statu
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-full font-medium whitespace-nowrap',
+        // حبّة بخلفية ناعمة وحدّ خفيف بلون النص نفسه
+        'inline-flex items-center gap-1 rounded-full font-medium whitespace-nowrap ring-1 ring-current/20 ring-inset',
         size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-2.5 py-1 text-sm',
         tone.className,
       )}

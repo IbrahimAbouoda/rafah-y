@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { CircleCheck, Hourglass, Target } from 'lucide-react';
 import { db } from '@/lib/db';
 import { OFFERABLE_INITIATIVE_STATUSES, OPEN_NEED_STATUSES } from '@/lib/initiatives/workflow';
 import { memberOrganizationIds } from '@/lib/organizations';
@@ -37,9 +38,9 @@ export default async function PartnerHome() {
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <StatTile label="احتياجات مفتوحة" value={openNeeds} tone="brand" href="/partner/needs" />
-            <StatTile label="عروض بانتظار القرار" value={pending} tone="warning" href="/partner/offers" />
-            <StatTile label="عروض مقبولة" value={accepted} tone="success" href="/partner/offers" />
+            <StatTile label="احتياجات مفتوحة" value={openNeeds} tone="brand" icon={Target} href="/partner/needs" />
+            <StatTile label="عروض بانتظار القرار" value={pending} tone="warning" icon={Hourglass} href="/partner/offers" />
+            <StatTile label="عروض مقبولة" value={accepted} tone="success" icon={CircleCheck} href="/partner/offers" />
           </div>
           <Card className="mt-5">
             <CardHeader>

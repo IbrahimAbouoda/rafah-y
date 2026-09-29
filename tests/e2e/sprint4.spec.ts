@@ -81,7 +81,8 @@ test('فرصة من مؤسسة ← نشر أمين السر ← تقديم بم�
   // 2) أمين السر ينشرها
   const secretary = await accountPage(browser, `أمين-سر-${tag}`, 'secretary');
   await secretary.page.goto('/admin/opportunities');
-  const card = secretary.page.locator('div.rounded-xl').filter({ hasText: title }).first();
+  // البطاقة بدورها واسمها لا بصنف CSS — تغيّر الشكل لا يكسر الاختبار
+  const card = secretary.page.getByRole('article', { name: title });
   await card.getByRole('button', { name: 'نشر الفرصة' }).click();
   await expect(secretary.page.getByText('نُشرت الفرصة')).toBeVisible({ timeout: 45_000 });
 

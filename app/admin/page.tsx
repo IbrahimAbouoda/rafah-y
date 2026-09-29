@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { CircleCheck, FolderOpen, Hourglass, Inbox, ListFilter } from 'lucide-react';
 import { readableComplaints } from '@/lib/complaints/queries';
 import { OPEN_STATUSES } from '@/lib/complaints/workflow';
 import { db } from '@/lib/db';
@@ -44,20 +45,21 @@ export default async function AdminHome() {
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
           {triage ? (
             <>
-              <StatTile label="وارد جديد" value={newCount} tone="brand" href="/admin/inbox" meta="بانتظار فتحه للفرز" />
-              <StatTile label="قيد الفرز" value={reviewing} href="/admin/inbox" meta="بانتظار اختيار لجنة" />
+              <StatTile label="وارد جديد" value={newCount} tone="brand" icon={Inbox} href="/admin/inbox" meta="بانتظار فتحه للفرز" />
+              <StatTile label="قيد الفرز" value={reviewing} icon={ListFilter} href="/admin/inbox" meta="بانتظار اختيار لجنة" />
             </>
           ) : null}
           {readScope ? (
             <>
-              <StatTile label="شكاوى مفتوحة" value={open} href="/admin/complaints?status=open" />
+              <StatTile label="شكاوى مفتوحة" value={open} icon={FolderOpen} href="/admin/complaints?status=open" />
               <StatTile
                 label="محوّلة بانتظار اللجنة"
                 value={awaitingCommittee}
                 tone="warning"
+                icon={Hourglass}
                 href="/admin/complaints?status=ASSIGNED"
               />
-              <StatTile label="حُلّت خلال 30 يومًا" value={resolved30} tone="success" href="/admin/complaints?status=RESOLVED" />
+              <StatTile label="حُلّت خلال 30 يومًا" value={resolved30} tone="success" icon={CircleCheck} href="/admin/complaints?status=RESOLVED" />
             </>
           ) : null}
         </div>

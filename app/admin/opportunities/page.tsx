@@ -58,10 +58,13 @@ export default async function AdminOpportunitiesPage() {
           pending.map((o) => {
             const expired = publishBlocker(o);
             return (
-              <Card key={o.id} className="flex flex-col gap-3 p-4">
+              // بطاقة لكل فرصة باسمها — تُعرف بدورها لا بشكلها (القارئ الشاشي واختبارات E2E)
+              <Card key={o.id} role="article" aria-labelledby={`pending-${o.id}`} className="flex flex-col gap-3 p-4">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <span className="flex flex-col gap-0.5">
-                    <span className="font-semibold">{o.title}</span>
+                    <span id={`pending-${o.id}`} className="font-semibold">
+                      {o.title}
+                    </span>
                     <span className="text-xs text-muted-foreground">
                       {OPPORTUNITY_TYPE_LABELS[o.type]} · {o.organization?.name} · أرسلها {o.createdBy.fullName} · {formatDate(o.createdAt)}
                     </span>

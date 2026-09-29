@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { FilePlus2, Search } from 'lucide-react';
+import { Bell, CircleCheck, FilePlus2, FolderOpen, Search } from 'lucide-react';
 import { OPEN_STATUSES } from '@/lib/complaints/workflow';
 import { db } from '@/lib/db';
 import { guardPage } from '@/lib/page-guard';
@@ -27,9 +27,9 @@ export default async function MePage() {
     <>
       <PageHeader title={`أهلًا ${user.fullName}`} description="من هنا تقدّم شكواك وتتابعها وتصلك تحديثاتها." />
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <StatTile label="شكاوى قيد المعالجة" value={open} href="/me/complaints" tone="brand" />
-        <StatTile label="شكاوى حُلّت" value={resolved} href="/me/complaints" tone="success" />
-        <StatTile label="إشعارات غير مقروءة" value={unread} href="/me/notifications" />
+        <StatTile label="شكاوى قيد المعالجة" value={open} href="/me/complaints" tone="brand" icon={FolderOpen} />
+        <StatTile label="شكاوى حُلّت" value={resolved} href="/me/complaints" tone="success" icon={CircleCheck} />
+        <StatTile label="إشعارات غير مقروءة" value={unread} href="/me/notifications" icon={Bell} />
       </div>
 
       <div className="mt-5 grid gap-4 md:grid-cols-2">

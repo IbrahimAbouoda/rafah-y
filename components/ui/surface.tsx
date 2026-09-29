@@ -1,15 +1,19 @@
 import { cn } from '@/lib/utils';
 
 export function Card({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div className={cn('rounded-xl border bg-surface', className)} {...props} />;
+  return <div className={cn('rounded-2xl border bg-surface shadow-xs', className)} {...props} />;
 }
+
+/** بطاقة قابلة للنقر (داخل رابط): ارتفاع خفيف وظل عند التحويم — يتوقف الارتفاع لمن طلب تقليل الحركة */
+export const interactiveCard =
+  'transition-all duration-200 hover:border-brand/30 hover:shadow-md motion-safe:hover:-translate-y-0.5';
 
 export function CardHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return <div className={cn('flex flex-col gap-1 p-4 sm:p-5', className)} {...props} />;
 }
 
 export function CardTitle({ className, ...props }: React.ComponentProps<'h2'>) {
-  return <h2 className={cn('text-base font-semibold', className)} {...props} />;
+  return <h2 className={cn('text-base font-bold', className)} {...props} />;
 }
 
 export function CardDescription({ className, ...props }: React.ComponentProps<'p'>) {

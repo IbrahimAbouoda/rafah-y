@@ -1,58 +1,35 @@
 import Link from 'next/link';
+import { getCurrentUser } from '@/lib/auth';
+import { landingPath } from '@/lib/nav';
 import { BrandMark } from '@/components/shared/brand-mark';
 import { FlashProvider } from '@/components/shared/flash';
+import { PublicNav } from '@/components/shared/public-nav';
 import { SiteFooter } from '@/components/shared/site-footer';
-import { ThemeToggle } from '@/components/shared/theme-toggle';
+import { StickyHeader } from '@/components/shared/sticky-header';
 
-// الصفحات العامة — بلا تسجيل دخول (PRD §11.1). الروابط هنا لمسارات منفَّذة فقط.
-export default function PublicLayout({ children }: { children: React.ReactNode }) {
+// الصفحات العامة — بلا تسجيل دخول (PRD §11.1). الروابط من lib/public-nav.ts (مسارات منفَّذة فقط).
+export default async function PublicLayout({ children }: { children: React.ReactNode }) {
+  // تعذّر قراءة الجلسة لا يكسر الصفحات العامة: يظهر «دخول» فقط
+  const user = await getCurrentUser().catch(() => null);
+  const account = user ? { href: landingPath(user), label: 'لوحتي' } : { href: '/login', label: 'دخول' };
   return (
     <div className="flex min-h-[calc(100dvh-1.5rem)] flex-col">
-      <header className="border-b bg-surface">
-        <div className="mx-auto flex h-14 max-w-4xl items-center gap-3 px-4">
-          <Link href="/" className="shrink-0">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:start-2 focus:top-2 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-3 focus:py-2"
+      >
+        تخطَّ إلى المحتوى
+      </a>
+      <StickyHeader>
+        <div className="mx-auto flex h-16 max-w-5xl items-center gap-2 px-4">
+          <Link href="/" className="min-w-0 shrink">
             <BrandMark />
           </Link>
-          <nav aria-label="روابط عامة" className="ms-auto flex items-center gap-0.5 overflow-x-auto text-sm">
-            <Link href="/initiatives" className="rounded-lg px-2 py-1.5 hover:bg-muted">
-              المبادرات
-            </Link>
-            <Link href="/support" className="hidden rounded-lg px-2 py-1.5 hover:bg-muted sm:inline">
-              ادعمنا
-            </Link>
-            <Link href="/ideas" className="rounded-lg px-2 py-1.5 hover:bg-muted">
-              الأفكار
-            </Link>
-            <Link href="/opportunities" className="rounded-lg px-2 py-1.5 hover:bg-muted">
-              الفرص
-            </Link>
-            <Link href="/activities" className="rounded-lg px-2 py-1.5 hover:bg-muted">
-              الأنشطة
-            </Link>
-            <Link href="/committees" className="hidden rounded-lg px-2 py-1.5 hover:bg-muted sm:inline">
-              اللجان
-            </Link>
-            <Link href="/help" className="rounded-lg px-2 py-1.5 hover:bg-muted">
-              مساعدة
-            </Link>
-            <Link href="/transparency" className="hidden rounded-lg px-2 py-1.5 hover:bg-muted sm:inline">
-              الشفافية
-            </Link>
-            <Link href="/track" className="rounded-lg px-2 py-1.5 hover:bg-muted">
-              تتبّع شكوى
-            </Link>
-            <Link href="/complaints/public-new" className="rounded-lg px-2 py-1.5 hover:bg-muted">
-              تقديم شكوى
-            </Link>
-            <Link href="/login" className="rounded-lg px-2 py-1.5 hover:bg-muted">
-              دخول
-            </Link>
-            <ThemeToggle />
-          </nav>
+          <PublicNav account={account} />
         </div>
-      </header>
+      </StickyHeader>
       {/* نتيجة الإجراء تبقى ظاهرة حين يتغيّر النموذج نفسه بعد النجاح (التقديم على فرصة، التسجيل في نشاط) */}
-      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-6">
+      <main id="main" className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:py-8">
         <FlashProvider>{children}</FlashProvider>
       </main>
       <SiteFooter />

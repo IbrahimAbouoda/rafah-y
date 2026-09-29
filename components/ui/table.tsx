@@ -8,8 +8,10 @@ export function Table({ className, ...props }: React.ComponentProps<'table'>) {
   );
 }
 
-export const THead = (p: React.ComponentProps<'thead'>) => <thead className="bg-muted/60 text-muted-foreground" {...p} />;
-export const TBody = (p: React.ComponentProps<'tbody'>) => <tbody className="divide-y" {...p} />;
+export const THead = ({ className, ...p }: React.ComponentProps<'thead'>) => (
+  <thead className={cn('bg-muted/60 text-muted-foreground', className)} {...p} />
+);
+export const TBody = ({ className, ...p }: React.ComponentProps<'tbody'>) => <tbody className={cn('divide-y', className)} {...p} />;
 export const TR = ({ className, ...p }: React.ComponentProps<'tr'>) => <tr className={cn('align-top', className)} {...p} />;
 export const TH = ({ className, ...p }: React.ComponentProps<'th'>) => (
   <th className={cn('px-3 py-2 text-start font-medium whitespace-nowrap', className)} {...p} />

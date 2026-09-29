@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { Loader2, Search, Send } from 'lucide-react';
+import { Loader2, MessageSquare, Search, Send } from 'lucide-react';
 import { Markdown } from '@/lib/markdown';
 import { askBotAction, markUnhelpfulAction, sendInquiryAction, type BotResult } from '@/server/actions/support';
 import { Button } from '@/components/ui/button';
@@ -69,92 +69,122 @@ export function SupportBotWidget({
       setStage({ kind: 'notFound', botQueryId: s.result.botQueryId, question: s.question, reason: 'unhelpful' });
     });
 
+  const asked = stage.kind === 'answered' || stage.kind === 'notFound' ? stage.question : '';
+
   return (
-    <Card className="flex flex-col gap-4 p-4" aria-live="polite">
-      {stage.kind !== 'sent' && !(faqEmpty && stage.kind === 'notFound') ? (
-        <form
-          role="search"
-          className="flex flex-col gap-2"
-          onSubmit={(e) => {
-            e.preventDefault();
-            ask(question);
-          }}
-        >
-          <Label htmlFor="bot-q">اسأل عن المجلس والمنصة</Label>
-          <div className="flex gap-2">
-            <Input
-              id="bot-q"
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              maxLength={500}
-              placeholder="مثال: كيف أتابع شكواي؟"
-              aria-invalid={error ? true : undefined}
-            />
-            <Button type="submit" disabled={pending} aria-busy={pending}>
-              {pending ? <Loader2 className="animate-spin" aria-hidden /> : <Search aria-hidden />}
-              اسأل
-            </Button>
-          </div>
-          {pending ? <p className="text-xs text-muted-foreground">جارٍ البحث في الأسئلة المعتمدة…</p> : null}
-          {error ? <Alert tone="danger">{error}</Alert> : null}
-        </form>
-      ) : null}
-
-      {stage.kind === 'idle' && suggestedQuestions.length > 0 ? (
-        <div className="flex flex-col gap-2">
-          <p className="text-xs text-muted-foreground">أسئلة شائعة:</p>
-          <div className="flex flex-wrap gap-2">
-            {suggestedQuestions.map((q) => (
-              <Button key={q} type="button" variant="outline" size="sm" disabled={pending} onClick={() => ask(q)}>
-                {q}
-              </Button>
-            ))}
-          </div>
+    <Card role="region" className="flex flex-col overflow-hidden" aria-labelledby="bot-title">
+      <div className="flex items-center gap-3 border-b bg-brand-soft px-4 py-3">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand text-brand-foreground">
+          <MessageSquare className="size-5" aria-hidden />
+        </span>
+        <div className="flex flex-col leading-tight">
+          <h2 id="bot-title" className="font-semibold">
+            مساعد الأسئلة
+          </h2>
+          <p className="text-xs text-muted-foreground">يجيب من أسئلة اعتمدها المجلس فقط — لا نصوص مولَّدة</p>
         </div>
-      ) : null}
+      </div>
+      <div className="flex flex-col gap-4 p-4" aria-live="polite">
+        {asked ? (
+          <p className="max-w-[85%] self-end rounded-2xl rounded-ee-sm bg-brand px-4 py-2 text-sm leading-6 text-brand-foreground">
+            <span className="sr-only">سؤالك: </span>
+            {asked}
+          </p>
+        ) : null}
 
-      {stage.kind === 'answered' ? (
-        <div className="flex flex-col gap-3">
-          {stage.result.answers.map((a, i) => (
-            <details key={a.id} open={i === 0} className="rounded-lg border p-3">
-              <summary className="cursor-pointer font-medium">{a.question}</summary>
-              <Markdown text={a.answerMd} className="mt-2 flex flex-col gap-2 text-sm leading-7" />
-            </details>
-          ))}
-          {stage.feedback === 'yes' ? (
-            <p className="text-sm text-success">سعدنا بإفادتك.</p>
-          ) : (
-            <div className="flex flex-wrap items-center gap-2 text-sm">
-              <span>هل أفادتك الإجابة؟</span>
-              <Button type="button" size="sm" variant="outline" onClick={() => setStage({ ...stage, feedback: 'yes' })}>
-                نعم
-              </Button>
-              <Button type="button" size="sm" variant="outline" disabled={pending} onClick={() => unhelpful(stage)}>
-                لا
+        {stage.kind !== 'sent' && !(faqEmpty && stage.kind === 'notFound') ? (
+          <form
+            role="search"
+            className="flex flex-col gap-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              ask(question);
+            }}
+          >
+            <Label htmlFor="bot-q">اسأل عن المجلس والمنصة</Label>
+            <div className="flex gap-2">
+              <Input
+                id="bot-q"
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                maxLength={500}
+                placeholder="مثال: كيف أتابع شكواي؟"
+                aria-invalid={error ? true : undefined}
+              />
+              <Button type="submit" disabled={pending} aria-busy={pending}>
+                {pending ? <Loader2 className="animate-spin" aria-hidden /> : <Search aria-hidden />}
+                اسأل
               </Button>
             </div>
-          )}
-        </div>
-      ) : null}
+            {pending ? <p className="text-xs text-muted-foreground">جارٍ البحث في الأسئلة المعتمدة…</p> : null}
+            {error ? <Alert tone="danger">{error}</Alert> : null}
+          </form>
+        ) : null}
 
-      {stage.kind === 'notFound' ? (
-        <SendForm
-          stage={stage}
-          isAuthenticated={isAuthenticated}
-          canSend={canSend}
-          faqEmpty={faqEmpty}
-          onSent={(message) => setStage({ kind: 'sent', message })}
-        />
-      ) : null}
+        {stage.kind === 'idle' && suggestedQuestions.length > 0 ? (
+          <div className="flex flex-col gap-2">
+            <p className="text-xs text-muted-foreground">أسئلة شائعة:</p>
+            <div className="flex flex-wrap gap-2">
+              {suggestedQuestions.map((q) => (
+                <Button
+                  key={q}
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-auto min-h-8 rounded-full py-1.5 whitespace-normal text-start hover:border-brand/40 hover:text-brand"
+                  disabled={pending}
+                  onClick={() => ask(q)}
+                >
+                  {q}
+                </Button>
+              ))}
+            </div>
+          </div>
+        ) : null}
 
-      {stage.kind === 'sent' ? (
-        <div className="flex flex-col gap-2">
-          <Alert tone="success">{stage.message}</Alert>
-          <Button type="button" variant="ghost" size="sm" className="self-start" onClick={() => setStage({ kind: 'idle' })}>
-            سؤال آخر
-          </Button>
-        </div>
-      ) : null}
+        {stage.kind === 'answered' ? (
+          <div className="flex flex-col gap-3">
+            {stage.result.answers.map((a, i) => (
+              <details key={a.id} open={i === 0} className="rounded-2xl rounded-es-sm border bg-muted/40 p-3">
+                <summary className="cursor-pointer font-medium">{a.question}</summary>
+                <Markdown text={a.answerMd} className="mt-2 flex flex-col gap-2 text-sm leading-7" />
+              </details>
+            ))}
+            {stage.feedback === 'yes' ? (
+              <p className="text-sm text-success">سعدنا بإفادتك.</p>
+            ) : (
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                <span>هل أفادتك الإجابة؟</span>
+                <Button type="button" size="sm" variant="outline" onClick={() => setStage({ ...stage, feedback: 'yes' })}>
+                  نعم
+                </Button>
+                <Button type="button" size="sm" variant="outline" disabled={pending} onClick={() => unhelpful(stage)}>
+                  لا
+                </Button>
+              </div>
+            )}
+          </div>
+        ) : null}
+
+        {stage.kind === 'notFound' ? (
+          <SendForm
+            stage={stage}
+            isAuthenticated={isAuthenticated}
+            canSend={canSend}
+            faqEmpty={faqEmpty}
+            onSent={(message) => setStage({ kind: 'sent', message })}
+          />
+        ) : null}
+
+        {stage.kind === 'sent' ? (
+          <div className="flex flex-col gap-2">
+            <Alert tone="success">{stage.message}</Alert>
+            <Button type="button" variant="ghost" size="sm" className="self-start" onClick={() => setStage({ kind: 'idle' })}>
+              سؤال آخر
+            </Button>
+          </div>
+        ) : null}
+      </div>
     </Card>
   );
 }

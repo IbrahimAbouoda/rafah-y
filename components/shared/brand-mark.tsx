@@ -6,9 +6,9 @@ import logo from '@/public/logo.png';
 export function BrandMark() {
   return (
     <span className="flex min-w-0 items-center gap-2">
-      <Image src={logo} alt="" width={36} height={36} priority className="size-9 shrink-0 rounded-md bg-white" />
+      <Image src={logo} alt="" width={40} height={40} priority className="size-10 shrink-0 rounded-xl bg-white p-0.5 shadow-xs ring-1 ring-border" />
       <span className="flex min-w-0 flex-col leading-tight">
-        <span className="text-lg font-bold text-brand">نبض رفح</span>
+        <span className="text-lg font-bold tracking-tight text-brand">نبض رفح</span>
         <span className="hidden truncate text-[11px] text-muted-foreground sm:block">{COUNCIL_NAME_AR}</span>
       </span>
     </span>

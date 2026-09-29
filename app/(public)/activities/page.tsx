@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ACTIVITY_KIND_LABELS, SEAT_HOLDING } from '@/lib/activities/workflow';
+import { ACTIVITY_KIND_LABELS, SEAT_HOLDING, upcomingActivityWhere } from '@/lib/activities/workflow';
 import { db } from '@/lib/db';
 import { formatDateTime } from '@/lib/utils';
 import { PageHeader } from '@/components/shared/page-header';
@@ -28,7 +28,7 @@ export default async function ActivitiesPage() {
     _count: { select: { registrations: { where: { status: { in: SEAT_HOLDING } } } } },
   } as const;
   const [upcoming, past] = await Promise.all([
-    db.activity.findMany({ where: { status: 'PUBLISHED', startsAt: { gte: now } }, orderBy: { startsAt: 'asc' }, take: 50, select }),
+    db.activity.findMany({ where: upcomingActivityWhere(now), orderBy: { startsAt: 'asc' }, take: 50, select }),
     db.activity.findMany({
       where: { OR: [{ status: 'COMPLETED' }, { status: 'PUBLISHED', startsAt: { lt: now } }] },
       orderBy: { startsAt: 'desc' },
