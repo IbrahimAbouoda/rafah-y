@@ -54,12 +54,15 @@ async function staff(browser: Browser, name: string, grant: string): Promise<Pag
 /**
  * صندوق الوارد مرتّب الأقدم أولًا بصفحات من 25 (لا تنتظر شكوى أطول من غيرها)، وقاعدة الاختبار المحلية تتراكم فيها
  * شكاوى التشغيلات السابقة — فالشكوى الجديدة قد تكون في صفحة لاحقة. نتنقّل بين الصفحات حتى نجدها.
+ * الصندوق بلا شريط بحث، وكل شكوى سطر-بطاقة يحمل رقمها المرجعي ورابط فتحها.
  */
 async function openFromInbox(page: Page, title: string, reference: string) {
   for (let n = 1; n <= 40; n++) {
     await page.goto(`/admin/inbox?page=${n}`);
-    const link = page.getByRole('link', { name: title }).filter({ hasText: reference });
-    if ((await link.count()) > 0) return link.click();
+    // المحتوى يُبث خلف Suspense ويبقى في عقدة مخفية بعد «load» حتى يكشفه React؛ count() لا ينتظر، فننتظر العنوان أولًا
+    await expect(page.getByRole('heading', { name: 'صندوق الوارد — الشكاوى' })).toBeVisible();
+    const card = page.getByRole('row').filter({ has: page.getByText(reference, { exact: true }) });
+    if ((await card.count()) > 0) return card.getByRole('link', { name: title }).click();
     if ((await page.getByRole('link', { name: 'التالية' }).count()) === 0) break;
   }
   throw new Error(`لم تظهر الشكوى ${reference} في أي صفحة من صندوق الوارد`);
