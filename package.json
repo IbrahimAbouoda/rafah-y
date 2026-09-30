@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/check-demo-gate.js",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -18,6 +19,7 @@
     "db:seed": "prisma db seed",
     "postinstall": "prisma generate",
     "admin:grant": "tsx scripts/grant-role.ts",
+    "admin:purge-demo": "tsx --conditions=react-server scripts/purge-demo.ts",
     "pdf:site": "tsx scripts/site-pdf.ts"
   },
   "dependencies": {

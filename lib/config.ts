@@ -11,6 +11,9 @@ export const isProduction = process.env.NODE_ENV === 'production';
 /** لجنة المؤسسات والشراكات: تظهر مسودات Concept Note في مهامها (AC-12) */
 export const PARTNERSHIPS_COMMITTEE_SLUG = 'organizations-partnerships';
 
+/** حساب العرض المعطّل صاحب بيانات العرض في البذرة — يُحذف مع بيانات isDemo (AC-20؛ User بلا isDemo) */
+export const DEMO_ACCOUNT_EMAIL = 'demo-ideas@example.invalid';
+
 /** الدور الذي يُمنح لممثل مؤسسة عند ربطه بها (D26) */
 export const PARTNER_ROLE_KEY = 'partner';
 

@@ -6,6 +6,7 @@ import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../lib/generated/prisma/client';
 import { formatAccessCode, generateAccessCode, hashAccessCode } from '../lib/complaints/access-code';
+import { DEMO_ACCOUNT_EMAIL } from '../lib/config';
 import { seedRbac, PERMISSIONS, ROLES } from './rbac.seed';
 import { BASE_FAQ, seedFaq } from './faq.seed';
 
@@ -148,7 +149,7 @@ export async function seedDemoComplaints(db: PrismaClient): Promise<{ reference:
 }
 
 // صاحب الأفكار التجريبية: حساب وهمي معطّل لا يدخل (isActive = false) — يُحذف مع بيانات isDemo في Sprint 6 (AC-20)
-const DEMO_SUBMITTER = { email: 'demo-ideas@example.invalid', fullName: 'حساب عرض تجريبي' };
+const DEMO_SUBMITTER = { email: DEMO_ACCOUNT_EMAIL, fullName: 'حساب عرض تجريبي' };
 
 const DEMO_IDEAS = [
   {

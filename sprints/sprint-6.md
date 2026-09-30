@@ -5,7 +5,7 @@
 | **الأسابيع** | 13–14 |
 | **الهدف** | نظام جاهز للإنتاج ومجرَّب مع المجلس |
 | **معيار الإنجاز** | أسبوع كامل من عمل المجلس داخل المنصة بلا قناة موازية |
-| **الحالة** | لم يبدأ |
+| **الحالة** | قيد التنفيذ — AC-20 منفّذ (2026-09-30) |
 
 ## الأسئلة الحاجبة (PRD §18)
 
@@ -34,7 +34,7 @@
 
 | Action | الصلاحية | سطر التدقيق |
 | --- | --- | --- |
-| `system/purgeDemoData` | `settings:manage` | `settings.change` |
+| `system/purgeDemoData` — ويُشغَّل بـ `npm run admin:purge-demo` | `settings:manage` | `settings.change` |
 
 ## معايير القبول
 
@@ -46,10 +46,22 @@
 - CI: فشل النشر عند وجود `isDemo = true` في الإنتاج.
 - إعادة تشغيل كل اختبارات E2E للسبرنتات 0–5 على بيئة مطابقة للإنتاج.
 
+## التقدّم
+
+| البند | الحالة |
+| --- | --- |
+| التشغيل: **أمر CLI** `npm run admin:purge-demo -- <email-or-phone> "احذف البيانات التجريبية"` (قرار 2026-09-30 — بلا صفحة، فلا تغيير في §11.2). المنفّذ حساب فعّال يملك `settings:manage` ويُسجَّل باسمه. بلا عبارة التأكيد يعرض ما سيُحذف ولا يحذف. يعمل بشرط `react-server` ليحمّل وحدات `lib/*` المحروسة بـ `server-only`. | ✅ |
+| المنطق المشترك `runDemoPurge()` في `lib/demo-data.ts`: `can(settings:manage)` ← معاملة واحدة: الحذف + سطر `settings.change` (`DemoData`/`purge`) بالأعداد قبل وبعد ومصدره (`cli`/`app`). يستعمله الأمر و `purgeDemoDataAction` (`server/actions/system`، بالتأكيد نفسه `DEMO_PURGE_CONFIRMATION`)، و `countDemoData()` يستعمله M10. | ✅ |
+| قاعدة الحذف: يُحذف ما ارتباطه بسجل عرض إلزامي (عروض الدعم، الشراكات، الاتفاقيات، طلبات الفرص، تسجيلات الأنشطة، وما عليه CASCADE)؛ السجل الحقيقي المرتبط اختياريًا يبقى ويُفرغ رابطه (SET NULL). المحذوف ناعمًا يُحذف فعليًا. | ✅ |
+| **حساب العرض** `demo-ideas@example.invalid` (`DEMO_ACCOUNT_EMAIL` في `lib/config.ts`، والبذرة تستعمله) يُحذف فعليًا بالبريد آخر المعاملة (قرار 2026-09-30 — بلا `isDemo` على `User`، فلا تغيير في النموذج). إن ربطه سجل حقيقي تُلغى العملية كلها برسالة عربية. | ✅ |
+| migration `20260930090000_audit_logs_row_trigger`: مشغّل الإلحاق فقط على `audit_logs` صار على مستوى السطر (و TRUNCATE بمشغّل جملة مستقل). قبله كان حذف **أي** مستخدم مستحيلًا: `actorId` عليه SET NULL فيصدر UPDATE يرفضه مشغّل الجملة ولو لم يطابق سطرًا. أسطر التدقيق ما زالت لا تُعدَّل ولا تُحذف (AC-19 ②)، وحذف منفّذ له أسطر ما زال يُرفض. يفيد Q13 لاحقًا. | ✅ |
+| `scripts/check-demo-gate.js` في `prebuild`: في الإنتاج (`APP_ENV`/`VERCEL_ENV=production`) يفشل عند `IS_DEMO`/`NEXT_PUBLIC_IS_DEMO=true`، أو سجل `isDemo` في النماذج الستة، أو تعذّر الاتصال بالقاعدة. | ✅ |
+| اختبارات: `tests/integration/purgeDemoData.test.ts` · `tests/unit/demo-gate.test.ts` · `tests/integration/database.test.ts` (حذف المستخدم مع مشغّل السطر، TRUNCATE) | ✅ |
+
 ## Definition of Done
 
 راجع PRD §17.
 
 ## Dependencies تقنية مُدخلة من خارج السبرنت
 
-_لا شيء بعد._
+- migration مشغّل `audit_logs` على مستوى السطر (أعلاه) — شرط لحذف حساب العرض، وكان سيعيق Q13 كذلك.

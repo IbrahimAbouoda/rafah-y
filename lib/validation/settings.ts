@@ -44,6 +44,18 @@ export const CategorySchema = z.object({
   sortOrder: intField('الترتيب رقم صحيح بين 0 و 1000.', 0, 1000),
 });
 
+/** AC-20: حذف بيانات العرض لا يعمل إلا بكتابة هذه العبارة حرفيًا */
+export const DEMO_PURGE_CONFIRMATION = 'احذف البيانات التجريبية';
+
+const purgeConfirmMessage = `للتأكيد اكتب العبارة كما هي: «${DEMO_PURGE_CONFIRMATION}».`;
+
+export const PurgeDemoSchema = z.object({
+  confirm: z
+    .string({ error: purgeConfirmMessage })
+    .trim()
+    .refine((v) => v === DEMO_PURGE_CONFIRMATION, purgeConfirmMessage),
+});
+
 export const AreaSchema = z.object({
   id: optionalUuid('المنطقة غير محددة.'),
   nameAr: z.string().trim().min(2, 'اكتب اسم المنطقة.').max(100, 'الاسم أطول من 100 محرف.'),
