@@ -102,7 +102,8 @@ export function AppShell({
       </StickyHeader>
       <div className="flex flex-col lg:flex-row">
         <Sidebar groups={nav} />
-        <main className="min-w-0 flex-1 p-4 sm:p-6">
+        {/* ارتفاع الشاشة ناقص الترويسة (h-14): التذييل تحت الطيّة فلا يقفز حين يُبث المحتوى (CLS · §1.4) */}
+        <main className="min-h-[calc(100dvh-3.5rem)] min-w-0 flex-1 p-4 sm:p-6">
           <FlashProvider>{children}</FlashProvider>
         </main>
       </div>

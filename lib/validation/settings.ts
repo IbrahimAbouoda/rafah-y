@@ -44,6 +44,21 @@ export const CategorySchema = z.object({
   sortOrder: intField('الترتيب رقم صحيح بين 0 و 1000.', 0, 1000),
 });
 
+/** Q13: محو حساب — نهائي، فلا يعمل إلا بكتابة هذه العبارة حرفيًا */
+export const ERASE_ACCOUNT_CONFIRMATION = 'احذف الحساب نهائيًا';
+const eraseConfirmMessage = `للتأكيد اكتب العبارة كما هي: «${ERASE_ACCOUNT_CONFIRMATION}».`;
+const eraseConfirm = z
+  .string({ error: eraseConfirmMessage })
+  .trim()
+  .refine((v) => v === ERASE_ACCOUNT_CONFIRMATION, eraseConfirmMessage);
+
+export const DeleteMyAccountSchema = z.object({ confirm: eraseConfirm });
+
+export const AnonymizeUserSchema = z.object({
+  userId: z.uuid('المستخدم غير محدد. أعد فتح صفحة المستخدم.'),
+  confirm: eraseConfirm,
+});
+
 /** AC-20: حذف بيانات العرض لا يعمل إلا بكتابة هذه العبارة حرفيًا */
 export const DEMO_PURGE_CONFIRMATION = 'احذف البيانات التجريبية';
 

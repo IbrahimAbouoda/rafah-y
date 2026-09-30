@@ -10,7 +10,7 @@ import { DEMO_ACCOUNT_EMAIL } from '../lib/config';
 import { seedRbac, PERMISSIONS, ROLES } from './rbac.seed';
 import { BASE_FAQ, seedFaq } from './faq.seed';
 
-// PRD §4.3
+// PRD §4.3 — الترتيب هو sortOrder. العاشرة بقرار D43 (2026-09-30).
 export const INITIAL_COMMITTEES = [
   { nameAr: 'لجنة التكنولوجيا والأنظمة الرقمية', slug: 'technology-digital-systems' },
   { nameAr: 'لجنة الأنشطة والمبادرات', slug: 'activities-initiatives' },
@@ -21,6 +21,11 @@ export const INITIAL_COMMITTEES = [
   { nameAr: 'لجنة العلاقات العامة والإعلام', slug: 'public-relations-media' },
   { nameAr: 'اللجنة الصحية', slug: 'health-affairs' },
   { nameAr: 'لجنة الدعم اللوجستي', slug: 'logistical-support' },
+  {
+    nameAr: 'لجنة التدريب والتطوير',
+    slug: 'training-development',
+    mandate: 'تنظيم الورش التدريبية، المحاضرات التثقيفية، والدورات التأهيلية لبناء وتطوير قدرات الشباب والكوادر.',
+  },
 ] as const;
 
 // D32: قائمة المهارات المرجعية — في الإنتاج أيضًا (لا مسار لإدارتها في §11.2 بعد).

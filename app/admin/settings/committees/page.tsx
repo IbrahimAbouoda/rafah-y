@@ -32,7 +32,7 @@ export default async function CommitteesPage({ searchParams }: { searchParams: P
         <DataTable
           rows={committees}
           rowKey={(c) => c.id}
-          empty={{ title: 'لا لجان بعد', hint: 'أضف اللجنة الأولى من النموذج، أو شغّل البذرة لتحميل اللجان التسع.' }}
+          empty={{ title: 'لا لجان بعد', hint: 'أضف اللجنة الأولى من النموذج، أو شغّل البذرة لتحميل لجان المجلس الأساسية.' }}
           columns={[
             {
               key: 'name',

@@ -92,7 +92,7 @@ export default function HomePage() {
             <p className="text-lg font-semibold sm:text-xl">صوت الشباب... فكرة تتحول إلى أثر</p>
           </div>
           <p className="max-w-xl text-base leading-8 text-muted-foreground">
-            منصة {COUNCIL_NAME_AR}: شكاوى الشباب وأفكارهم ومبادراتهم تدخل بمسار موثّق، تعمل عليها تسع لجان، وتُنشر نتائجها للجميع.
+            منصة {COUNCIL_NAME_AR}: شكاوى الشباب وأفكارهم ومبادراتهم تدخل بمسار موثّق، تعمل عليها لجان متخصصة، وتُنشر نتائجها للجميع.
           </p>
           <div className="flex flex-wrap gap-3">
             <Button asChild size="lg">

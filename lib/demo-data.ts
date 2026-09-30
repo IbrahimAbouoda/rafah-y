@@ -2,8 +2,8 @@ import 'server-only';
 import { writeAudit } from '@/lib/audit';
 import { DEMO_ACCOUNT_EMAIL } from '@/lib/config';
 import type { Db, Tx } from '@/lib/db';
+import { isReferencedError } from '@/lib/db-errors';
 import { conflict, forbidden } from '@/lib/errors';
-import { Prisma } from '@/lib/generated/prisma/client';
 import { can, type SessionUser } from '@/lib/rbac';
 
 // AC-20 · M10 — بيانات العرض تحمل isDemo على ستة نماذج فقط (PRD §4.1) وتُحذف كلها قبل الإطلاق،
@@ -95,19 +95,6 @@ export async function purgeDemoData(tx: Tx) {
     );
   }
   return { deleted, dependents, demoAccount };
-}
-
-/**
- * سجل حقيقي يمنع حذف الحساب: RESTRICT (23001) أو مفتاح أجنبي (23503)، أو سطر تدقيق يمنع إفراغَ منفّذه
- * (audit_logs_append_only · 42501). Prisma يغلّف رمز Postgres برموز تختلف حسب المحوّل، فالعبرة بالرمز الأصلي.
- */
-const REFERENCED_CODES = new Set(['23001', '23503', '42501']);
-
-function isReferencedError(e: unknown): boolean {
-  if (!(e instanceof Prisma.PrismaClientKnownRequestError)) return false;
-  const meta = e.meta as { driverAdapterError?: { cause?: { originalCode?: string } } } | undefined;
-  const code = meta?.driverAdapterError?.cause?.originalCode;
-  return code ? REFERENCED_CODES.has(code) : /Code: `(23001|23503|42501)`/.test(e.message);
 }
 
 /**

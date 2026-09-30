@@ -17,3 +17,6 @@ supabase/.temp/
 
 # لقطات PDF من scripts/site-pdf.ts
 exports/
+
+# نسخ احتياطية — فيها بيانات شخصية، لا تُرفع أبدًا (docs/ops/backup-and-restore.md)
+backups/

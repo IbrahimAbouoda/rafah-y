@@ -28,6 +28,9 @@ export type AuditAction =
   | 'role.assign'
   | 'role.revoke'
   | 'term.change'
+  // محو الحساب (Sprint 6 · Q13 — قرار 2026-09-30): حذف فعلي لحساب بلا أثر، وإلا تجهيل
+  | 'user.delete'
+  | 'user.anonymize'
   | 'settings.change'
   | 'faq.create'
   | 'faq.update'

@@ -17,7 +17,7 @@ export default async function PublicCommitteesPage() {
   });
   return (
     <>
-      <PageHeader title="لجان المجلس" description="تسع لجان تعمل على شكاوى الشباب وأفكارهم ومبادراتهم، كلٌّ في مجالها." />
+      <PageHeader title="لجان المجلس" description="لجان متخصصة تعمل على شكاوى الشباب وأفكارهم ومبادراتهم، كلٌّ في مجالها." />
       {committees.length === 0 ? (
         <Card>
           <EmptyState title="لا لجان منشورة بعد" hint="تظهر اللجان هنا حين يضيفها المجلس." />

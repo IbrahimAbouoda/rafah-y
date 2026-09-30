@@ -14,6 +14,9 @@
   --brand-soft: #e7f0f7;
   --accent: #3e8e28; /* أخضر المجلس — ثانوي */
   --accent-foreground: #ffffff;
+  /* تعبئة خضراء تحمل نصًا: أبيض على --accent = 4.11 (دون AA)، فالأخضر الداكن الرسمي (D40) = 6.94 */
+  --accent-solid: #2c661d;
+  --accent-solid-foreground: #ffffff;
   --alert: #c81d25; /* أحمر المجلس — للتنبيه */
   --alert-foreground: #ffffff;
 
@@ -34,6 +37,8 @@
   --muted: #f1f5f9;
   --muted-foreground: #475569;
   --border: #e2e8f0;
+  /* حدود الحقول: ≥ 3:1 مقابل background و surface و muted (WCAG 1.4.11). --border زخرفي ولا يلزمه ذلك */
+  --input: #7c8799;
   --ring: #0b568f;
 }
 
@@ -43,6 +48,8 @@
   --brand-soft: #0f2a40;
   --accent: #6cc04f;
   --accent-foreground: #0d2107;
+  --accent-solid: #6cc04f;
+  --accent-solid-foreground: #0d2107;
   --alert: #f0676e;
   --alert-foreground: #2a0507;
 
@@ -62,6 +69,7 @@
   --muted: #1a2438;
   --muted-foreground: #a4b0c3;
   --border: #26324a;
+  --input: #64748b;
   --ring: #6fb3e8;
 }
 
@@ -71,6 +79,8 @@
   --color-brand-soft: var(--brand-soft);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-accent-solid: var(--accent-solid);
+  --color-accent-solid-foreground: var(--accent-solid-foreground);
   --color-alert: var(--alert);
   --color-alert-foreground: var(--alert-foreground);
   --color-success: var(--success);
@@ -88,6 +98,7 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
+  --color-input: var(--input);
   --color-ring: var(--ring);
 
   /* ألوان الشعار الرسمية — ثابتة في الوضعين (bg-council-blue · text-council-green-dark …) */

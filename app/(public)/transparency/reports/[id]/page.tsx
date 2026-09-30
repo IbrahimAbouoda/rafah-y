@@ -6,7 +6,8 @@ import { parseSnapshot } from '@/lib/reports/metrics';
 import { formatDate, formatDateTime } from '@/lib/utils';
 import { PERIOD_LABELS } from '@/lib/validation/reports';
 import { PageHeader } from '@/components/shared/page-header';
-import { MetricTiles, ReportSummary, TrendCharts } from '@/components/shared/report-snapshot';
+import { MetricTiles, ReportSummary } from '@/components/shared/report-snapshot';
+import { TrendCharts } from '@/components/shared/trend-charts';
 import { Button } from '@/components/ui/button';
 import { Alert, Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
 
