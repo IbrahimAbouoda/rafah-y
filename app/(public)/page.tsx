@@ -33,7 +33,7 @@ export const dynamic = 'force-dynamic';
 type Tone = 'brand' | 'accent' | 'alert';
 const TINT: Record<Tone, string> = {
   brand: 'bg-brand/10 text-brand',
-  accent: 'bg-accent/10 text-accent',
+  accent: 'bg-accent/10 text-council-green-dark dark:text-accent',
   alert: 'bg-alert/10 text-alert',
 };
 

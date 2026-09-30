@@ -9,7 +9,7 @@ import { Table, TBody, TD, TH, THead, TR } from '@/components/ui/table';
 export const metadata: Metadata = { title: 'الأدوار وصلاحياتها' };
 
 const SCOPE_LABEL = { ALL: 'الكل', COMMITTEE: 'لجنة', OWN: 'خاص' } as const;
-const SCOPE_CLASS = { ALL: 'text-brand font-medium', COMMITTEE: 'text-accent font-medium', OWN: 'text-info' } as const;
+const SCOPE_CLASS = { ALL: 'text-brand font-medium', COMMITTEE: 'text-council-green-dark dark:text-accent font-medium', OWN: 'text-info' } as const;
 
 // المصفوفة تُقرأ من قاعدة البيانات لا من الكود: ما يُعرض هنا هو ما يُطبَّق فعلًا.
 export default async function RolesPage() {

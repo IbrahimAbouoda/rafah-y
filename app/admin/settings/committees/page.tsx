@@ -28,7 +28,7 @@ export default async function CommitteesPage({ searchParams }: { searchParams: P
         title="اللجان"
         description="اللجنة سجل بيانات: تُضاف لجنة جديدة من هنا بلا تعديل في الكود. تعطيل لجنة يخفيها من قوائم التعيين والتحويل ولا يحذف تاريخها."
       />
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
         <DataTable
           rows={committees}
           rowKey={(c) => c.id}

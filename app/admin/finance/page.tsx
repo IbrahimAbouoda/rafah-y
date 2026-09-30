@@ -71,7 +71,7 @@ export default async function FinancePage() {
         </Card>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
         <DataTable
           rows={records}
           rowKey={(r) => r.id}

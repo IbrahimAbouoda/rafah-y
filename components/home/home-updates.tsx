@@ -6,7 +6,7 @@ import { EmptyState } from '@/components/shared/states';
 import { Alert, Card, Skeleton } from '@/components/ui/surface';
 
 const KINDS: Record<UpdateKind, { label: string; date: string; icon: LucideIcon; tint: string }> = {
-  activity: { label: 'نشاط قادم', date: 'يبدأ', icon: CalendarDays, tint: 'bg-accent/10 text-accent' },
+  activity: { label: 'نشاط قادم', date: 'يبدأ', icon: CalendarDays, tint: 'bg-accent/10 text-council-green-dark dark:text-accent' },
   opportunity: { label: 'فرصة مفتوحة', date: 'نُشرت', icon: Briefcase, tint: 'bg-brand/10 text-brand' },
   report: { label: 'تقرير منشور', date: 'نُشر', icon: ChartColumn, tint: 'bg-brand/10 text-brand' },
 };

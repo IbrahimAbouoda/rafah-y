@@ -38,7 +38,7 @@ export default async function CategoriesPage({ searchParams }: { searchParams: P
         title="تصنيفات الشكاوى"
         description="يختار الشاب التصنيف عند تقديم الشكوى، ويقترح التصنيف لجنة افتراضية عند الفرز."
       />
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
         <DataTable
           rows={categories}
           rowKey={(c) => c.id}

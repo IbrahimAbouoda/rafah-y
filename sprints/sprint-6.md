@@ -58,6 +58,19 @@
 | `scripts/check-demo-gate.js` في `prebuild`: في الإنتاج (`APP_ENV`/`VERCEL_ENV=production`) يفشل عند `IS_DEMO`/`NEXT_PUBLIC_IS_DEMO=true`، أو سجل `isDemo` في النماذج الستة، أو تعذّر الاتصال بالقاعدة. | ✅ |
 | اختبارات: `tests/integration/purgeDemoData.test.ts` · `tests/unit/demo-gate.test.ts` · `tests/integration/database.test.ts` (حذف المستخدم مع مشغّل السطر، TRUNCATE) | ✅ |
 
+### المراجعة التقنية §6 · §1.4 · §12 (2026-09-30)
+
+| المحور | النتيجة |
+| --- | --- |
+| Server Actions | 89 إجراءً: 74 بـ `requireUser` + `requirePermission`؛ الـ 15 الباقية استثناءات موثّقة (الدخول والتسجيل بحد معدل، شكوى الزائر D21، الرفع بالرقم والرمز، الإشعارات بنطاق `userId`، البوت D36). **أُصلح:** `confirmUploadAction` كان يتحقق من الرمز بلا حد معدل (مسار تخمين موازٍ لـ `/track`) — صار له `uploadConfirm` 10/ساعة لكل IP، باختبار. |
+| الأسرار | لا قيمة سرية (service role، روابط القاعدة) في حزمة العميل `.next/static`؛ `NEXT_PUBLIC_*` = رابط Supabase ومفتاح anon فقط؛ `SERVICE_ROLE` في `lib/storage.ts` المحروس بـ `server-only`. |
+| القاعدة | RLS **مفعّل** على 61/61 جدولًا بلا أي policy، ولا صلاحيات لـ anon/authenticated؛ طلب REST بمفتاح anon ← 401. الحاوية خاصة (`public: false`). |
+| الرؤوس §6.10 | CSP بـ nonce، HSTS، nosniff، Referrer-Policy، X-Frame-Options DENY، Permissions-Policy — متحقَّق منها على استجابة حية. |
+| 360px | 57 صفحة (عامة، `/me`، `/admin`، وأول صفحة تفاصيل لكل قائمة): **0 تمرير أفقي** بعد الإصلاح. **أُصلح:** شبكات «محتوى + عمود جانبي» (22 في 21 ملفًا) بلا `grid-cols-1` كانت تتمدد بمحتواها على الجوال — ظهر في `/admin/settings/terms` (377px). `/partner/*` لم تُفحص (تحتاج ربط مؤسسة). |
+| RTL | لا أصناف فيزيائية. **أُصلح:** أسهم نقل المهام في Kanban كانت معكوسة (تقدّم ← يمينًا). |
+| الألوان والتباين | لا ألوان ثابتة خارج tokens إلا خلفية الشعار البيضاء والـ backdrop. **أُصلح:** نص الزر `destructive` في الداكن 2.70 ← `--danger-foreground` (6.92)؛ نص `text-accent` الصغير في الفاتح 4.11 ← `council-green-dark` (6.18). **معلّق لقرار (D40):** أبيض على `accent` 4.11 (زر `accent`، شريط «بيئة تجريبية»)، وحدود الحقول 1.2:1 أقل من 3:1 (WCAG 1.4.11). |
+| الوصول | 286 زرًا ورابطًا: كل زر أيقونة له اسم؛ `:focus-visible` عام بإطار `ring` (≥ 3:1 في الوضعين) ولا شيء يلغيه. |
+
 ## Definition of Done
 
 راجع PRD §17.

@@ -28,7 +28,7 @@ export default async function ProfilePage() {
         title="ملفي ومهاراتي"
         description="ملف مختصر يساعد الجهات على معرفة ما تجيده. لا نطلب رقم هوية ولا عنوانًا تفصيليًا ولا تاريخ ميلاد كاملًا."
       />
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
         <Card>
           <CardHeader>
             <CardTitle>بياناتي</CardTitle>

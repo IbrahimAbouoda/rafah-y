@@ -26,7 +26,7 @@ export default async function TermsPage() {
         title="دورات المجلس"
         description="دورة حالية واحدة فقط. بدء دورة جديدة يوقف أدوار المجلس واللجان في الدورة السابقة دون حذف أي بيان، فتبقى ذاكرة المجلس كاملة."
       />
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
         <DataTable
           rows={terms}
           rowKey={(t) => t.id}

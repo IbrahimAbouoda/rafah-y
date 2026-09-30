@@ -120,7 +120,7 @@ export default async function AdminInitiativePage({ params }: { params: Promise<
         </div>
       </PageHeader>
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
         <div className="flex flex-col gap-4">
           <Card>
             <CardHeader>

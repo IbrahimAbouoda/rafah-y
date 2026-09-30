@@ -93,7 +93,7 @@ async function InitiativesTab({ user }: { user: SessionUser }) {
       : [],
   ]);
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
       <DataTable
         rows={rows}
         rowKey={(r) => r.id}
@@ -181,7 +181,7 @@ async function DemandTab() {
     db.initiative.findMany({ where: { status: { notIn: ['CANCELLED', 'COMPLETED'] } }, select: { id: true, title: true } }),
   ]);
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div className="flex flex-col gap-3">
         {polls.length === 0 ? (
           <Card>

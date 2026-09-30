@@ -33,7 +33,7 @@ export default async function OrganizationsPage({ searchParams }: { searchParams
   return (
     <>
       <PageHeader title="سجل المؤسسات" description="المؤسسات الشريكة والمحتملة، ومرحلة كل شراكة، وآخر تواصل معها." />
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
         <DataTable
           rows={orgs}
           rowKey={(o) => o.id}

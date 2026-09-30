@@ -25,6 +25,7 @@
   --info-soft: #e6f0fa;
   --danger: #b42318;
   --danger-soft: #fdecea;
+  --danger-foreground: #ffffff;
 
   /* محايدات slate: خلفية فاتحة مريحة ونص ثانوي slate-600 (تباين ≥ 4.5:1) */
   --background: #f8fafc;
@@ -53,6 +54,7 @@
   --info-soft: #102538;
   --danger: #f07b70;
   --danger-soft: #3a1512;
+  --danger-foreground: #2a0507;
 
   --background: #0b1120;
   --surface: #111a2e;
@@ -79,6 +81,7 @@
   --color-info-soft: var(--info-soft);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
+  --color-danger-foreground: var(--danger-foreground);
   --color-background: var(--background);
   --color-surface: var(--surface);
   --color-foreground: var(--foreground);

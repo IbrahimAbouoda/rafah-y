@@ -33,7 +33,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
   return (
     <>
       <PageHeader title="الإشعارات" description="تحديثات شكاواك وما يخصّك في المنصة. من لديه بريد تصله الأحداث المهمة بريديًا أيضًا." />
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
         <NotificationCenter
           notifications={notifications}
           unreadCount={unread}

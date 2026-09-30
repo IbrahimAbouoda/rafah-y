@@ -64,7 +64,7 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
       <PageHeader title={idea.title}>
         <StatusBadge kind="idea" status={idea.status} size="md" />
       </PageHeader>
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div className="flex flex-col gap-4">
           <Card>
             <CardHeader>

@@ -62,7 +62,7 @@ export default async function AttendancePage({ params }: { params: Promise<{ id:
           ) : null}
         </div>
       </PageHeader>
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
         <Card>
           <CardHeader>
             <CardTitle>المسجّلون ({registrations.length})</CardTitle>
