@@ -1,6 +1,6 @@
 import { PGlite } from '@electric-sql/pglite';
 import { PrismaPGlite } from 'pglite-prisma-adapter';
-import { afterAll, inject, vi } from 'vitest';
+import { afterAll, afterEach, inject, vi } from 'vitest';
 import { createDbFromClient, setDbForTests } from '@/lib/db';
 import { PrismaClient } from '@/lib/generated/prisma/client';
 
@@ -14,6 +14,18 @@ setDbForTests(createDbFromClient(client));
 afterAll(async () => {
   await client.$disconnect();
   await pg.close();
+});
+
+// after() يحتاج سياق طلب Next.js: في الاختبار يُجدول العمل ويُنتظر بعد كل اختبار (flushAfter للانتظار داخله)،
+// فلا يبقى استعلام يعمل بعد انتهاء الاختبار أو إغلاق القاعدة
+vi.mock('next/server', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('next/server')>();
+  const { scheduleAfter } = await import('./identity');
+  return { ...actual, after: vi.fn(scheduleAfter) };
+});
+afterEach(async () => {
+  const { flushAfter } = await import('./identity');
+  await flushAfter();
 });
 
 // revalidatePath يحتاج سياق طلب Next.js؛ لا أثر له في الاختبار

@@ -9,7 +9,7 @@ import { conflict, invalid, notFound } from '@/lib/errors';
 import { Prisma } from '@/lib/generated/prisma/client';
 import type { IdeaStatus } from '@/lib/generated/prisma/enums';
 import { IDEA_STATUS_LABELS, ideaTransitionPermission, VOTABLE_IDEA_STATUSES } from '@/lib/ideas/workflow';
-import { dispatchEmails, queueNotifications } from '@/lib/notify';
+import { sendEmailsAfterResponse, queueNotifications } from '@/lib/notify';
 import type { PermissionKey, SessionUser } from '@/lib/rbac';
 import { nextRef } from '@/lib/sequence';
 import {
@@ -90,7 +90,7 @@ async function transition(opts: {
         ])
       : [];
   });
-  await dispatchEmails(db, emailIds);
+  sendEmailsAfterResponse(db, emailIds);
   revalidateIdea(idea.id);
 }
 

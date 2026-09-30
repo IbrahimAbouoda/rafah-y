@@ -8,7 +8,7 @@ import { isCommitteeMember } from '@/lib/committees';
 import { db, type Tx } from '@/lib/db';
 import { conflict, invalid, notFound } from '@/lib/errors';
 import type { TaskStatus } from '@/lib/generated/prisma/enums';
-import { dispatchEmails, queueNotifications } from '@/lib/notify';
+import { sendEmailsAfterResponse, queueNotifications } from '@/lib/notify';
 import { TASK_STATUS_LABELS, taskTransitionPermission } from '@/lib/tasks/workflow';
 import {
   CommentTaskSchema,
@@ -115,7 +115,7 @@ export async function createTaskAction(_prev: ActionState, form: FormData): Prom
       await writeAudit(tx, user, 'task.assign', 'Task', task.id, null, task);
       return assignedDraft(tx, { id: task.id, title: task.title, committeeSlug: committee.slug }, data.assigneeId);
     });
-    await dispatchEmails(db, emailIds);
+    sendEmailsAfterResponse(db, emailIds);
     revalidateTask(committee.slug, data.complaintId);
     return 'أُنشئت المهمة وأُشعر المسند إليه.';
   });
@@ -139,7 +139,7 @@ export async function reassignTaskAction(_prev: ActionState, form: FormData): Pr
       await writeAudit(tx, user, 'task.assign', 'Task', task.id, { assigneeId: task.assigneeId }, { assigneeId: updated.assigneeId });
       return assignedDraft(tx, { id: task.id, title: task.title, committeeSlug: task.committee.slug }, data.assigneeId);
     });
-    await dispatchEmails(db, emailIds);
+    sendEmailsAfterResponse(db, emailIds);
     revalidateTask(task.committee.slug, task.complaintId);
     return 'أُعيد إسناد المهمة.';
   });

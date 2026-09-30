@@ -2,6 +2,9 @@
 # نسخة احتياطية كاملة — Sprint 6 · Q14. الإجراء الكامل والجدولة في docs/ops/backup-and-restore.md.
 #
 #   scripts/db-backup.sh [--skip-storage]
+#   scripts/db-backup.sh --schema-only     الهيكل وحده: الجداول والأنواع والدوال والمشغّلات وRLS، بلا أي بيانات
+#                                          (backup-<UTC>_schema.sql.gz — لمقارنة البيئات ومراجعة الهيكل. بلا سجل migrations，
+#                                          فلا تُهيَّأ منه قاعدة تُدار بـ Prisma: لذلك npx prisma migrate deploy)
 #
 # الناتج في $BACKUP_DIR (افتراضيًا backups/ — خارج git):
 #   backup-<UTC>.sql.gz            مخطط public وبياناته وسجل الـ migrations (pg_dump)
@@ -16,10 +19,18 @@ cd "$(dirname "$0")/.."
 . scripts/lib/pg-tools.sh
 
 SKIP_STORAGE=0
-[ "${1:-}" = "--skip-storage" ] && SKIP_STORAGE=1
+SCHEMA_ONLY=0
+for arg in "$@"; do
+  case "$arg" in
+    --skip-storage) SKIP_STORAGE=1 ;;
+    --schema-only) SCHEMA_ONLY=1; SKIP_STORAGE=1 ;;
+    *) echo "✗ خيار غير معروف: $arg" >&2; exit 2 ;;
+  esac
+done
 
 load_db_url
-if is_production && [ -z "${BACKUP_GPG_RECIPIENT:-}" ]; then
+# الهيكل بلا بيانات لا يحمل بيانات شخصية؛ التشفير إلزامي لما فيه بيانات فقط
+if is_production && [ "$SCHEMA_ONLY" -eq 0 ] && [ -z "${BACKUP_GPG_RECIPIENT:-}" ]; then
   echo "✗ نسخة إنتاج بلا تشفير مرفوضة: عيّن BACKUP_GPG_RECIPIENT (انظر docs/ops/backup-and-restore.md)." >&2
   exit 1
 fi
@@ -27,6 +38,11 @@ fi
 OUT_DIR="${BACKUP_DIR:-backups}"
 TS="$(date -u +%Y-%m-%d_%H%M%S)"
 BASE="$OUT_DIR/backup-$TS"
+DATA_FLAG=()
+if [ "$SCHEMA_ONLY" -eq 1 ]; then
+  BASE="${BASE}_schema"
+  DATA_FLAG=(--schema-only)
+fi
 umask 077 # النسخة فيها بيانات شخصية: لصاحبها وحده
 mkdir -p "$OUT_DIR"
 FILES=()
@@ -34,7 +50,7 @@ FILES=()
 echo "→ القاعدة (public) …"
 # --no-privileges: صلاحيات public ملك المنصة (supabase_admin) ويمنحها كل مشروع جديد؛ إغلاق Data API يُعاد
 # بعد الاستعادة من migration الإغلاق نفسه (scripts/db-restore.sh --apply)
-pg_tool pg_dump "$DB_URL" --schema=public --no-owner --no-privileges --quote-all-identifiers | gzip -9 > "$BASE.sql.gz"
+pg_tool pg_dump "$DB_URL" --schema=public --no-owner --no-privileges --quote-all-identifiers "${DATA_FLAG[@]}" | gzip -9 > "$BASE.sql.gz"
 gzip -t "$BASE.sql.gz"
 tables=$(gzip -dc "$BASE.sql.gz" | grep -c '^CREATE TABLE' || true)
 # grep -c لا grep -q: الخروج المبكر يقطع gzip بـ SIGPIPE فيفشل الأنبوب كله مع pipefail
@@ -43,7 +59,9 @@ migrations=$(gzip -dc "$BASE.sql.gz" | grep -c '_prisma_migrations' || true)
 echo "  $tables جدولًا"
 FILES+=("$BASE.sql.gz")
 
-if [ "$(pg_tool psql "$DB_URL" -tAc "select to_regclass('auth.users') is not null")" = "t" ]; then
+if [ "$SCHEMA_ONLY" -eq 1 ]; then
+  : # مخطط auth يملكه Supabase، والهيكل وحده لا يحتاج حساباته
+elif [ "$(pg_tool psql "$DB_URL" -tAc "select to_regclass('auth.users') is not null")" = "t" ]; then
   echo "→ حسابات الدخول (auth) …"
   pg_tool pg_dump "$DB_URL" --data-only --no-owner --table=auth.users --table=auth.identities | gzip -9 > "${BASE}_auth.sql.gz"
   gzip -t "${BASE}_auth.sql.gz"

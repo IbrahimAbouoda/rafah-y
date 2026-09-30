@@ -8,7 +8,7 @@ import { STATUS_LABELS, transitionPermission } from '@/lib/complaints/workflow';
 import { db, type Tx } from '@/lib/db';
 import { conflict, invalid, notFound } from '@/lib/errors';
 import type { ComplaintStatus, NotificationType } from '@/lib/generated/prisma/enums';
-import { committeeHoldersOf, dispatchEmails, queueNotifications, type NotificationDraft } from '@/lib/notify';
+import { committeeHoldersOf, sendEmailsAfterResponse, queueNotifications, type NotificationDraft } from '@/lib/notify';
 import type { PermissionKey, SessionUser } from '@/lib/rbac';
 import {
   AssignComplaintSchema,
@@ -98,7 +98,7 @@ async function transition(spec: TransitionSpec): Promise<void> {
     );
     return queueNotifications(tx, spec.notify ?? [submitterDraft(complaint, to, spec.event)]);
   });
-  await dispatchEmails(db, emailIds);
+  sendEmailsAfterResponse(db, emailIds);
   revalidatePath(`/admin/complaints/${complaint.id}`);
   revalidatePath('/admin/complaints');
   revalidatePath('/admin/inbox');
