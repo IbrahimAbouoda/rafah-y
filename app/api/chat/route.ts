@@ -1,5 +1,5 @@
 import { anthropic } from '@ai-sdk/anthropic';
-import { streamText } from 'ai';
+import { createUIMessageStreamResponse, streamText, toUIMessageStream } from 'ai';
 
 // تحديد الحد الأقصى لوقت الاستجابة (30 ثانية)
 export const maxDuration = 30;
@@ -8,9 +8,9 @@ export async function POST(req: Request) {
   const { prompt } = await req.json();
 
   const result = streamText({
-    model: anthropic('claude-3-5-sonnet-20241022'),
+    model: anthropic('claude-sonnet-5-5'),
     prompt: prompt,
   });
 
-  return result.toDataStreamResponse();
+  return createUIMessageStreamResponse({ stream: toUIMessageStream({ stream: result.stream }) });
 }
