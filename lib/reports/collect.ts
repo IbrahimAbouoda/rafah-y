@@ -1,6 +1,7 @@
 import 'server-only';
 import { SIGNUP_ROLE_KEY } from '@/lib/config';
 import { db } from '@/lib/db';
+import { countDemoData, demoTotal } from '@/lib/demo-data';
 import type { Prisma } from '@/lib/generated/prisma/client';
 import { scopeFilter, type SessionUser } from '@/lib/rbac';
 import { gazaDayStart, toDateInput } from '@/lib/utils';
@@ -154,17 +155,7 @@ async function botResolution(range: { gte: Date; lt: Date }): Promise<number | n
   return ratio(answered, total);
 }
 
-/** M10: كل النماذج التي تحمل isDemo، والمحذوف ناعمًا منها أيضًا (السجل ما زال في القاعدة).
- *  `deletedAt: undefined` يوقف مرشّح الحذف الناعم في lib/db.ts ولا يضيف شرطًا. */
+/** M10: كل النماذج التي تحمل isDemo، والمحذوف ناعمًا منها أيضًا (السجل ما زال في القاعدة). */
 async function countDemo() {
-  const where = { isDemo: true, deletedAt: undefined };
-  const counts = await Promise.all([
-    db.complaint.count({ where }),
-    db.idea.count({ where }),
-    db.initiative.count({ where }),
-    db.organization.count({ where }),
-    db.opportunity.count({ where }),
-    db.activity.count({ where }),
-  ]);
-  return counts.reduce((a, b) => a + b, 0);
+  return demoTotal(await countDemoData(db));
 }

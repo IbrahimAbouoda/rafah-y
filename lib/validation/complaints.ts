@@ -20,10 +20,9 @@ export const COMPLAINT_STATUSES = [
 export const CONTACT_CHANNELS = ['PHONE', 'EMAIL', 'WHATSAPP'] as const;
 export const REFERRAL_TARGETS = ['MUNICIPALITY', 'ORGANIZATION', 'GOVERNMENT', 'LEGAL', 'OTHER'] as const;
 
-// §6.5: القائمة البيضاء والحدود
-export const UPLOAD_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'] as const;
-export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
-export const MAX_FILES_PER_RECORD = 5;
+// §6.5: القائمة البيضاء والحدود — تعريفها في lib/files.ts (يستوردها العميل بلا zod)
+import { MAX_FILES_PER_RECORD, MAX_UPLOAD_BYTES, UPLOAD_MIME_TYPES } from '@/lib/files';
+export { MAX_FILES_PER_RECORD, MAX_UPLOAD_BYTES, UPLOAD_MIME_TYPES };
 
 const optionalEnum = <T extends readonly [string, ...string[]]>(values: T, message: string) =>
   z.preprocess((v) => (v === '' ? undefined : v), z.enum(values, { error: message }).optional());

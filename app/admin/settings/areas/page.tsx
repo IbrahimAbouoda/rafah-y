@@ -27,7 +27,7 @@ export default async function AreasPage({ searchParams }: { searchParams: Promis
         title="المناطق والأحياء"
         description="شجرة مناطق رفح وأحيائها، لتعمل إحصاءات «أكثر القضايا حسب المنطقة». لا يُطلب من الشاب عنوان تفصيلي."
       />
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
         <DataTable
           rows={areas}
           rowKey={(a) => a.id}

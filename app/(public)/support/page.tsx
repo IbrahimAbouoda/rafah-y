@@ -36,7 +36,7 @@ export default async function SupportPage() {
         title="ادعمنا"
         description="احتياجات مرقّمة لمبادرات الشباب في رفح: ما المطلوب بالضبط، وكم، ولأي مبادرة. الدعم غير المالي بمكانة المالي تمامًا."
       />
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
         {needs.length === 0 ? (
           <Card>
             <EmptyState title="لا احتياجات مفتوحة الآن" hint="كل الاحتياجات المنشورة مغطّاة. تابع صفحة المبادرات لما يُعتمد لاحقًا." />

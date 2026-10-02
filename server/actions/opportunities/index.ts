@@ -7,7 +7,7 @@ import { writeAudit } from '@/lib/audit';
 import { db } from '@/lib/db';
 import { conflict, forbidden, invalid, notFound } from '@/lib/errors';
 import { Prisma } from '@/lib/generated/prisma/client';
-import { dispatchEmails, queueNotifications } from '@/lib/notify';
+import { sendEmailsAfterResponse, queueNotifications } from '@/lib/notify';
 import {
   APPLICATION_STATUS_LABELS,
   applyBlocker,
@@ -122,7 +122,7 @@ export async function reviewOpportunityAction(_prev: ActionState, form: FormData
           ])
         : [];
     });
-    await dispatchEmails(db, emailIds);
+    sendEmailsAfterResponse(db, emailIds);
     revalidateOpportunities(opportunity.id);
     return published ? 'نُشرت الفرصة وتظهر الآن في بوابة الفرص.' : 'رُفضت الفرصة ولن تظهر للشباب.';
   });
@@ -270,7 +270,7 @@ export async function setApplicationStatusAction(_prev: ActionState, form: FormD
         },
       ]);
     });
-    await dispatchEmails(db, emailIds);
+    sendEmailsAfterResponse(db, emailIds);
     revalidateOpportunities(application.opportunity.id);
     return `صار الطلب «${APPLICATION_STATUS_LABELS[data.toStatus]}»، وأُشعر المتقدّم.`;
   });

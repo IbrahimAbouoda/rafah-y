@@ -29,7 +29,8 @@ export default async function PublicLayout({ children }: { children: React.React
         </div>
       </StickyHeader>
       {/* نتيجة الإجراء تبقى ظاهرة حين يتغيّر النموذج نفسه بعد النجاح (التقديم على فرصة، التسجيل في نشاط) */}
-      <main id="main" className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:py-8">
+      {/* ارتفاع الشاشة ناقص الترويسة (h-16): التذييل يبدأ تحت الطيّة، فلا يقفز أمام القارئ حين يُبث المحتوى بعد الهيكل (CLS · §1.4) */}
+      <main id="main" className="mx-auto min-h-[calc(100dvh-4rem)] w-full max-w-5xl flex-1 px-4 py-6 sm:py-8">
         <FlashProvider>{children}</FlashProvider>
       </main>
       <SiteFooter />

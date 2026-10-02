@@ -18,7 +18,7 @@ function useFieldProps<P extends object>(props: P): P {
 }
 
 const control =
-  'w-full rounded-lg border bg-surface px-3 text-sm placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-50 aria-[invalid=true]:border-danger';
+  'w-full rounded-lg border border-input bg-surface px-3 text-sm placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-50 aria-[invalid=true]:border-danger';
 
 export function Input({ className, ...props }: React.ComponentProps<'input'>) {
   return <input className={cn(control, 'h-10', className)} {...useFieldProps(props)} />;

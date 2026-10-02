@@ -69,7 +69,7 @@ export default async function AdminIdeaPage({ params }: { params: Promise<{ id: 
       <PageHeader title={idea.title} description={`${idea.voteCount} صوت تأييد — مؤشر أولوية لا يعتمد الفكرة وحده.`}>
         <StatusBadge kind="idea" status={idea.status} size="md" />
       </PageHeader>
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
         <div className="flex flex-col gap-4">
           <Card>
             <CardContent className="grid gap-2 pt-4 text-sm sm:grid-cols-2 sm:pt-5">

@@ -61,7 +61,7 @@ export default async function ActivityPage({ params }: { params: Promise<{ id: s
       <PageHeader title={a.title}>
         <StatusBadge kind="activity" status={a.status} size="md" />
       </PageHeader>
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div className="flex flex-col gap-4">
           {a.isDemo ? <Alert tone="warning">نشاط عرض تجريبي — ليس حقيقيًا.</Alert> : null}
           {a.description ? (

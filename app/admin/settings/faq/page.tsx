@@ -55,7 +55,7 @@ export default async function FaqSettingsPage({ searchParams }: { searchParams: 
         </Button>
       </PageHeader>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_400px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_400px]">
         <div className="flex flex-col gap-3">
           <Card className="p-3">
             <form action="/admin/settings/faq" role="search" className="grid gap-3 sm:grid-cols-[1.4fr_1fr_1fr_auto] sm:items-end">

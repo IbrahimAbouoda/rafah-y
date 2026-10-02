@@ -212,7 +212,7 @@ async function InquiryDetail({ user, id }: { user: SessionUser; id: string }) {
       >
         {back}
       </PageHeader>
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
         <div className="flex flex-col gap-4">
           <Card className="p-4">
             <p className="whitespace-pre-line text-sm leading-7">{inquiry.question}</p>

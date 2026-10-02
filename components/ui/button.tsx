@@ -9,8 +9,8 @@ const buttonVariants = cva(
       variant: {
         // الأزرار المصمتة ترتفع قليلًا عند التحويم؛ الشفافة والروابط تبقى ثابتة
         default: 'bg-brand text-brand-foreground shadow-xs hover:bg-brand/90 hover:shadow-md motion-safe:hover:-translate-y-0.5',
-        accent: 'bg-accent text-accent-foreground shadow-xs hover:bg-accent/90 hover:shadow-md motion-safe:hover:-translate-y-0.5',
-        destructive: 'bg-danger text-white shadow-xs hover:bg-danger/90 hover:shadow-md motion-safe:hover:-translate-y-0.5',
+        accent: 'bg-accent-solid text-accent-solid-foreground shadow-xs hover:bg-accent-solid/90 hover:shadow-md motion-safe:hover:-translate-y-0.5',
+        destructive: 'bg-danger text-danger-foreground shadow-xs hover:bg-danger/90 hover:shadow-md motion-safe:hover:-translate-y-0.5',
         outline: 'border bg-surface shadow-xs hover:border-brand/30 hover:bg-muted motion-safe:hover:-translate-y-0.5',
         ghost: 'hover:bg-muted',
         link: 'text-brand underline-offset-4 hover:underline',

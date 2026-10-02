@@ -1,10 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { after } from 'next/server';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '@/lib/db';
 import { mailOutbox, resetMailAdapter } from '@/lib/mail';
-import { queueNotifications, retryPendingEmails } from '@/lib/notify';
+import { queueNotifications, retryPendingEmails, sendEmailsAfterResponse } from '@/lib/notify';
 import { POST as emailRetry } from '@/app/api/cron/email-retry/route';
 import { openNotificationAction, setEmailPreferencesAction } from '@/server/actions/notifications';
 import { actAs, createUser, form } from '../support/factories';
+import { flushAfter } from '../support/identity';
 
 // Sprint 5 — المحور ٤: تفضيلات البريد (§8.3) · إعادة إرسال المعلّق · فتح الإشعار.
 
@@ -91,6 +93,28 @@ describe('إعادة إرسال البريد المعلّق — §8.3', () => {
     const sentTo = mailOutbox().slice(outboxBefore).map((m) => m.to);
     expect(sentTo).toContain(youth.email);
     expect(sentTo).not.toContain(other.email);
+  });
+
+  it('البريد بعد الاستجابة (after): الإجراء لا ينتظره، ويُرسل بعدها؛ والسطر الحديث لا تعيده الجدولة فلا يتكرر', async () => {
+    process.env.MAIL_TRANSPORT = 'memory';
+    resetMailAdapter();
+    const youth = await createUser(['youth']);
+    const other = await createUser(['youth']);
+    await queue(youth.id, 'IDEA_DECIDED');
+    await queue(other.id, 'IDEA_DECIDED');
+    const [mine] = (await rows(youth.id, 'IDEA_DECIDED')).filter((r) => r.channel === 'EMAIL');
+    const [theirs] = (await rows(other.id, 'IDEA_DECIDED')).filter((r) => r.channel === 'EMAIL');
+
+    vi.mocked(after).mockClear();
+    sendEmailsAfterResponse(db, [mine!.id]);
+    expect(after).toHaveBeenCalledTimes(1); // مُجدول، لا مُنتظَر
+    await flushAfter();
+    expect((await db.notification.findUniqueOrThrow({ where: { id: mine!.id } })).status).toBe('SENT');
+
+    // سطر كُتب للتو (قد يكون قيد الإرسال عبر after) لا تلتقطه إعادة الإرسال
+    await retryPendingEmails(db);
+    expect((await db.notification.findUniqueOrThrow({ where: { id: theirs!.id } })).status).toBe('PENDING');
+    await db.notification.update({ where: { id: theirs!.id }, data: { status: 'FAILED' } }); // لا يبقى معلّقًا لملفات أخرى
   });
 });
 

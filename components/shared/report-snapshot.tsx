@@ -1,11 +1,10 @@
 import { formatMetric, formatTarget, meetsTarget, METRIC_KEYS, METRICS, type MetricKey, type MetricsSnapshot } from '@/lib/reports/metrics';
 import { Markdown } from '@/lib/markdown';
 import { StatTile } from '@/components/shared/stat-tile';
-import { TrendChart } from '@/components/shared/trend-chart';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
 
 // عرض لقطة مؤشرات — نفسه في اللوحة (حيّة)، ومراجعة التقرير، وصفحة الشفافية العامة (لقطة محفوظة).
 // لا يحمل إلا ما في MetricsSnapshot: أرقام مجمّعة وتواريخ، بلا أي بيانات شخصية.
+// الرسوم في trend-charts.tsx: recharts (≈ 100 ك.ب) لا يُحمَّل في صفحة لا ترسم (مثل /transparency).
 
 export function MetricTiles({ snapshot, showTargets = true }: { snapshot: MetricsSnapshot; showTargets?: boolean }) {
   const scoped = snapshot.scope !== 'ALL';
@@ -31,44 +30,6 @@ function MetricTile({ k, value, scoped, showTarget }: { k: MetricKey; value: num
       tone={met === null ? 'default' : met ? 'success' : 'warning'}
       meta={reason ?? (showTarget ? `${def.definition} · الهدف المقترح: ${formatTarget(k)}` : def.definition)}
     />
-  );
-}
-
-export function TrendCharts({ snapshot }: { snapshot: MetricsSnapshot }) {
-  const series = snapshot.trend.map((p) => ({ ...p }));
-  return (
-    <div className="grid gap-4 lg:grid-cols-3">
-      <Card>
-        <CardHeader>
-          <CardTitle>الشكاوى شهريًا</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <TrendChart series={series} xKey="month" yKey="complaints" ariaLabel="عدد الشكاوى المقدّمة في كل شهر" />
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>وسيط زمن الفرز (M3)</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <TrendChart
-            series={series}
-            xKey="month"
-            yKey="triageMedianHours"
-            unit="hours"
-            ariaLabel="وسيط الساعات من تقديم الشكوى إلى تحويلها للجنة، لكل شهر"
-          />
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>نسبة الإغلاق (M4)</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <TrendChart series={series} xKey="month" yKey="closureRate" unit="ratio" ariaLabel="نسبة شكاوى كل شهر التي حُلّت أو أُغلقت" />
-        </CardContent>
-      </Card>
-    </div>
   );
 }
 

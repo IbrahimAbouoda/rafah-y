@@ -118,13 +118,15 @@ export const LIMITS = {
   track: { max: 10, windowSec: 3600 },
   /** رفع ملف — لكل IP (§6.4) */
   upload: { max: 10, windowSec: 3600 },
+  /** تأكيد الرفع — لكل IP: يتحقق من الرقم والرمز كـ /track، فبلا حد يصير الرمز قابلًا للتخمين (§6.4) */
+  uploadConfirm: { max: 10, windowSec: 3600 },
   /** سؤال البوت وإرسال الاستفسار — لكل حساب أو IP (§6.4) */
   bot: { max: 20, windowSec: 3600 },
 } as const;
 
 export type LimitResult = { allowed: boolean; retryAfterSec: number };
 
-type Bucket = 'register' | 'resetPassword' | 'complaint' | 'publicComplaint' | 'track' | 'upload' | 'bot';
+type Bucket = 'register' | 'resetPassword' | 'complaint' | 'publicComplaint' | 'track' | 'upload' | 'uploadConfirm' | 'bot';
 
 export async function limit(bucket: Bucket, id: string): Promise<LimitResult> {
   const { max, windowSec } = LIMITS[bucket];

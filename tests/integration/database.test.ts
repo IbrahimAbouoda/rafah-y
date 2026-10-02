@@ -14,6 +14,19 @@ describe('سجل التدقيق إلحاقي فقط — AC-19 ②', () => {
     await expect(db.$executeRaw`UPDATE audit_logs SET action = 'tampered'`).rejects.toThrow(/append-only/);
     await expect(db.$executeRaw`DELETE FROM audit_logs`).rejects.toThrow(/append-only/);
     await expect(db.auditLog.deleteMany({})).rejects.toThrow();
+    await expect(db.$executeRaw`TRUNCATE audit_logs`).rejects.toThrow(/append-only/);
+  });
+
+  it('حذف مستخدم بلا أسطر تدقيق ممكن، وحذف منفّذ له أسطر يُرفض ويبقى سطره كما هو (AC-20)', async () => {
+    const clean = await createUser();
+    await expect(db.user.delete({ where: { id: clean.id } })).resolves.toMatchObject({ id: clean.id });
+
+    // بلا دور: تعيين الدور نفسه يمنع الحذف (RESTRICT) قبل أن يصل الأمر إلى سطر التدقيق
+    const actor = await createUser();
+    const s = await session(actor.id);
+    await db.$transaction((tx) => writeAudit(tx, s, 'settings.change', 'Test', 'kept', null, {}));
+    await expect(db.user.delete({ where: { id: actor.id } })).rejects.toThrow(/append-only/);
+    expect(await db.auditLog.count({ where: { actorId: actor.id, entityId: 'kept' } })).toBe(1);
   });
 
   it('تغيّر دور المنفّذ لاحقًا لا يغيّر لقطة أدواره في السطور القديمة — AC-19 ③', async () => {

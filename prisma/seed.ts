@@ -6,10 +6,11 @@ import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../lib/generated/prisma/client';
 import { formatAccessCode, generateAccessCode, hashAccessCode } from '../lib/complaints/access-code';
+import { DEMO_ACCOUNT_EMAIL } from '../lib/config';
 import { seedRbac, PERMISSIONS, ROLES } from './rbac.seed';
 import { BASE_FAQ, seedFaq } from './faq.seed';
 
-// PRD §4.3
+// PRD §4.3 — الترتيب هو sortOrder. العاشرة بقرار D43 (2026-09-30).
 export const INITIAL_COMMITTEES = [
   { nameAr: 'لجنة التكنولوجيا والأنظمة الرقمية', slug: 'technology-digital-systems' },
   { nameAr: 'لجنة الأنشطة والمبادرات', slug: 'activities-initiatives' },
@@ -20,6 +21,11 @@ export const INITIAL_COMMITTEES = [
   { nameAr: 'لجنة العلاقات العامة والإعلام', slug: 'public-relations-media' },
   { nameAr: 'اللجنة الصحية', slug: 'health-affairs' },
   { nameAr: 'لجنة الدعم اللوجستي', slug: 'logistical-support' },
+  {
+    nameAr: 'لجنة التدريب والتطوير',
+    slug: 'training-development',
+    mandate: 'تنظيم الورش التدريبية، المحاضرات التثقيفية، والدورات التأهيلية لبناء وتطوير قدرات الشباب والكوادر.',
+  },
 ] as const;
 
 // D32: قائمة المهارات المرجعية — في الإنتاج أيضًا (لا مسار لإدارتها في §11.2 بعد).
@@ -148,7 +154,7 @@ export async function seedDemoComplaints(db: PrismaClient): Promise<{ reference:
 }
 
 // صاحب الأفكار التجريبية: حساب وهمي معطّل لا يدخل (isActive = false) — يُحذف مع بيانات isDemo في Sprint 6 (AC-20)
-const DEMO_SUBMITTER = { email: 'demo-ideas@example.invalid', fullName: 'حساب عرض تجريبي' };
+const DEMO_SUBMITTER = { email: DEMO_ACCOUNT_EMAIL, fullName: 'حساب عرض تجريبي' };
 
 const DEMO_IDEAS = [
   {

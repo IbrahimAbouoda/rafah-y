@@ -27,7 +27,7 @@ export function CommitteeSwitcher({
       <select
         value={current ?? ''}
         onChange={(e) => e.target.value && router.push(hrefFor(e.target.value))}
-        className="h-9 appearance-none rounded-lg border bg-surface ps-3 pe-8 text-sm font-medium"
+        className="h-9 appearance-none rounded-lg border border-input bg-surface ps-3 pe-8 text-sm font-medium"
       >
         {current ? null : <option value="">— اختر لجنة —</option>}
         {committees.map((c) => (

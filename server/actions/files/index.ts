@@ -78,6 +78,8 @@ export async function createUploadUrlAction(input: unknown): Promise<DataState<U
  */
 export async function confirmUploadAction(input: unknown): Promise<DataState<{ fileId: string }>> {
   return runActionData(async () => {
+    const gate = await limit('uploadConfirm', await clientIp());
+    if (!gate.allowed) throw rateLimited(gate.retryAfterSec);
     const data = ConfirmUploadSchema.parse(input);
     const complaint = await ownedComplaint(data.reference, data.accessCode);
     const file = await db.fileObject.findFirst({

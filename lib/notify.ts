@@ -1,4 +1,5 @@
 import 'server-only';
+import { after } from 'next/server';
 import type { Db, Tx } from '@/lib/db';
 import type { NotificationType } from '@/lib/generated/prisma/enums';
 import type { PermissionKey } from '@/lib/rbac';
@@ -8,7 +9,8 @@ import { logError } from '@/lib/log';
 
 // الإشعارات — PRD §8.
 // 1) queueNotifications() داخل معاملة الإجراء: سطر IN_APP لكل مستلم، وسطر EMAIL بحالة PENDING لمن يستحقه.
-// 2) dispatchEmails() بعد انتهاء المعاملة: الإرسال خارجها، وفشله لا يُفشل الإجراء (§8.3).
+// 2) sendEmailsAfterResponse() بعد انتهاء المعاملة: الإرسال بعد إرسال الاستجابة، وفشله لا يُفشل الإجراء (§8.3).
+//    ما لم يُرسل (توقّف الخادم، أو لا ناقل) يبقى PENDING وتلتقطه /api/cron/email-retry.
 
 export type NotificationDraft = {
   type: NotificationType;
@@ -73,6 +75,18 @@ export async function queueNotifications(tx: Tx, drafts: NotificationDraft[]): P
 }
 
 /** خارج المعاملة. لا يرمي أبدًا: الفشل يُسجَّل FAILED على السطر نفسه. بلا ناقل يبقى PENDING. */
+/**
+ * يجدول dispatchEmails() بعد إرسال الاستجابة (next/server after): المستخدم لا ينتظر SMTP على اتصال ضعيف (§1.4)،
+ * ولا يطول الإجراء بعدد المستلمين (عرض دعم ⇒ كل من يحمل offers:decide).
+ */
+export function sendEmailsAfterResponse(db: Db, ids: string[]): void {
+  if (ids.length === 0) return;
+  after(() => dispatchEmails(db, ids));
+}
+
+/** السطر الأحدث من هذا قد يكون قيد الإرسال الآن عبر after(): إعادة إرساله تكرّر البريد */
+export const RETRY_GRACE_MS = 2 * 60_000;
+
 export async function dispatchEmails(db: Db, ids: string[]): Promise<void> {
   if (ids.length === 0) return;
   try {
@@ -161,7 +175,7 @@ export async function retryPendingEmails(db: Db, batch = 100, maxBatches = 10): 
 
 async function retryBatch(db: Db, batch: number): Promise<{ sent: number; skipped: number; processed: number }> {
   const rows = await db.notification.findMany({
-    where: { channel: 'EMAIL', status: 'PENDING' },
+    where: { channel: 'EMAIL', status: 'PENDING', createdAt: { lt: new Date(Date.now() - RETRY_GRACE_MS) } },
     orderBy: { createdAt: 'asc' },
     take: batch,
     select: { id: true, userId: true, type: true },

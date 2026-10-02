@@ -6,7 +6,7 @@ import { writeAudit } from '@/lib/audit';
 import { getCurrentUser, requirePermission, requireUser } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { conflict, notFound, rateLimited } from '@/lib/errors';
-import { dispatchEmails, permissionHolders, queueNotifications } from '@/lib/notify';
+import { sendEmailsAfterResponse, permissionHolders, queueNotifications } from '@/lib/notify';
 import { limit } from '@/lib/rate-limit';
 import { clientIp } from '@/lib/request';
 import { matchFaq } from '@/lib/support/match';
@@ -217,7 +217,7 @@ export async function answerInquiryAction(_prev: ActionState, form: FormData): P
         },
       ]);
     });
-    await dispatchEmails(db, emailIds);
+    sendEmailsAfterResponse(db, emailIds);
     revalidatePath('/admin/support');
     revalidatePath('/help');
     return data.promote ? 'أُرسل الرد وأُضيف إلى الأسئلة الشائعة.' : 'أُرسل الرد لصاحب الاستفسار.';
