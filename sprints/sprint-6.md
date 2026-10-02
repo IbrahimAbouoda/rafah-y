@@ -63,6 +63,7 @@
 | المحور | النتيجة |
 | --- | --- |
 | Server Actions | 89 إجراءً: 74 بـ `requireUser` + `requirePermission`؛ الـ 15 الباقية استثناءات موثّقة (الدخول والتسجيل بحد معدل، شكوى الزائر D21، الرفع بالرقم والرمز، الإشعارات بنطاق `userId`، البوت D36). **أُصلح:** `confirmUploadAction` كان يتحقق من الرمز بلا حد معدل (مسار تخمين موازٍ لـ `/track`) — صار له `uploadConfirm` 10/ساعة لكل IP، باختبار. |
+| مراجعة 2026-10-02 | **أُزيل** `app/api/chat/route.ts` وحزمتا `ai` و `@ai-sdk/anthropic`: مسار غير موثّق في §11.2 (C8) يخالف §10.2 و C16، بلا هوية ولا حد معدل ولا تحقق من المدخلات (يقبل `system` من العميل)، ولا يستدعيه أي مكوّن. ميزة ذكاء اصطناعي تحتاج قرارًا موثّقًا أولًا. **أُصلح:** `uselibpqcompat=true&sslmode=require` (لإصلاح بناء Vercel) يقبل أي شهادة ← `lib/pg-ssl.js` بـ `DATABASE_CA_CERT` وتحقق كامل في التطبيق والبوابة؛ مجمّع `pg` بحجم 5 ومهلة اتصال 5 ث، والبوابة بمهلتي اتصال واستعلام. اختبار `tests/unit/infra.test.ts` يمنع أي route handler غير موثّق. |
 | الأسرار | لا قيمة سرية (service role، روابط القاعدة) في حزمة العميل `.next/static`؛ `NEXT_PUBLIC_*` = رابط Supabase ومفتاح anon فقط؛ `SERVICE_ROLE` في `lib/storage.ts` المحروس بـ `server-only`. |
 | القاعدة | RLS **مفعّل** على 61/61 جدولًا بلا أي policy، ولا صلاحيات لـ anon/authenticated؛ طلب REST بمفتاح anon ← 401. الحاوية خاصة (`public: false`). |
 | الرؤوس §6.10 | CSP بـ nonce، HSTS، nosniff، Referrer-Policy، X-Frame-Options DENY، Permissions-Policy — متحقَّق منها على استجابة حية. |

@@ -69,7 +69,9 @@ export async function checkDemoGate(env, countDemo) {
 
 async function countWithPg(url) {
   const { default: pg } = await import('pg');
-  const client = new pg.Client({ connectionString: url });
+  const { pgConnection } = await import('../lib/pg-ssl.js');
+  // مهلتان: تعلّق الشبكة يُفشل البناء برسالة واضحة بدل انتظار مهلة Vercel
+  const client = new pg.Client({ ...pgConnection(url), connectionTimeoutMillis: 10_000, query_timeout: 15_000 });
   await client.connect();
   try {
     return (await client.query(DEMO_COUNT_SQL)).rows;
