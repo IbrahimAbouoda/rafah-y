@@ -159,6 +159,7 @@ export async function seedRbac(db: PrismaClient): Promise<void> {
         }
       }
     },
-    { timeout: 60_000 },
+    // البذرة تعمل أيضًا على قاعدة بعيدة: ≈ 285 عملية متتالية × زمن رحلة الشبكة تتجاوز الدقيقة
+    { timeout: 300_000, maxWait: 30_000 },
   );
 }
