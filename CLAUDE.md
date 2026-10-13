@@ -43,7 +43,9 @@ lib/sequence.ts      — nextRef()
 lib/crypto.ts        — تشفير بيانات التواصل
 lib/rate-limit.ts    — LRU محليًا · Upstash في الإنتاج
 lib/nav.ts           — عناصر التنقل من الصلاحيات
-server/actions/<domain>/*.ts
+server/actions/<domain>/*.ts — أغلفة رقيقة؛ المنطق في lib/<domain>/{actions,queries}.ts
+app/api/mobile/v1/** — واجهة الجوّال (apiRoute في lib/api/handler.ts) — sprints/mobile.md
+mobile/              — تطبيق Flutter
 proxy.ts             — CSP + تجديد الجلسة + فحص خشن للدخول فقط
 prisma/schema.prisma · prisma/rbac.seed.ts · prisma/seed.ts · prisma/migrations/
 tests/unit · tests/integration · tests/e2e
