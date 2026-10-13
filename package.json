@@ -17,7 +17,9 @@
     "db:migrate": "prisma migrate dev",
     "db:seed": "prisma db seed",
     "postinstall": "prisma generate",
-    "admin:grant": "tsx scripts/grant-role.ts"
+    "admin:grant": "tsx scripts/grant-role.ts",
+    "api:fixtures": "node -e \"require('fs').rmSync('docs/mobile/fixtures',{recursive:true,force:true})\" && vitest run --project integration tests/integration/api && tsx scripts/openapi.ts",
+    "api:openapi": "tsx scripts/openapi.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.10.0",

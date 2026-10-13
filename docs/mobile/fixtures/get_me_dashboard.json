@@ -1,0 +1,13 @@
+{
+  "route": "GET /me/dashboard",
+  "status": 200,
+  "body": {
+    "data": {
+      "complaints": {
+        "open": 0,
+        "resolved": 0
+      },
+      "unread": 2
+    }
+  }
+}

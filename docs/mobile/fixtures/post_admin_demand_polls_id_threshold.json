@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/demand/polls/{id}/threshold",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "حُفظ الحد."
+  }
+}

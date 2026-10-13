@@ -1,0 +1,718 @@
+{
+  "route": "GET /admin/audit",
+  "status": 200,
+  "body": {
+    "data": {
+      "items": [
+        {
+          "id": "67",
+          "action": "complaint.create",
+          "entityType": "Complaint",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "youth"
+          ],
+          "before": null,
+          "after": {
+            "areaId": null,
+            "status": "SUBMITTED",
+            "reference": "RF-CMP-2026-000001",
+            "categoryId": "00000000-K7QM-3XWD-8000-000000000000",
+            "hasContact": false,
+            "isAnonymous": false
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "مستخدم اختبار 0000"
+          }
+        },
+        {
+          "id": "66",
+          "action": "file.download",
+          "entityType": "FileObject",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "council_president"
+          ],
+          "before": null,
+          "after": {
+            "reference": "RF-CMP-2026-000001",
+            "complaintId": "00000000-K7QM-3XWD-8000-000000000000"
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "مستخدم اختبار 0000"
+          }
+        },
+        {
+          "id": "65",
+          "action": "complaint.create",
+          "entityType": "Complaint",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "youth"
+          ],
+          "before": null,
+          "after": {
+            "areaId": null,
+            "status": "SUBMITTED",
+            "reference": "RF-CMP-2026-000001",
+            "categoryId": "00000000-K7QM-3XWD-8000-000000000000",
+            "hasContact": false,
+            "isAnonymous": false
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "مستخدم اختبار 0000"
+          }
+        },
+        {
+          "id": "64",
+          "action": "role.revoke",
+          "entityType": "RoleAssignment",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "council_president"
+          ],
+          "before": {
+            "id": "00000000-K7QM-3XWD-8000-000000000000",
+            "role": {
+              "key": "committee_member",
+              "nameAr": "عضو اللجنة"
+            },
+            "title": null,
+            "endsAt": null,
+            "roleId": "00000000-K7QM-3XWD-8000-000000000000",
+            "termId": "00000000-K7QM-3XWD-8000-000000000000",
+            "userId": "00000000-K7QM-3XWD-8000-000000000000",
+            "startsAt": "2026-01-01T09:00:00.000Z",
+            "createdAt": "2026-01-01T09:00:00.000Z",
+            "revokedAt": null,
+            "updatedAt": "2026-01-01T09:00:00.000Z",
+            "committeeId": "00000000-K7QM-3XWD-8000-000000000000",
+            "revokedById": null,
+            "assignedById": "00000000-K7QM-3XWD-8000-000000000000"
+          },
+          "after": {
+            "id": "00000000-K7QM-3XWD-8000-000000000000",
+            "title": null,
+            "endsAt": null,
+            "roleId": "00000000-K7QM-3XWD-8000-000000000000",
+            "termId": "00000000-K7QM-3XWD-8000-000000000000",
+            "userId": "00000000-K7QM-3XWD-8000-000000000000",
+            "startsAt": "2026-01-01T09:00:00.000Z",
+            "createdAt": "2026-01-01T09:00:00.000Z",
+            "revokedAt": "2026-01-01T09:00:00.000Z",
+            "updatedAt": "2026-01-01T09:00:00.000Z",
+            "committeeId": "00000000-K7QM-3XWD-8000-000000000000",
+            "revokedById": "00000000-K7QM-3XWD-8000-000000000000",
+            "assignedById": "00000000-K7QM-3XWD-8000-000000000000"
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "مستخدم اختبار 0000"
+          }
+        },
+        {
+          "id": "63",
+          "action": "role.assign",
+          "entityType": "RoleAssignment",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "council_president"
+          ],
+          "before": null,
+          "after": {
+            "id": "00000000-K7QM-3XWD-8000-000000000000",
+            "title": null,
+            "endsAt": null,
+            "roleId": "00000000-K7QM-3XWD-8000-000000000000",
+            "termId": "00000000-K7QM-3XWD-8000-000000000000",
+            "userId": "00000000-K7QM-3XWD-8000-000000000000",
+            "roleKey": "committee_member",
+            "startsAt": "2026-01-01T09:00:00.000Z",
+            "createdAt": "2026-01-01T09:00:00.000Z",
+            "revokedAt": null,
+            "updatedAt": "2026-01-01T09:00:00.000Z",
+            "committeeId": "00000000-K7QM-3XWD-8000-000000000000",
+            "revokedById": null,
+            "assignedById": "00000000-K7QM-3XWD-8000-000000000000"
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "مستخدم اختبار 0000"
+          }
+        },
+        {
+          "id": "62",
+          "action": "task.approve",
+          "entityType": "Task",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "committee_head@logistical-support"
+          ],
+          "before": {
+            "status": "REVIEW"
+          },
+          "after": {
+            "status": "DONE",
+            "approvedById": "00000000-K7QM-3XWD-8000-000000000000"
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "مستخدم اختبار 0000"
+          }
+        },
+        {
+          "id": "61",
+          "action": "task.assign",
+          "entityType": "Task",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "committee_head@logistical-support"
+          ],
+          "before": null,
+          "after": {
+            "id": "00000000-K7QM-3XWD-8000-000000000000",
+            "dueAt": null,
+            "title": "تجهيز القاعة",
+            "status": "TODO",
+            "priority": "MEDIUM",
+            "createdAt": "2026-01-01T09:00:00.000Z",
+            "deletedAt": null,
+            "updatedAt": "2026-01-01T09:00:00.000Z",
+            "approvedAt": null,
+            "assigneeId": "00000000-K7QM-3XWD-8000-000000000000",
+            "decisionId": null,
+            "committeeId": "00000000-K7QM-3XWD-8000-000000000000",
+            "complaintId": null,
+            "createdById": "00000000-K7QM-3XWD-8000-000000000000",
+            "description": null,
+            "approvedById": null,
+            "initiativeId": null
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "مستخدم اختبار 0000"
+          }
+        },
+        {
+          "id": "60",
+          "action": "funding.approve",
+          "entityType": "FundingRecord",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "council_president"
+          ],
+          "before": {
+            "approvedAt": null
+          },
+          "after": {
+            "approvedById": "00000000-K7QM-3XWD-8000-000000000000"
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "مستخدم اختبار 0000"
+          }
+        },
+        {
+          "id": "59",
+          "action": "funding.record",
+          "entityType": "FundingRecord",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "treasurer"
+          ],
+          "before": null,
+          "after": {
+            "id": "00000000-K7QM-3XWD-8000-000000000000",
+            "amount": "100",
+            "offerId": null,
+            "currency": "ILS",
+            "createdAt": "2026-01-01T09:00:00.000Z",
+            "direction": "INCOMING",
+            "updatedAt": "2026-01-01T09:00:00.000Z",
+            "approvedAt": null,
+            "occurredAt": "2026-01-01T09:00:00.000Z",
+            "description": null,
+            "approvedById": null,
+            "initiativeId": null,
+            "recordedById": "00000000-K7QM-3XWD-8000-000000000000",
+            "organizationId": null
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "مستخدم اختبار 0000"
+          }
+        },
+        {
+          "id": "58",
+          "action": "offer.decide",
+          "entityType": "SupportOffer",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "council_president"
+          ],
+          "before": {
+            "status": "SUBMITTED"
+          },
+          "after": {
+            "status": "ACCEPTED",
+            "needStatus": "COVERED",
+            "decisionNote": null
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "الرئيس 0000"
+          }
+        },
+        {
+          "id": "57",
+          "action": "need.change",
+          "entityType": "InitiativeNeed",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "council_president"
+          ],
+          "before": {
+            "status": "OPEN"
+          },
+          "after": {
+            "status": "COVERED",
+            "offerId": "00000000-K7QM-3XWD-8000-000000000000"
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "الرئيس 0000"
+          }
+        },
+        {
+          "id": "56",
+          "action": "role.assign",
+          "entityType": "RoleAssignment",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "secretary"
+          ],
+          "before": null,
+          "after": {
+            "userId": "00000000-K7QM-3XWD-8000-000000000000",
+            "newRole": true,
+            "roleKey": "partner",
+            "membership": "linked",
+            "organizationId": "00000000-K7QM-3XWD-8000-000000000000"
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "مستخدم اختبار 0000"
+          }
+        },
+        {
+          "id": "55",
+          "action": "role.assign",
+          "entityType": "RoleAssignment",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "secretary"
+          ],
+          "before": null,
+          "after": {
+            "userId": "00000000-K7QM-3XWD-8000-000000000000",
+            "newRole": true,
+            "roleKey": "partner",
+            "membership": "linked",
+            "organizationId": "00000000-K7QM-3XWD-8000-000000000000"
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "مستخدم اختبار 0000"
+          }
+        },
+        {
+          "id": "54",
+          "action": "initiative.approve",
+          "entityType": "Initiative",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "council_president"
+          ],
+          "before": {
+            "status": "PENDING_APPROVAL"
+          },
+          "after": {
+            "status": "PUBLISHED",
+            "approvedById": "00000000-K7QM-3XWD-8000-000000000000"
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "الرئيس 0000"
+          }
+        },
+        {
+          "id": "53",
+          "action": "need.change",
+          "entityType": "InitiativeNeed",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "committee_head@activities-initiatives"
+          ],
+          "before": null,
+          "after": {
+            "id": "00000000-K7QM-3XWD-8000-000000000000",
+            "type": "FUNDING",
+            "unit": null,
+            "amount": "2000.5",
+            "status": "OPEN",
+            "quantity": null,
+            "createdAt": "2026-01-01T09:00:00.000Z",
+            "sortOrder": 0,
+            "updatedAt": "2026-01-01T09:00:00.000Z",
+            "description": "تمويل أدوات الورش",
+            "initiativeId": "00000000-K7QM-3XWD-8000-000000000000"
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "رئيس لجنة 0000"
+          }
+        },
+        {
+          "id": "52",
+          "action": "initiative.approve",
+          "entityType": "Initiative",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "council_president"
+          ],
+          "before": {
+            "status": "PENDING_APPROVAL"
+          },
+          "after": {
+            "status": "PUBLISHED",
+            "approvedById": "00000000-K7QM-3XWD-8000-000000000000"
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "الرئيس 0000"
+          }
+        },
+        {
+          "id": "51",
+          "action": "need.change",
+          "entityType": "InitiativeNeed",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "committee_head@activities-initiatives"
+          ],
+          "before": null,
+          "after": {
+            "id": "00000000-K7QM-3XWD-8000-000000000000",
+            "type": "FUNDING",
+            "unit": null,
+            "amount": "2000.5",
+            "status": "OPEN",
+            "quantity": null,
+            "createdAt": "2026-01-01T09:00:00.000Z",
+            "sortOrder": 0,
+            "updatedAt": "2026-01-01T09:00:00.000Z",
+            "description": "تمويل أدوات الورش",
+            "initiativeId": "00000000-K7QM-3XWD-8000-000000000000"
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "رئيس لجنة 0000"
+          }
+        },
+        {
+          "id": "50",
+          "action": "complaint.contact_read",
+          "entityType": "Complaint",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "council_president"
+          ],
+          "before": null,
+          "after": {
+            "fields": {
+              "name": true,
+              "email": false,
+              "phone": true,
+              "account": true
+            }
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "مستخدم اختبار 0000"
+          }
+        },
+        {
+          "id": "49",
+          "action": "complaint.create",
+          "entityType": "Complaint",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "youth"
+          ],
+          "before": null,
+          "after": {
+            "areaId": null,
+            "status": "SUBMITTED",
+            "reference": "RF-CMP-2026-000001",
+            "categoryId": "00000000-K7QM-3XWD-8000-000000000000",
+            "hasContact": true,
+            "isAnonymous": false
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "شاب 0000"
+          }
+        },
+        {
+          "id": "48",
+          "action": "complaint.create",
+          "entityType": "Complaint",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "youth"
+          ],
+          "before": null,
+          "after": {
+            "areaId": null,
+            "status": "SUBMITTED",
+            "reference": "RF-CMP-2026-000001",
+            "categoryId": "00000000-K7QM-3XWD-8000-000000000000",
+            "hasContact": false,
+            "isAnonymous": false
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "شاب 0000"
+          }
+        },
+        {
+          "id": "47",
+          "action": "complaint.status_change",
+          "entityType": "Complaint",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "committee_head@legal-affairs"
+          ],
+          "before": {
+            "status": "ASSIGNED",
+            "committeeId": "00000000-K7QM-3XWD-8000-000000000000"
+          },
+          "after": {
+            "note": null,
+            "status": "COMMITTEE_REVIEW",
+            "isPublic": false
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "مستخدم اختبار 0000"
+          }
+        },
+        {
+          "id": "46",
+          "action": "complaint.assign",
+          "entityType": "Complaint",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "secretary"
+          ],
+          "before": {
+            "status": "UNDER_REVIEW",
+            "committeeId": null
+          },
+          "after": {
+            "note": "حُوّلت الشكوى إلى اللجنة القانونية.",
+            "status": "ASSIGNED",
+            "isPublic": true,
+            "followUpAt": null,
+            "triageNote": null,
+            "committeeId": "00000000-K7QM-3XWD-8000-000000000000",
+            "committeeNameAr": "اللجنة القانونية"
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "مستخدم اختبار 0000"
+          }
+        },
+        {
+          "id": "45",
+          "action": "complaint.triage",
+          "entityType": "Complaint",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "secretary"
+          ],
+          "before": {
+            "status": "SUBMITTED",
+            "committeeId": null
+          },
+          "after": {
+            "note": "بدأت أمانة السر فرز الشكوى لتحديد اللجنة المختصة.",
+            "status": "UNDER_REVIEW",
+            "isPublic": true
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "مستخدم اختبار 0000"
+          }
+        },
+        {
+          "id": "44",
+          "action": "complaint.create",
+          "entityType": "Complaint",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "youth"
+          ],
+          "before": null,
+          "after": {
+            "areaId": null,
+            "status": "SUBMITTED",
+            "reference": "RF-CMP-2026-000001",
+            "categoryId": "00000000-K7QM-3XWD-8000-000000000000",
+            "hasContact": false,
+            "isAnonymous": false
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "شاب 0000"
+          }
+        },
+        {
+          "id": "43",
+          "action": "complaint.create",
+          "entityType": "Complaint",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "youth"
+          ],
+          "before": null,
+          "after": {
+            "areaId": null,
+            "status": "SUBMITTED",
+            "reference": "RF-CMP-2026-000001",
+            "categoryId": "00000000-K7QM-3XWD-8000-000000000000",
+            "hasContact": false,
+            "isAnonymous": false
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "شاب 0000"
+          }
+        },
+        {
+          "id": "42",
+          "action": "complaint.create",
+          "entityType": "Complaint",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "youth"
+          ],
+          "before": null,
+          "after": {
+            "areaId": null,
+            "status": "SUBMITTED",
+            "reference": "RF-CMP-2026-000001",
+            "categoryId": "00000000-K7QM-3XWD-8000-000000000000",
+            "hasContact": false,
+            "isAnonymous": false
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "شاب 0000"
+          }
+        },
+        {
+          "id": "41",
+          "action": "complaint.create",
+          "entityType": "Complaint",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "youth"
+          ],
+          "before": null,
+          "after": {
+            "areaId": null,
+            "status": "SUBMITTED",
+            "reference": "RF-CMP-2026-000001",
+            "categoryId": "00000000-K7QM-3XWD-8000-000000000000",
+            "hasContact": false,
+            "isAnonymous": false
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "شاب 0000"
+          }
+        },
+        {
+          "id": "40",
+          "action": "complaint.create",
+          "entityType": "Complaint",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "youth"
+          ],
+          "before": null,
+          "after": {
+            "areaId": null,
+            "status": "SUBMITTED",
+            "reference": "RF-CMP-2026-000001",
+            "categoryId": "00000000-K7QM-3XWD-8000-000000000000",
+            "hasContact": false,
+            "isAnonymous": false
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": {
+            "fullName": "شاب 0000"
+          }
+        },
+        {
+          "id": "39",
+          "action": "complaint.create",
+          "entityType": "Complaint",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "system:public"
+          ],
+          "before": null,
+          "after": {
+            "areaId": null,
+            "status": "SUBMITTED",
+            "reference": "RF-CMP-2026-000001",
+            "categoryId": "00000000-K7QM-3XWD-8000-000000000000",
+            "hasContact": false,
+            "isAnonymous": false
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": null
+        },
+        {
+          "id": "38",
+          "action": "complaint.create",
+          "entityType": "Complaint",
+          "entityId": "00000000-K7QM-3XWD-8000-000000000000",
+          "actorRoles": [
+            "system:public"
+          ],
+          "before": null,
+          "after": {
+            "areaId": null,
+            "status": "SUBMITTED",
+            "reference": "RF-CMP-2026-000001",
+            "categoryId": "00000000-K7QM-3XWD-8000-000000000000",
+            "hasContact": false,
+            "isAnonymous": false
+          },
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "actor": null
+        }
+      ],
+      "total": 67,
+      "filtered": false,
+      "page": 1,
+      "pageSize": 30
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "route": "GET /me/notifications",
+  "status": 200,
+  "body": {
+    "data": {
+      "items": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "title": "إشعار ثانٍ",
+          "body": null,
+          "link": null,
+          "readAt": null,
+          "createdAt": "2026-01-01T09:00:00.000Z"
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "title": "إشعار تجريبي",
+          "body": null,
+          "link": null,
+          "readAt": null,
+          "createdAt": "2026-01-01T09:00:00.000Z"
+        }
+      ],
+      "total": 2,
+      "unread": 2,
+      "page": 1,
+      "pageSize": 30
+    }
+  }
+}

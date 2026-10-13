@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/tasks",
+  "status": 201,
+  "body": {
+    "data": null,
+    "message_ar": "أُنشئت المهمة وأُشعر المسند إليه."
+  }
+}

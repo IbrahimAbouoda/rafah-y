@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/ideas/{id}/review",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "الفكرة الآن: مراجعة اللجنة."
+  }
+}

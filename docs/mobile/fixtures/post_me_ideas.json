@@ -1,0 +1,12 @@
+{
+  "route": "POST /me/ideas",
+  "status": 201,
+  "body": {
+    "data": {
+      "id": "00000000-K7QM-3XWD-8000-000000000000",
+      "reference": "RF-IDA-2026-000001",
+      "duplicate": false
+    },
+    "message_ar": "وصلت فكرتك. تظهر للعامة ويُصوَّت عليها بعد الفرز الأولي."
+  }
+}

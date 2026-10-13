@@ -1,0 +1,31 @@
+{
+  "route": "GET /public/demand",
+  "status": 200,
+  "body": {
+    "data": {
+      "mode": "login",
+      "polls": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "title": "مجالات التدريب 0000",
+          "description": null,
+          "proposalThreshold": 2,
+          "closesAt": null,
+          "options": [
+            {
+              "id": "00000000-K7QM-3XWD-8000-000000000000",
+              "label": "تصميم جرافيك",
+              "voteCount": 2
+            },
+            {
+              "id": "00000000-K7QM-3XWD-8000-000000000000",
+              "label": "برمجة الويب",
+              "voteCount": 0
+            }
+          ],
+          "myOptionId": null
+        }
+      ]
+    }
+  }
+}

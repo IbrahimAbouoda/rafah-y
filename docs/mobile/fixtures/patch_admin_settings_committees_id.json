@@ -1,0 +1,8 @@
+{
+  "route": "PATCH /admin/settings/committees/{id}",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "حُفظت تعديلات «لجنة اختبار معدّلة»."
+  }
+}

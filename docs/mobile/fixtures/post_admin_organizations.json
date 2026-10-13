@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/organizations",
+  "status": 201,
+  "body": {
+    "data": null,
+    "message_ar": "أُضيفت المؤسسة."
+  }
+}

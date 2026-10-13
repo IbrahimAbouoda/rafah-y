@@ -1,0 +1,27 @@
+{
+  "route": "GET /me/complaints/{ref}",
+  "status": 200,
+  "body": {
+    "data": {
+      "reference": "RF-CMP-2026-000001",
+      "title": "انقطاع الإنارة في الشارع",
+      "body": "الإنارة معطلة منذ أسبوعين في الشارع الرئيسي، والمكان مظلم ليلًا.",
+      "status": "SUBMITTED",
+      "submitterId": "00000000-K7QM-3XWD-8000-000000000000",
+      "createdAt": "2026-01-01T09:00:00.000Z",
+      "category": {
+        "nameAr": "الخدمات البلدية والبنية التحتية"
+      },
+      "area": null,
+      "committee": null,
+      "events": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "toStatus": "SUBMITTED",
+          "note": "استُلمت الشكوى وسُجّلت برقمها المرجعي.",
+          "createdAt": "2026-01-01T09:00:00.000Z"
+        }
+      ]
+    }
+  }
+}

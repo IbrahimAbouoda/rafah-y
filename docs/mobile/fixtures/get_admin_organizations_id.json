@@ -1,0 +1,28 @@
+{
+  "route": "GET /admin/organizations/{id}",
+  "status": 200,
+  "body": {
+    "data": {
+      "org": {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "name": "مؤسسة فحص 0",
+        "type": "LOCAL_NGO",
+        "country": null,
+        "sectors": [],
+        "stage": "PROSPECT",
+        "website": null,
+        "lastContactAt": null,
+        "owner": null,
+        "members": [],
+        "interactions": [],
+        "offers": [],
+        "initiativePartners": []
+      },
+      "can": {
+        "manage": true,
+        "log": true,
+        "readOffers": true
+      }
+    }
+  }
+}

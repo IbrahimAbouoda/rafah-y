@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/ideas/{id}/merge",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "دُمجت الفكرة في RF-IDA-2026-000001."
+  }
+}

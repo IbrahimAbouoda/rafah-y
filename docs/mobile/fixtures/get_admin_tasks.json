@@ -1,0 +1,22 @@
+{
+  "route": "GET /admin/tasks",
+  "status": 200,
+  "body": {
+    "data": [
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "title": "تجهيز القاعة",
+        "status": "TODO",
+        "priority": "MEDIUM",
+        "dueAt": null,
+        "assignee": "مستخدم اختبار 0000",
+        "mine": true,
+        "complaint": null,
+        "comments": [],
+        "canMove": true,
+        "canApprove": false,
+        "canComment": true
+      }
+    ]
+  }
+}

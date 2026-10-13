@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/concept-notes/{id}/mark-sent",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "سُجّل إرسال المقترح."
+  }
+}

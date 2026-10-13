@@ -1,0 +1,13 @@
+{
+  "route": "POST /me/complaints",
+  "status": 201,
+  "body": {
+    "data": {
+      "id": "00000000-K7QM-3XWD-8000-000000000000",
+      "reference": "RF-CMP-2026-000001",
+      "accessCode": "K7QM-3XWD",
+      "duplicate": false
+    },
+    "message_ar": "وصلت شكواك. احفظ الرقم والرمز الآن: الرمز لن يظهر مرة أخرى."
+  }
+}

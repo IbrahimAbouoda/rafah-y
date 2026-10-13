@@ -1,0 +1,98 @@
+{
+  "route": "GET /admin/committees",
+  "status": 200,
+  "body": {
+    "data": [
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "technology-digital-systems",
+        "nameAr": "لجنة التكنولوجيا والأنظمة الرقمية",
+        "mandate": null,
+        "_count": {
+          "complaints": 0,
+          "tasks": 0
+        }
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "activities-initiatives",
+        "nameAr": "لجنة الأنشطة والمبادرات",
+        "mandate": null,
+        "_count": {
+          "complaints": 0,
+          "tasks": 0
+        }
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "organizations-partnerships",
+        "nameAr": "لجنة المؤسسات والشراكات",
+        "mandate": null,
+        "_count": {
+          "complaints": 0,
+          "tasks": 1
+        }
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "women-empowerment",
+        "nameAr": "لجنة المرأة",
+        "mandate": null,
+        "_count": {
+          "complaints": 0,
+          "tasks": 0
+        }
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "legal-affairs",
+        "nameAr": "اللجنة القانونية",
+        "mandate": null,
+        "_count": {
+          "complaints": 2,
+          "tasks": 0
+        }
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "sports-arts",
+        "nameAr": "اللجنة الرياضية والفنية",
+        "mandate": null,
+        "_count": {
+          "complaints": 0,
+          "tasks": 0
+        }
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "public-relations-media",
+        "nameAr": "لجنة العلاقات العامة والإعلام",
+        "mandate": null,
+        "_count": {
+          "complaints": 0,
+          "tasks": 0
+        }
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "health-affairs",
+        "nameAr": "اللجنة الصحية",
+        "mandate": null,
+        "_count": {
+          "complaints": 0,
+          "tasks": 1
+        }
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "logistical-support",
+        "nameAr": "لجنة الدعم اللوجستي",
+        "mandate": null,
+        "_count": {
+          "complaints": 0,
+          "tasks": 0
+        }
+      }
+    ]
+  }
+}

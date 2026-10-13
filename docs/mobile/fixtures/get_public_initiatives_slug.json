@@ -1,0 +1,44 @@
+{
+  "route": "GET /public/initiatives/{slug}",
+  "status": 200,
+  "body": {
+    "data": {
+      "id": "00000000-K7QM-3XWD-8000-000000000000",
+      "title": "دوري الأحياء الرمضاني",
+      "summary": null,
+      "description": null,
+      "status": "PUBLISHED",
+      "progressPct": 40,
+      "estimatedBudget": null,
+      "beneficiariesTarget": null,
+      "beneficiariesReached": 120,
+      "impactSummary": null,
+      "startsAt": null,
+      "endsAt": null,
+      "committee": {
+        "nameAr": "اللجنة الرياضية والفنية",
+        "slug": "sports-arts"
+      },
+      "needs": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "type": "EQUIPMENT",
+          "description": "كرات وشباك",
+          "quantity": null,
+          "unit": null,
+          "amount": null,
+          "status": "OPEN"
+        }
+      ],
+      "partners": [],
+      "updates": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "body": "انطلقت مباريات الأسبوع الأول بمشاركة ثماني فرق.",
+          "createdAt": "2026-01-01T09:00:00.000Z"
+        }
+      ],
+      "secured": {}
+    }
+  }
+}

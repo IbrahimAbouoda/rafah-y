@@ -1,0 +1,53 @@
+{
+  "route": "GET /public/committees",
+  "status": 200,
+  "body": {
+    "data": [
+      {
+        "slug": "technology-digital-systems",
+        "nameAr": "لجنة التكنولوجيا والأنظمة الرقمية",
+        "mandate": null
+      },
+      {
+        "slug": "activities-initiatives",
+        "nameAr": "لجنة الأنشطة والمبادرات",
+        "mandate": null
+      },
+      {
+        "slug": "organizations-partnerships",
+        "nameAr": "لجنة المؤسسات والشراكات",
+        "mandate": null
+      },
+      {
+        "slug": "women-empowerment",
+        "nameAr": "لجنة المرأة",
+        "mandate": null
+      },
+      {
+        "slug": "legal-affairs",
+        "nameAr": "اللجنة القانونية",
+        "mandate": null
+      },
+      {
+        "slug": "sports-arts",
+        "nameAr": "اللجنة الرياضية والفنية",
+        "mandate": null
+      },
+      {
+        "slug": "public-relations-media",
+        "nameAr": "لجنة العلاقات العامة والإعلام",
+        "mandate": null
+      },
+      {
+        "slug": "health-affairs",
+        "nameAr": "اللجنة الصحية",
+        "mandate": null
+      },
+      {
+        "slug": "logistical-support",
+        "nameAr": "لجنة الدعم اللوجستي",
+        "mandate": null
+      }
+    ]
+  }
+}

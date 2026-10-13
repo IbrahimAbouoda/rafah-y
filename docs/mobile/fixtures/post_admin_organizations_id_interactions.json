@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/organizations/{id}/interactions",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "سُجّل التواصل."
+  }
+}

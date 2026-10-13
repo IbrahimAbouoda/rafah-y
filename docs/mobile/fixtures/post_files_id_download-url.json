@@ -1,0 +1,10 @@
+{
+  "route": "POST /files/{id}/download-url",
+  "status": 200,
+  "body": {
+    "data": {
+      "url": "memory://download/complaints/00000000-K7QM-3XWD-8000-000000000000/00000000-K7QM-3XWD-8000-000000000000.png"
+    },
+    "message_ar": "الرابط صالح لدقيقة واحدة."
+  }
+}

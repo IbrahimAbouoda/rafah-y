@@ -1,0 +1,46 @@
+{
+  "route": "GET /admin/committees/{slug}/tasks",
+  "status": 200,
+  "body": {
+    "data": {
+      "committee": {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "logistical-support",
+        "nameAr": "لجنة الدعم اللوجستي"
+      },
+      "tasks": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "title": "تجهيز القاعة",
+          "status": "REVIEW",
+          "priority": "MEDIUM",
+          "dueAt": null,
+          "assignee": "مستخدم اختبار 0000",
+          "mine": false,
+          "complaint": null,
+          "comments": [],
+          "canMove": true,
+          "canApprove": true,
+          "canComment": true
+        }
+      ],
+      "members": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "fullName": "مستخدم اختبار 0000",
+          "roles": [
+            "رئيس اللجنة"
+          ]
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "fullName": "مستخدم اختبار 0000",
+          "roles": [
+            "عضو اللجنة"
+          ]
+        }
+      ],
+      "canCreate": true
+    }
+  }
+}

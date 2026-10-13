@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/settings/users/{id}/roles",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "عُيّن دور «عضو اللجنة» للمستخدم مستخدم اختبار 5c72ff0a."
+  }
+}

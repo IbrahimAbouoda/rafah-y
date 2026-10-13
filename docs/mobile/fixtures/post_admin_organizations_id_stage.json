@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/organizations/{id}/stage",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "حُدّثت مرحلة الشراكة."
+  }
+}

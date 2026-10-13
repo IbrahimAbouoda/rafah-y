@@ -1,0 +1,15 @@
+{
+  "route": "POST /auth/register",
+  "status": 201,
+  "body": {
+    "data": {
+      "session": {
+        "accessToken": "access-token",
+        "refreshToken": "refresh-token",
+        "expiresAt": 2000000000,
+        "tokenType": "bearer"
+      }
+    },
+    "message_ar": "أنشأنا حسابك، وسجّلنا دخولك."
+  }
+}

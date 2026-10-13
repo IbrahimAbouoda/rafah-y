@@ -1,0 +1,1334 @@
+{
+  "route": "GET /admin/settings/roles",
+  "status": 200,
+  "body": {
+    "data": {
+      "roles": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "المدير التقني",
+          "requiresCommittee": false,
+          "permissions": [
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            }
+          ],
+          "_count": {
+            "permissions": 6
+          }
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "رئيس المجلس",
+          "requiresCommittee": false,
+          "permissions": [
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            }
+          ],
+          "_count": {
+            "permissions": 49
+          }
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "نائب الرئيس",
+          "requiresCommittee": false,
+          "permissions": [
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            }
+          ],
+          "_count": {
+            "permissions": 34
+          }
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "أمين السر",
+          "requiresCommittee": false,
+          "permissions": [
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            }
+          ],
+          "_count": {
+            "permissions": 32
+          }
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "أمين الصندوق",
+          "requiresCommittee": false,
+          "permissions": [
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            }
+          ],
+          "_count": {
+            "permissions": 11
+          }
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "رئيس اللجنة",
+          "requiresCommittee": true,
+          "permissions": [
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            }
+          ],
+          "_count": {
+            "permissions": 31
+          }
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "عضو اللجنة",
+          "requiresCommittee": true,
+          "permissions": [
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "COMMITTEE"
+            }
+          ],
+          "_count": {
+            "permissions": 12
+          }
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "مراقب البلدية",
+          "requiresCommittee": false,
+          "permissions": [
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            }
+          ],
+          "_count": {
+            "permissions": 10
+          }
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "مؤسسة شريكة",
+          "requiresCommittee": false,
+          "permissions": [
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
+            }
+          ],
+          "_count": {
+            "permissions": 7
+          }
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "شاب",
+          "requiresCommittee": false,
+          "permissions": [
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "OWN"
+            }
+          ],
+          "_count": {
+            "permissions": 10
+          }
+        }
+      ],
+      "permissions": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "activities:attendance",
+          "descriptionAr": "تسجيل الحضور",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "activities:create",
+          "descriptionAr": "إنشاء نشاط أو ورشة",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "activities:register",
+          "descriptionAr": "التسجيل في نشاط وتقييمه",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "activities:update",
+          "descriptionAr": "تعديل النشاط ونشره",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "ai:use",
+          "descriptionAr": "طلب اقتراح من المساعد الذكي وقبوله",
+          "isPhase2": true
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "audit:read",
+          "descriptionAr": "عرض سجل التدقيق",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "committees:manage",
+          "descriptionAr": "إنشاء لجنة وتعديل مجالها",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "committees:read",
+          "descriptionAr": "عرض لوحة اللجنة وأعضائها",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "complaints:close",
+          "descriptionAr": "إغلاق الشكوى أو استبعادها بسبب مكتوب",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "complaints:create",
+          "descriptionAr": "تقديم شكوى",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "complaints:export",
+          "descriptionAr": "تصدير سجل الشكاوى",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "complaints:read",
+          "descriptionAr": "عرض الشكاوى وتفاصيلها (بلا بيانات التواصل)",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "complaints:read_contact",
+          "descriptionAr": "عرض بيانات التواصل المشفّرة لمقدّم الشكوى",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "complaints:refer",
+          "descriptionAr": "تحويل لجهة خارجية (بلدية، مؤسسة…)",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "complaints:triage",
+          "descriptionAr": "فرز الوارد وتحويله إلى لجنة",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "complaints:update_status",
+          "descriptionAr": "تحديث حالة الشكوى في مسارها",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "concept_notes:approve",
+          "descriptionAr": "اعتماد مسودة Concept Note قبل إرسالها",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "decisions:create",
+          "descriptionAr": "إصدار قرار مرقّم",
+          "isPhase2": true
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "demand:manage",
+          "descriptionAr": "إنشاء استطلاع طلب وتحديد حدّ المقترح",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "demand:vote",
+          "descriptionAr": "التصويت على مجالات التدريب",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "faq:manage",
+          "descriptionAr": "إنشاء وتعديل وتعطيل أسئلة FAQ المعتمدة",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "finance:approve",
+          "descriptionAr": "اعتماد القيد المالي",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "finance:read",
+          "descriptionAr": "عرض السجل المالي",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "finance:record",
+          "descriptionAr": "تسجيل تمويل وارد أو مصروف",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "ideas:approve",
+          "descriptionAr": "اعتماد الفكرة أو رفضها نهائيًا",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "ideas:create",
+          "descriptionAr": "تقديم فكرة",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "ideas:merge",
+          "descriptionAr": "دمج فكرتين متشابهتين",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "ideas:read_internal",
+          "descriptionAr": "عرض ملاحظات المراجعة الداخلية",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "ideas:review",
+          "descriptionAr": "فرز الفكرة وإحالتها وطلب تعديلها",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "ideas:vote",
+          "descriptionAr": "التصويت على فكرة",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "initiatives:approve",
+          "descriptionAr": "اعتماد المبادرة ونشرها للعامة",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "initiatives:create",
+          "descriptionAr": "إنشاء مبادرة",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "initiatives:manage_needs",
+          "descriptionAr": "إدارة الاحتياجات المرقّمة",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "initiatives:post_update",
+          "descriptionAr": "نشر تحديث ميداني عن المبادرة",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "initiatives:update",
+          "descriptionAr": "تعديل المبادرة ونسبة الإنجاز",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "media:approve_committee",
+          "descriptionAr": "موافقة لجنة الإعلام",
+          "isPhase2": true
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "media:approve_final",
+          "descriptionAr": "الموافقة النهائية والنشر",
+          "isPhase2": true
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "media:create",
+          "descriptionAr": "كتابة مسودة خبر أو بيان",
+          "isPhase2": true
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "media:review",
+          "descriptionAr": "المراجعة الداخلية",
+          "isPhase2": true
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "meetings:manage",
+          "descriptionAr": "جدولة الاجتماع وتسجيل الحضور والمحضر",
+          "isPhase2": true
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "meetings:read",
+          "descriptionAr": "عرض الاجتماعات والمحاضر",
+          "isPhase2": true
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "offers:create",
+          "descriptionAr": "تقديم عرض دعم",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "offers:decide",
+          "descriptionAr": "قبول عرض الدعم أو رفضه",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "offers:read",
+          "descriptionAr": "عرض عروض الدعم",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "opportunities:applicants",
+          "descriptionAr": "عرض المتقدمين (بموافقتهم فقط)",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "opportunities:apply",
+          "descriptionAr": "التقديم على فرصة",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "opportunities:create",
+          "descriptionAr": "نشر فرصة (تدخل المراجعة)",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "opportunities:publish",
+          "descriptionAr": "اعتماد الفرصة ونشرها",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "organizations:log",
+          "descriptionAr": "تسجيل تواصل أو اجتماع مع مؤسسة",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "organizations:manage",
+          "descriptionAr": "إضافة مؤسسة وتعديل مرحلة الشراكة",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "organizations:read",
+          "descriptionAr": "عرض سجل المؤسسات",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "profiles:read_consented",
+          "descriptionAr": "البحث في ملفات الشباب الموافقين على المشاركة",
+          "isPhase2": true
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "profiles:update",
+          "descriptionAr": "تعديل الملف الشخصي والمهارات والموافقات",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "reports:export",
+          "descriptionAr": "تصدير التقارير",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "reports:publish",
+          "descriptionAr": "نشر تقرير في صفحة الشفافية",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "reports:read",
+          "descriptionAr": "عرض التقارير والمؤشرات الداخلية",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "settings:manage",
+          "descriptionAr": "التصنيفات والمناطق وإعدادات النظام",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "support:ask",
+          "descriptionAr": "إرسال استفسار للبوت أو لفريق المجلس",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "support:read",
+          "descriptionAr": "عرض الاستفسارات الواردة ولوحة الدعم",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "support:respond",
+          "descriptionAr": "الرد على استفسار وإسناده وإغلاقه",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "tasks:approve",
+          "descriptionAr": "اعتماد المهمة المنجزة وإغلاقها",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "tasks:comment",
+          "descriptionAr": "إضافة ملاحظة متابعة",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "tasks:create",
+          "descriptionAr": "إنشاء مهمة وإسنادها",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "tasks:read",
+          "descriptionAr": "عرض المهام",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "tasks:update",
+          "descriptionAr": "تحديث حالة المهمة حتى «مراجعة»",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "users:manage_roles",
+          "descriptionAr": "تعيين الأدوار وسحبها وإدارة الدورات",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "volunteer:approve",
+          "descriptionAr": "اعتماد ساعات التطوع",
+          "isPhase2": true
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "volunteer:certify",
+          "descriptionAr": "إصدار شهادة",
+          "isPhase2": true
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "volunteer:log",
+          "descriptionAr": "تسجيل ساعات تطوع",
+          "isPhase2": true
+        }
+      ]
+    }
+  }
+}

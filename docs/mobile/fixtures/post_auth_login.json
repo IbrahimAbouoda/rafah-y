@@ -1,0 +1,15 @@
+{
+  "route": "POST /auth/login",
+  "status": 200,
+  "body": {
+    "data": {
+      "session": {
+        "accessToken": "access-token",
+        "refreshToken": "refresh-token",
+        "expiresAt": 2000000000,
+        "tokenType": "bearer"
+      },
+      "landingPath": "/me"
+    }
+  }
+}

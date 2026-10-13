@@ -1,0 +1,18 @@
+{
+  "route": "GET /partner/dashboard",
+  "status": 200,
+  "body": {
+    "data": {
+      "orgs": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "name": "مؤسسة اختبار 0",
+          "stage": "PROSPECT"
+        }
+      ],
+      "pending": 0,
+      "accepted": 0,
+      "openNeeds": 3
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "route": "GET /admin/settings/terms",
+  "status": 200,
+  "body": {
+    "data": [
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "name": "دورة تجريبية — للتطوير فقط",
+        "startsAt": "2026-01-01T09:00:00.000Z",
+        "endsAt": null,
+        "isCurrent": true,
+        "_count": {
+          "assignments": 39
+        }
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "name": "دورة اختبار 0000",
+        "startsAt": "2026-01-01T09:00:00.000Z",
+        "endsAt": null,
+        "isCurrent": false,
+        "_count": {
+          "assignments": 0
+        }
+      }
+    ]
+  }
+}

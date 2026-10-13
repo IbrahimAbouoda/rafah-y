@@ -1,0 +1,8 @@
+{
+  "route": "PATCH /admin/initiatives/{id}",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "حُفظت المبادرة."
+  }
+}

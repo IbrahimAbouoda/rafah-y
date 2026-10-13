@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/complaints/{id}/assign",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "حُوّلت الشكوى إلى اللجنة القانونية، وأُشعر رئيس اللجنة."
+  }
+}

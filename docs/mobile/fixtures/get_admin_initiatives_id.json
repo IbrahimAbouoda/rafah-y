@@ -1,0 +1,81 @@
+{
+  "route": "GET /admin/initiatives/{id}",
+  "status": 200,
+  "body": {
+    "data": {
+      "initiative": {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "m-2026-b1cb9cc3",
+        "title": "دوري الأحياء الرمضاني",
+        "summary": null,
+        "description": null,
+        "status": "PUBLISHED",
+        "committeeId": "00000000-K7QM-3XWD-8000-000000000000",
+        "estimatedBudget": null,
+        "beneficiariesTarget": null,
+        "beneficiariesReached": 120,
+        "impactSummary": null,
+        "progressPct": 40,
+        "startsAt": null,
+        "endsAt": null,
+        "approvedAt": "2026-01-01T09:00:00.000Z",
+        "approvedBy": {
+          "fullName": "مستخدم اختبار 0000"
+        },
+        "committee": {
+          "nameAr": "اللجنة الرياضية والفنية"
+        },
+        "needs": [
+          {
+            "id": "00000000-K7QM-3XWD-8000-000000000000",
+            "type": "EQUIPMENT",
+            "description": "كرات وشباك",
+            "quantity": null,
+            "unit": null,
+            "amount": null,
+            "status": "OPEN",
+            "sortOrder": 0
+          },
+          {
+            "id": "00000000-K7QM-3XWD-8000-000000000000",
+            "type": "OTHER",
+            "description": "احتياج سيُلغى",
+            "quantity": null,
+            "unit": null,
+            "amount": null,
+            "status": "CANCELLED",
+            "sortOrder": 0
+          }
+        ],
+        "offers": [],
+        "partners": [],
+        "updates": [
+          {
+            "id": "00000000-K7QM-3XWD-8000-000000000000",
+            "body": "انطلقت مباريات الأسبوع الأول بمشاركة ثماني فرق.",
+            "isPublic": true,
+            "createdAt": "2026-01-01T09:00:00.000Z",
+            "author": {
+              "fullName": "مستخدم اختبار 0000"
+            }
+          }
+        ],
+        "fundingRecords": []
+      },
+      "secured": {},
+      "closed": false,
+      "can": {
+        "manageNeeds": true,
+        "decideOffers": false,
+        "postUpdate": true
+      },
+      "transitions": [
+        {
+          "to": "IN_PROGRESS",
+          "label": "نقل إلى «قيد التنفيذ»",
+          "variant": "outline"
+        }
+      ]
+    }
+  }
+}

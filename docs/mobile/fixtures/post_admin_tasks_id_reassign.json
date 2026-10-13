@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/tasks/{id}/reassign",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "أُعيد إسناد المهمة."
+  }
+}

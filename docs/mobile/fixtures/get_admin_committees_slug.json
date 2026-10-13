@@ -1,0 +1,58 @@
+{
+  "route": "GET /admin/committees/{slug}",
+  "status": 200,
+  "body": {
+    "data": {
+      "committee": {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "legal-affairs",
+        "nameAr": "اللجنة القانونية",
+        "mandate": null
+      },
+      "can": {
+        "readComplaints": true,
+        "readTasks": true,
+        "readIdeas": true
+      },
+      "complaints": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "reference": "RF-CMP-2026-000001",
+          "title": "حفرة في الطريق",
+          "status": "REFERRED",
+          "followUpAt": null,
+          "updatedAt": "2026-01-01T09:00:00.000Z"
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "reference": "RF-CMP-2026-000001",
+          "title": "انقطاع الإنارة في الشارع",
+          "status": "COMMITTEE_REVIEW",
+          "followUpAt": null,
+          "updatedAt": "2026-01-01T09:00:00.000Z"
+        }
+      ],
+      "openCount": 2,
+      "overdue": 0,
+      "tasksInReview": 0,
+      "openTasks": 0,
+      "ideas": [],
+      "members": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "fullName": "مستخدم اختبار 0000",
+          "roles": [
+            "رئيس اللجنة"
+          ]
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "fullName": "مستخدم اختبار 0000",
+          "roles": [
+            "رئيس اللجنة"
+          ]
+        }
+      ]
+    }
+  }
+}

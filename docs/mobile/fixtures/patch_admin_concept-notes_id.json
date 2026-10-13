@@ -1,0 +1,8 @@
+{
+  "route": "PATCH /admin/concept-notes/{id}",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "حُفظت المسودة."
+  }
+}

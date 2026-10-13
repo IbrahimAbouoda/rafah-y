@@ -1,0 +1,8 @@
+{
+  "route": "POST /me/notifications/read-all",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "عُلّمت 1 إشعارات كمقروءة."
+  }
+}

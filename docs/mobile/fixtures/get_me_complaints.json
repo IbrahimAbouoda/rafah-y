@@ -1,0 +1,22 @@
+{
+  "route": "GET /me/complaints",
+  "status": 200,
+  "body": {
+    "data": {
+      "items": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "reference": "RF-CMP-2026-000001",
+          "title": "انقطاع الإنارة في الشارع",
+          "status": "SUBMITTED",
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "updatedAt": "2026-01-01T09:00:00.000Z",
+          "committee": null
+        }
+      ],
+      "total": 1,
+      "page": 1,
+      "pageSize": 20
+    }
+  }
+}

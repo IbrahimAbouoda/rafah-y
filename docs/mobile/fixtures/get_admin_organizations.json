@@ -1,0 +1,58 @@
+{
+  "route": "GET /admin/organizations",
+  "status": 200,
+  "body": {
+    "data": {
+      "orgs": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "name": "جمعية الشباب 0000",
+          "type": "LOCAL_NGO",
+          "stage": "CONTACTED",
+          "lastContactAt": "2026-01-01T09:00:00.000Z",
+          "_count": {
+            "offers": 0,
+            "members": 0
+          }
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "name": "مؤسسة اختبار 0",
+          "type": "LOCAL_NGO",
+          "stage": "PROSPECT",
+          "lastContactAt": null,
+          "_count": {
+            "offers": 1,
+            "members": 1
+          }
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "name": "مؤسسة اختبار 0",
+          "type": "LOCAL_NGO",
+          "stage": "PROSPECT",
+          "lastContactAt": null,
+          "_count": {
+            "offers": 0,
+            "members": 1
+          }
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "name": "مؤسسة فحص 0",
+          "type": "LOCAL_NGO",
+          "stage": "PROSPECT",
+          "lastContactAt": null,
+          "_count": {
+            "offers": 0,
+            "members": 0
+          }
+        }
+      ],
+      "query": "",
+      "can": {
+        "manage": true
+      }
+    }
+  }
+}

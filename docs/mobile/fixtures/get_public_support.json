@@ -1,0 +1,34 @@
+{
+  "route": "GET /public/support",
+  "status": 200,
+  "body": {
+    "data": [
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "type": "EQUIPMENT",
+        "description": "كرات وشباك",
+        "quantity": null,
+        "unit": null,
+        "amount": null,
+        "status": "OPEN",
+        "initiative": {
+          "slug": "m-2026-b1cb9cc3",
+          "title": "دوري الأحياء الرمضاني"
+        }
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "type": "FUNDING",
+        "description": "تمويل أدوات الورش",
+        "quantity": null,
+        "unit": null,
+        "amount": "2000.5",
+        "status": "OPEN",
+        "initiative": {
+          "slug": "m-2026-0011b867",
+          "title": "مبادرة صيف الشباب"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "route": "GET /admin/dashboard",
+  "status": 200,
+  "body": {
+    "data": {
+      "triage": false,
+      "readable": false,
+      "newCount": null,
+      "reviewing": null,
+      "open": null,
+      "awaitingCommittee": null,
+      "resolved30": null
+    }
+  }
+}

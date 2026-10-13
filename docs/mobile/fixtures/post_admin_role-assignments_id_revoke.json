@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/role-assignments/{id}/revoke",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "سُحب دور «عضو اللجنة». يسري ذلك من الطلب التالي للمستخدم."
+  }
+}

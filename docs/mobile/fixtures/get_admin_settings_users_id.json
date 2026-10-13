@@ -1,0 +1,210 @@
+{
+  "route": "GET /admin/settings/users/{id}",
+  "status": 200,
+  "body": {
+    "data": {
+      "user": {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "fullName": "مستخدم اختبار 0000",
+        "email": "test-00000000@example.test",
+        "phone": null,
+        "isActive": true,
+        "roleAssignments": [
+          {
+            "id": "00000000-K7QM-3XWD-8000-000000000000",
+            "title": null,
+            "startsAt": "2026-01-01T09:00:00.000Z",
+            "endsAt": null,
+            "revokedAt": null,
+            "role": {
+              "nameAr": "رئيس اللجنة",
+              "isTermBound": true
+            },
+            "committee": {
+              "nameAr": "اللجنة القانونية"
+            },
+            "term": {
+              "name": "دورة تجريبية — للتطوير فقط",
+              "isCurrent": true
+            }
+          },
+          {
+            "id": "00000000-K7QM-3XWD-8000-000000000000",
+            "title": null,
+            "startsAt": "2026-01-01T09:00:00.000Z",
+            "endsAt": null,
+            "revokedAt": null,
+            "role": {
+              "nameAr": "شاب",
+              "isTermBound": false
+            },
+            "committee": null,
+            "term": null
+          },
+          {
+            "id": "00000000-K7QM-3XWD-8000-000000000000",
+            "title": null,
+            "startsAt": "2026-01-01T09:00:00.000Z",
+            "endsAt": null,
+            "revokedAt": null,
+            "role": {
+              "nameAr": "مؤسسة شريكة",
+              "isTermBound": false
+            },
+            "committee": null,
+            "term": null
+          },
+          {
+            "id": "00000000-K7QM-3XWD-8000-000000000000",
+            "title": null,
+            "startsAt": "2026-01-01T09:00:00.000Z",
+            "endsAt": null,
+            "revokedAt": null,
+            "role": {
+              "nameAr": "أمين الصندوق",
+              "isTermBound": true
+            },
+            "committee": null,
+            "term": {
+              "name": "دورة تجريبية — للتطوير فقط",
+              "isCurrent": true
+            }
+          },
+          {
+            "id": "00000000-K7QM-3XWD-8000-000000000000",
+            "title": null,
+            "startsAt": "2026-01-01T09:00:00.000Z",
+            "endsAt": null,
+            "revokedAt": null,
+            "role": {
+              "nameAr": "رئيس المجلس",
+              "isTermBound": true
+            },
+            "committee": null,
+            "term": {
+              "name": "دورة تجريبية — للتطوير فقط",
+              "isCurrent": true
+            }
+          },
+          {
+            "id": "00000000-K7QM-3XWD-8000-000000000000",
+            "title": null,
+            "startsAt": "2026-01-01T09:00:00.000Z",
+            "endsAt": null,
+            "revokedAt": null,
+            "role": {
+              "nameAr": "المدير التقني",
+              "isTermBound": false
+            },
+            "committee": null,
+            "term": null
+          }
+        ]
+      },
+      "roles": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "المدير التقني",
+          "requiresCommittee": false,
+          "isTermBound": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "رئيس المجلس",
+          "requiresCommittee": false,
+          "isTermBound": true
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "نائب الرئيس",
+          "requiresCommittee": false,
+          "isTermBound": true
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "أمين السر",
+          "requiresCommittee": false,
+          "isTermBound": true
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "أمين الصندوق",
+          "requiresCommittee": false,
+          "isTermBound": true
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "رئيس اللجنة",
+          "requiresCommittee": true,
+          "isTermBound": true
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "عضو اللجنة",
+          "requiresCommittee": true,
+          "isTermBound": true
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "مراقب البلدية",
+          "requiresCommittee": false,
+          "isTermBound": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "مؤسسة شريكة",
+          "requiresCommittee": false,
+          "isTermBound": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "شاب",
+          "requiresCommittee": false,
+          "isTermBound": false
+        }
+      ],
+      "committees": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "لجنة التكنولوجيا والأنظمة الرقمية"
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "لجنة الأنشطة والمبادرات"
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "لجنة المؤسسات والشراكات"
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "لجنة المرأة"
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "اللجنة القانونية"
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "اللجنة الرياضية والفنية"
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "لجنة العلاقات العامة والإعلام"
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "اللجنة الصحية"
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "لجنة الدعم اللوجستي"
+        }
+      ],
+      "currentTerm": {
+        "name": "دورة تجريبية — للتطوير فقط"
+      },
+      "isSelf": true
+    }
+  }
+}

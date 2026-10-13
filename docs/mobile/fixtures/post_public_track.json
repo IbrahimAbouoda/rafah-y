@@ -1,0 +1,21 @@
+{
+  "route": "POST /public/track",
+  "status": 200,
+  "body": {
+    "data": {
+      "reference": "RF-CMP-2026-000001",
+      "status": "SUBMITTED",
+      "committee": null,
+      "submittedAt": "2026-01-01T09:00:00.000Z",
+      "events": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "toStatus": "SUBMITTED",
+          "note": "استُلمت الشكوى وسُجّلت برقمها المرجعي.",
+          "at": "2026-01-01T09:00:00.000Z"
+        }
+      ]
+    },
+    "message_ar": "وجدنا شكواك."
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "route": "POST /admin/complaints/{id}/contact",
+  "status": 200,
+  "body": {
+    "data": {
+      "anonymous": false,
+      "account": {
+        "fullName": "شاب 0000",
+        "email": "test-00000000@example.test",
+        "phone": null
+      },
+      "name": "اسم تجريبي",
+      "phone": "0599000001",
+      "email": null,
+      "preferredChannel": "PHONE"
+    },
+    "message_ar": "سُجّلت قراءتك لبيانات التواصل في سجل التدقيق."
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "route": "GET /partner/offers",
+  "status": 200,
+  "body": {
+    "data": []
+  }
+}

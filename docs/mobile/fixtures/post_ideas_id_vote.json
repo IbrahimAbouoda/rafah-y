@@ -1,0 +1,8 @@
+{
+  "route": "POST /ideas/{id}/vote",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "صوّتّ لهذه الفكرة من قبل — صوت واحد لكل حساب."
+  }
+}

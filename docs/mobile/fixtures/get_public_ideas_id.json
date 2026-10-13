@@ -1,0 +1,25 @@
+{
+  "route": "GET /public/ideas/{id}",
+  "status": 200,
+  "body": {
+    "data": {
+      "kind": "idea",
+      "idea": {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "reference": "RF-IDA-2026-000001",
+        "title": "مساحة دراسة مسائية للطلاب",
+        "problem": "لا يوجد مكان هادئ ومضاء للدراسة مساءً في الحي، والكهرباء تنقطع في البيوت.",
+        "solution": "تجهيز قاعة في المركز الشبابي بإنارة شمسية ومقاعد، وفتحها من السادسة حتى العاشرة.",
+        "estimatedCost": null,
+        "status": "SCREENING",
+        "voteCount": 0,
+        "createdAt": "2026-01-01T09:00:00.000Z",
+        "committee": null,
+        "area": null,
+        "reviewNote": null
+      },
+      "voteMode": "login",
+      "internal": false
+    }
+  }
+}

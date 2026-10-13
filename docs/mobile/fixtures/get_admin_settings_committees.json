@@ -1,0 +1,88 @@
+{
+  "route": "GET /admin/settings/committees",
+  "status": 200,
+  "body": {
+    "data": [
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "technology-digital-systems",
+        "nameAr": "لجنة التكنولوجيا والأنظمة الرقمية",
+        "mandate": null,
+        "isActive": true,
+        "sortOrder": 1
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "activities-initiatives",
+        "nameAr": "لجنة الأنشطة والمبادرات",
+        "mandate": null,
+        "isActive": true,
+        "sortOrder": 2
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "organizations-partnerships",
+        "nameAr": "لجنة المؤسسات والشراكات",
+        "mandate": null,
+        "isActive": true,
+        "sortOrder": 3
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "women-empowerment",
+        "nameAr": "لجنة المرأة",
+        "mandate": null,
+        "isActive": true,
+        "sortOrder": 4
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "legal-affairs",
+        "nameAr": "اللجنة القانونية",
+        "mandate": null,
+        "isActive": true,
+        "sortOrder": 5
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "sports-arts",
+        "nameAr": "اللجنة الرياضية والفنية",
+        "mandate": null,
+        "isActive": true,
+        "sortOrder": 6
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "public-relations-media",
+        "nameAr": "لجنة العلاقات العامة والإعلام",
+        "mandate": null,
+        "isActive": true,
+        "sortOrder": 7
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "health-affairs",
+        "nameAr": "اللجنة الصحية",
+        "mandate": null,
+        "isActive": true,
+        "sortOrder": 8
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "logistical-support",
+        "nameAr": "لجنة الدعم اللوجستي",
+        "mandate": null,
+        "isActive": true,
+        "sortOrder": 9
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "test-2f4c92eb",
+        "nameAr": "لجنة اختبار معدّلة",
+        "mandate": null,
+        "isActive": false,
+        "sortOrder": 999
+      }
+    ]
+  }
+}

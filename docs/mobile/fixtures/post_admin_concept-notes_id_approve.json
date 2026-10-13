@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/concept-notes/{id}/approve",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "اعتُمد المقترح. يمكن الآن إرساله للجهة المانحة وتعليمه «أُرسل»."
+  }
+}

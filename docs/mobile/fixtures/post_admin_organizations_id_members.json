@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/organizations/{id}/members",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "رُبط ممثل مؤسسة 0000 بمؤسسة مؤسسة اختبار 1791914138455، ويدخل الآن بوابة المؤسسات."
+  }
+}

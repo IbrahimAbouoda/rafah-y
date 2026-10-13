@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/initiatives/{id}/updates",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "نُشر التحديث على صفحة المبادرة."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/complaints/{id}/open-triage",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "فُتحت الشكوى للفرز. اختر اللجنة المختصة وحوّلها."
+  }
+}

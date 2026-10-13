@@ -1,0 +1,57 @@
+{
+  "route": "GET /admin/complaints/{id}",
+  "status": 200,
+  "body": {
+    "data": {
+      "complaint": {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "reference": "RF-CMP-2026-000001",
+        "title": "انقطاع الإنارة في الشارع",
+        "body": "الإنارة معطلة منذ أسبوعين في الشارع الرئيسي، والمكان مظلم ليلًا.",
+        "status": "SUBMITTED",
+        "isAnonymous": false,
+        "submitterId": "00000000-K7QM-3XWD-8000-000000000000",
+        "committeeId": null,
+        "dismissReason": null,
+        "resolutionNote": null,
+        "closedAt": null,
+        "followUpAt": null,
+        "createdAt": "2026-01-01T09:00:00.000Z",
+        "category": {
+          "nameAr": "الخدمات البلدية والبنية التحتية",
+          "defaultCommitteeId": "00000000-K7QM-3XWD-8000-000000000000"
+        },
+        "area": null,
+        "committee": null,
+        "contact": null,
+        "events": [
+          {
+            "id": "00000000-K7QM-3XWD-8000-000000000000",
+            "toStatus": "SUBMITTED",
+            "note": "استُلمت الشكوى وسُجّلت برقمها المرجعي.",
+            "isPublic": true,
+            "createdAt": "2026-01-01T09:00:00.000Z",
+            "actor": {
+              "fullName": "شاب 0000"
+            }
+          }
+        ],
+        "referrals": [],
+        "tasks": [],
+        "files": []
+      },
+      "actions": {
+        "openForTriage": true,
+        "assign": null,
+        "dismiss": false,
+        "close": false,
+        "updateStatus": [],
+        "refer": false,
+        "awaitingResponse": false
+      },
+      "canContact": true,
+      "taskMembers": null,
+      "submitterLabel": "حساب مسجّل"
+    }
+  }
+}

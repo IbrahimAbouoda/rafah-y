@@ -1,0 +1,649 @@
+{
+  "route": "GET /me/session",
+  "status": 200,
+  "body": {
+    "data": {
+      "user": {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "fullName": "مستخدم اختبار 0000",
+        "email": "test-00000000@example.test",
+        "phone": null
+      },
+      "roles": [
+        {
+          "key": "super_admin",
+          "nameAr": "المدير التقني",
+          "committeeId": null,
+          "committeeSlug": null,
+          "committeeNameAr": null,
+          "endsAt": null
+        },
+        {
+          "key": "council_president",
+          "nameAr": "رئيس المجلس",
+          "committeeId": null,
+          "committeeSlug": null,
+          "committeeNameAr": null,
+          "endsAt": null
+        },
+        {
+          "key": "treasurer",
+          "nameAr": "أمين الصندوق",
+          "committeeId": null,
+          "committeeSlug": null,
+          "committeeNameAr": null,
+          "endsAt": null
+        },
+        {
+          "key": "partner",
+          "nameAr": "مؤسسة شريكة",
+          "committeeId": null,
+          "committeeSlug": null,
+          "committeeNameAr": null,
+          "endsAt": null
+        },
+        {
+          "key": "youth",
+          "nameAr": "شاب",
+          "committeeId": null,
+          "committeeSlug": null,
+          "committeeNameAr": null,
+          "endsAt": null
+        },
+        {
+          "key": "committee_head",
+          "nameAr": "رئيس اللجنة",
+          "committeeId": "00000000-K7QM-3XWD-8000-000000000000",
+          "committeeSlug": "legal-affairs",
+          "committeeNameAr": "اللجنة القانونية",
+          "endsAt": null
+        }
+      ],
+      "grants": {
+        "committees:read": {
+          "all": true,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "committees:manage": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "reports:read": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "audit:read": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "users:manage_roles": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "settings:manage": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "complaints:read": {
+          "all": true,
+          "own": true,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "complaints:read_contact": {
+          "all": true,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "complaints:triage": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "complaints:update_status": {
+          "all": true,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "complaints:refer": {
+          "all": true,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "complaints:close": {
+          "all": true,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "complaints:export": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "ideas:read_internal": {
+          "all": true,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "ideas:review": {
+          "all": true,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "ideas:approve": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "ideas:merge": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "demand:manage": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "concept_notes:approve": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "initiatives:create": {
+          "all": true,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "initiatives:update": {
+          "all": true,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "initiatives:manage_needs": {
+          "all": true,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "initiatives:approve": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "initiatives:post_update": {
+          "all": true,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "offers:read": {
+          "all": true,
+          "own": true,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "offers:decide": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "organizations:read": {
+          "all": true,
+          "own": true,
+          "committees": []
+        },
+        "organizations:manage": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "organizations:log": {
+          "all": false,
+          "own": true,
+          "committees": []
+        },
+        "opportunities:publish": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "opportunities:applicants": {
+          "all": true,
+          "own": true,
+          "committees": []
+        },
+        "activities:create": {
+          "all": true,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "activities:update": {
+          "all": true,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "tasks:read": {
+          "all": true,
+          "own": true,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "tasks:create": {
+          "all": true,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "tasks:update": {
+          "all": true,
+          "own": true,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "tasks:approve": {
+          "all": true,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "tasks:comment": {
+          "all": true,
+          "own": true,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "finance:read": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "finance:approve": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "reports:export": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "reports:publish": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "meetings:read": {
+          "all": true,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "meetings:manage": {
+          "all": true,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "decisions:create": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "media:approve_final": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "volunteer:certify": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "ai:use": {
+          "all": true,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "support:read": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "support:respond": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "faq:manage": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "finance:record": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "offers:create": {
+          "all": false,
+          "own": true,
+          "committees": []
+        },
+        "opportunities:create": {
+          "all": false,
+          "own": true,
+          "committees": []
+        },
+        "activities:register": {
+          "all": false,
+          "own": true,
+          "committees": []
+        },
+        "profiles:read_consented": {
+          "all": true,
+          "own": false,
+          "committees": []
+        },
+        "complaints:create": {
+          "all": false,
+          "own": true,
+          "committees": []
+        },
+        "ideas:create": {
+          "all": false,
+          "own": true,
+          "committees": []
+        },
+        "ideas:vote": {
+          "all": false,
+          "own": true,
+          "committees": []
+        },
+        "demand:vote": {
+          "all": false,
+          "own": true,
+          "committees": []
+        },
+        "opportunities:apply": {
+          "all": false,
+          "own": true,
+          "committees": []
+        },
+        "profiles:update": {
+          "all": false,
+          "own": true,
+          "committees": []
+        },
+        "volunteer:log": {
+          "all": false,
+          "own": true,
+          "committees": []
+        },
+        "support:ask": {
+          "all": false,
+          "own": true,
+          "committees": []
+        },
+        "activities:attendance": {
+          "all": false,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "media:create": {
+          "all": false,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "media:review": {
+          "all": false,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "media:approve_committee": {
+          "all": false,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        },
+        "volunteer:approve": {
+          "all": false,
+          "own": false,
+          "committees": [
+            "00000000-K7QM-3XWD-8000-000000000000"
+          ]
+        }
+      },
+      "nav": {
+        "admin": [
+          {
+            "label": "العمل",
+            "items": [
+              {
+                "href": "/admin",
+                "label": "اللوحة",
+                "permission": null,
+                "icon": "home"
+              },
+              {
+                "href": "/admin/inbox",
+                "label": "صندوق الوارد",
+                "permission": "complaints:triage",
+                "icon": "inbox"
+              },
+              {
+                "href": "/admin/complaints",
+                "label": "الشكاوى",
+                "permission": "complaints:read",
+                "beyondOwn": true,
+                "icon": "file"
+              },
+              {
+                "href": "/admin/ideas",
+                "label": "الأفكار",
+                "permission": "ideas:review",
+                "icon": "lightbulb"
+              },
+              {
+                "href": "/admin/committees",
+                "label": "اللجان",
+                "permission": "committees:read",
+                "beyondOwn": true,
+                "icon": "committee"
+              },
+              {
+                "href": "/admin/tasks",
+                "label": "مهامي",
+                "permission": "tasks:read",
+                "icon": "kanban"
+              },
+              {
+                "href": "/admin/initiatives",
+                "label": "المبادرات",
+                "permission": [
+                  "initiatives:update",
+                  "demand:manage",
+                  "concept_notes:approve"
+                ],
+                "icon": "rocket"
+              },
+              {
+                "href": "/admin/organizations",
+                "label": "المؤسسات",
+                "permission": "organizations:read",
+                "beyondOwn": true,
+                "icon": "building"
+              },
+              {
+                "href": "/admin/finance",
+                "label": "السجل المالي",
+                "permission": "finance:read",
+                "icon": "wallet"
+              },
+              {
+                "href": "/admin/audit",
+                "label": "سجل التدقيق",
+                "permission": "audit:read",
+                "beyondOwn": true,
+                "icon": "history"
+              }
+            ]
+          },
+          {
+            "label": "الإعدادات",
+            "items": [
+              {
+                "href": "/admin/settings/users",
+                "label": "المستخدمون والأدوار",
+                "permission": "users:manage_roles",
+                "icon": "users"
+              },
+              {
+                "href": "/admin/settings/roles",
+                "label": "الأدوار وصلاحياتها",
+                "permission": "users:manage_roles",
+                "icon": "shield"
+              },
+              {
+                "href": "/admin/settings/terms",
+                "label": "دورات المجلس",
+                "permission": "users:manage_roles",
+                "icon": "calendar"
+              },
+              {
+                "href": "/admin/settings/committees",
+                "label": "اللجان",
+                "permission": "committees:manage",
+                "icon": "layers"
+              },
+              {
+                "href": "/admin/settings/categories",
+                "label": "تصنيفات الشكاوى",
+                "permission": "settings:manage",
+                "icon": "tags"
+              },
+              {
+                "href": "/admin/settings/areas",
+                "label": "المناطق والأحياء",
+                "permission": "settings:manage",
+                "icon": "map"
+              }
+            ]
+          }
+        ],
+        "partner": [
+          {
+            "label": "بوابة المؤسسات",
+            "items": [
+              {
+                "href": "/partner",
+                "label": "لوحة المؤسسة",
+                "permission": "offers:create",
+                "icon": "home"
+              },
+              {
+                "href": "/partner/needs",
+                "label": "الاحتياجات المفتوحة",
+                "permission": "offers:create",
+                "icon": "handshake"
+              },
+              {
+                "href": "/partner/offers",
+                "label": "عروض دعمنا",
+                "permission": "offers:read",
+                "icon": "file"
+              }
+            ]
+          }
+        ],
+        "me": [
+          {
+            "label": "بوابة الشباب",
+            "items": [
+              {
+                "href": "/me",
+                "label": "لوحتي",
+                "permission": null,
+                "icon": "home"
+              },
+              {
+                "href": "/me/complaints",
+                "label": "شكاواي",
+                "permission": "complaints:read",
+                "icon": "file"
+              },
+              {
+                "href": "/me/complaints/new",
+                "label": "تقديم شكوى",
+                "permission": "complaints:create",
+                "icon": "plus"
+              },
+              {
+                "href": "/me/ideas",
+                "label": "أفكاري",
+                "permission": "ideas:create",
+                "icon": "lightbulb"
+              },
+              {
+                "href": "/me/notifications",
+                "label": "الإشعارات",
+                "permission": null,
+                "icon": "bell"
+              }
+            ]
+          }
+        ]
+      },
+      "landingPath": "/admin",
+      "unreadCount": 0
+    }
+  }
+}

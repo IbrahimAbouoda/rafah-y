@@ -1,0 +1,8 @@
+{
+  "route": "PATCH /admin/settings/areas/{id}",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "حُفظت منطقة «حي 0000 الغربي»."
+  }
+}

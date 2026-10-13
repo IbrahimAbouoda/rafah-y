@@ -1,0 +1,8 @@
+{
+  "route": "PATCH /admin/organizations/{id}",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "حُفظت بيانات المؤسسة."
+  }
+}

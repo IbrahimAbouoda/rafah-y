@@ -1,0 +1,14 @@
+{
+  "route": "GET /public/committees/{slug}",
+  "status": 200,
+  "body": {
+    "data": {
+      "committee": {
+        "nameAr": "اللجنة القانونية",
+        "mandate": null
+      },
+      "resolved": 1,
+      "ideas": []
+    }
+  }
+}

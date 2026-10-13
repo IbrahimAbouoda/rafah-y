@@ -1,0 +1,63 @@
+{
+  "route": "GET /admin/finance",
+  "status": 200,
+  "body": {
+    "data": {
+      "records": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "direction": "INCOMING",
+          "amount": "100",
+          "currency": "ILS",
+          "occurredAt": "2026-01-01T09:00:00.000Z",
+          "description": null,
+          "approvedAt": "2026-01-01T09:00:00.000Z",
+          "recordedById": "00000000-K7QM-3XWD-8000-000000000000",
+          "recordedBy": {
+            "fullName": "مستخدم اختبار 0000"
+          },
+          "approvedBy": {
+            "fullName": "مستخدم اختبار 0000"
+          },
+          "initiative": null,
+          "organization": null
+        }
+      ],
+      "awaiting": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "amount": "2000.5",
+          "currency": "ILS",
+          "decidedAt": "2026-01-01T09:00:00.000Z",
+          "organization": {
+            "name": "مؤسسة اختبار 0"
+          },
+          "initiative": {
+            "title": "مبادرة صيف الشباب"
+          }
+        }
+      ],
+      "initiatives": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "title": "دوري الأحياء الرمضاني"
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "title": "مبادرة صيف الشباب"
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "title": "مبادرة صيف الشباب"
+        }
+      ],
+      "secured": {
+        "ILS": "100.00"
+      },
+      "can": {
+        "record": true,
+        "approve": true
+      }
+    }
+  }
+}

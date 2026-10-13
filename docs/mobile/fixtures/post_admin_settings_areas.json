@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/settings/areas",
+  "status": 201,
+  "body": {
+    "data": null,
+    "message_ar": "أُضيفت منطقة «حي 03f7172d»."
+  }
+}

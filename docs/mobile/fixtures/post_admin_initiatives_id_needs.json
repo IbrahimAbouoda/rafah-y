@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/initiatives/{id}/needs",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "أُضيف الاحتياج."
+  }
+}

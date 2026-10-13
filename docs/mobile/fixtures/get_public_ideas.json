@@ -1,0 +1,108 @@
+{
+  "route": "GET /public/ideas",
+  "status": 200,
+  "body": {
+    "data": {
+      "items": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "reference": "RF-IDA-2026-000001",
+          "title": "مساحة دراسة مسائية للطلاب",
+          "problem": "لا يوجد مكان هادئ ومضاء للدراسة مساءً في الحي، والكهرباء تنقطع في البيوت.",
+          "status": "SCREENING",
+          "voteCount": 0,
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "committee": null,
+          "area": null,
+          "voteMode": "login"
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "reference": "RF-IDA-2026-000001",
+          "title": "مساحة دراسة مسائية — معدّلة",
+          "problem": "لا يوجد مكان هادئ ومضاء للدراسة مساءً في الحي، والكهرباء تنقطع في البيوت.",
+          "status": "COMMITTEE_REVIEW",
+          "voteCount": 0,
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "committee": {
+            "nameAr": "اللجنة القانونية"
+          },
+          "area": null,
+          "voteMode": "login"
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "reference": "RF-IDA-2026-000001",
+          "title": "ملعب للحي الشرقي",
+          "problem": "لا مكان آمن يلعب فيه الأطفال في الحي الشرقي.",
+          "status": "SCREENING",
+          "voteCount": 0,
+          "createdAt": "2026-01-01T09:00:00.000Z",
+          "committee": null,
+          "area": null,
+          "voteMode": "login"
+        }
+      ],
+      "total": 3,
+      "committees": [
+        {
+          "slug": "technology-digital-systems",
+          "nameAr": "لجنة التكنولوجيا والأنظمة الرقمية"
+        },
+        {
+          "slug": "activities-initiatives",
+          "nameAr": "لجنة الأنشطة والمبادرات"
+        },
+        {
+          "slug": "organizations-partnerships",
+          "nameAr": "لجنة المؤسسات والشراكات"
+        },
+        {
+          "slug": "women-empowerment",
+          "nameAr": "لجنة المرأة"
+        },
+        {
+          "slug": "legal-affairs",
+          "nameAr": "اللجنة القانونية"
+        },
+        {
+          "slug": "sports-arts",
+          "nameAr": "اللجنة الرياضية والفنية"
+        },
+        {
+          "slug": "public-relations-media",
+          "nameAr": "لجنة العلاقات العامة والإعلام"
+        },
+        {
+          "slug": "health-affairs",
+          "nameAr": "اللجنة الصحية"
+        },
+        {
+          "slug": "logistical-support",
+          "nameAr": "لجنة الدعم اللوجستي"
+        }
+      ],
+      "areas": [
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "حي 0000 الغربي"
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "منطقة تجريبية (أ)"
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "منطقة تجريبية (ب)"
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "nameAr": "منطقة تجريبية (ج)"
+        }
+      ],
+      "status": null,
+      "page": 1,
+      "pageSize": 20
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "route": "POST /admin/complaints/{id}/dismiss",
+  "status": 200,
+  "body": {
+    "data": null,
+    "message_ar": "استُبعدت الشكوى، وسُجّل السبب."
+  }
+}
