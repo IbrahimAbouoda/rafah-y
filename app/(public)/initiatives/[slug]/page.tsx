@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { db } from '@/lib/db';
-import { securedByInitiative } from '@/lib/initiatives/queries';
-import { formatMoney, PUBLIC_INITIATIVE_STATUSES, SUPPORT_TYPE_LABELS } from '@/lib/initiatives/workflow';
+import { publicInitiative } from '@/lib/initiatives/queries';
+import { formatMoney, SUPPORT_TYPE_LABELS } from '@/lib/initiatives/workflow';
 import { formatDate } from '@/lib/utils';
 import { PageHeader } from '@/components/shared/page-header';
 import { StatTile } from '@/components/shared/stat-tile';
@@ -17,38 +16,9 @@ export const dynamic = 'force-dynamic';
 // /initiatives/[slug] — عام: الاحتياجات والشركاء والتحديثات العامة، والمبلغ المؤمَّن من القيود المعتمدة (AC-09 ④).
 export default async function InitiativePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const initiative = await db.initiative.findFirst({
-    where: { slug, status: { in: PUBLIC_INITIATIVE_STATUSES } },
-    select: {
-      id: true,
-      title: true,
-      summary: true,
-      description: true,
-      status: true,
-      progressPct: true,
-      estimatedBudget: true,
-      beneficiariesTarget: true,
-      beneficiariesReached: true,
-      impactSummary: true,
-      startsAt: true,
-      endsAt: true,
-      committee: { select: { nameAr: true, slug: true } },
-      needs: {
-        where: { status: { not: 'CANCELLED' } },
-        orderBy: { sortOrder: 'asc' },
-        select: { id: true, type: true, description: true, quantity: true, unit: true, amount: true, status: true },
-      },
-      partners: { orderBy: { since: 'asc' }, select: { role: true, organization: { select: { name: true } } } },
-      updates: {
-        where: { isPublic: true },
-        orderBy: { createdAt: 'desc' },
-        take: 20,
-        select: { id: true, body: true, createdAt: true },
-      },
-    },
-  });
+  const initiative = await publicInitiative(slug);
   if (!initiative) notFound();
-  const secured = Object.entries((await securedByInitiative([initiative.id])).get(initiative.id) ?? {});
+  const secured = Object.entries(initiative.secured);
 
   return (
     <>

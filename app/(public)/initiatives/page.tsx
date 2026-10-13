@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { db } from '@/lib/db';
-import { securedByInitiative } from '@/lib/initiatives/queries';
-import { formatMoney, OPEN_NEED_STATUSES, PUBLIC_INITIATIVE_STATUSES } from '@/lib/initiatives/workflow';
+import { publicInitiatives } from '@/lib/initiatives/queries';
+import { formatMoney } from '@/lib/initiatives/workflow';
 import { PageHeader } from '@/components/shared/page-header';
 import { EmptyState } from '@/components/shared/states';
 import { StatusBadge } from '@/components/shared/status-badge';
@@ -13,21 +12,7 @@ export const dynamic = 'force-dynamic';
 
 // /initiatives — عام. المعتمدة من الرئيس فقط (§5.3 · AC-09).
 export default async function InitiativesPage() {
-  const initiatives = await db.initiative.findMany({
-    where: { status: { in: PUBLIC_INITIATIVE_STATUSES } },
-    orderBy: [{ isFlagship: 'desc' }, { approvedAt: 'desc' }],
-    select: {
-      id: true,
-      slug: true,
-      title: true,
-      summary: true,
-      status: true,
-      progressPct: true,
-      committee: { select: { nameAr: true } },
-      _count: { select: { needs: { where: { status: { in: OPEN_NEED_STATUSES } } }, partners: true } },
-    },
-  });
-  const secured = await securedByInitiative(initiatives.map((i) => i.id));
+  const initiatives = await publicInitiatives();
 
   return (
     <>
@@ -39,7 +24,7 @@ export default async function InitiativesPage() {
       ) : (
         <div className="grid gap-3 md:grid-cols-2">
           {initiatives.map((i) => {
-            const totals = Object.entries(secured.get(i.id) ?? {});
+            const totals = Object.entries(i.secured);
             return (
               <Link key={i.id} href={`/initiatives/${i.slug}`} className="rounded-xl focus-visible:outline-2 focus-visible:outline-ring">
                 <Card className="flex h-full flex-col gap-2 p-4 transition-colors hover:bg-muted/50">

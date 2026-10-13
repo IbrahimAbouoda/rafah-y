@@ -1,15 +1,15 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { db } from '@/lib/db';
-import type { Prisma } from '@/lib/generated/prisma/client';
 import { guardPage } from '@/lib/page-guard';
-import { formatDateTime, gazaDayStart } from '@/lib/utils';
+import { formatDateTime } from '@/lib/utils';
 import { DataTable } from '@/components/shared/data-table';
 import { PageHeader } from '@/components/shared/page-header';
 import { Forbidden } from '@/components/shared/states';
 import { Button } from '@/components/ui/button';
 import { Input, Label, Select } from '@/components/ui/form-controls';
 import { Card } from '@/components/ui/surface';
+import { auditLog } from '@/lib/audit-log';
+import { toPage } from '@/lib/paging';
 
 export const metadata: Metadata = { title: 'سجل التدقيق' };
 
@@ -41,57 +41,21 @@ function hrefWith(params: Search, patch: Partial<Search>) {
   return `/admin/audit${qs ? `?${qs}` : ''}`;
 }
 
-function parseDay(value: string | undefined, endOfDay: boolean): Date | null {
-  const start = value ? gazaDayStart(value) : null;
-  if (!start) return null;
-  return endOfDay ? new Date(start.getTime() + 24 * 60 * 60 * 1000 - 1) : start;
-}
-
 const pretty = (v: unknown) => (v === null || v === undefined ? '—' : JSON.stringify(v, null, 2));
 
 export default async function AuditPage({ searchParams }: { searchParams: Promise<Search> }) {
   const params = await searchParams;
   // AC-19 ④: لا يظهر السجل لمن لا يملك audit:read
-  const { allowed, backHref } = await guardPage('/admin/audit', 'audit:read', { beyondOwn: true });
+  const { user, allowed, backHref } = await guardPage('/admin/audit', 'audit:read', { beyondOwn: true });
   if (!allowed) return <Forbidden backHref={backHref} />;
 
-  const page = Math.max(1, Number(params.page) || 1);
-  const filters: Prisma.AuditLogWhereInput[] = [];
-  if (params.action) filters.push({ action: params.action });
   const actor = params.actor?.trim();
-  if (actor) {
-    filters.push({
-      actor: { OR: [{ fullName: { contains: actor, mode: 'insensitive' } }, { email: { contains: actor, mode: 'insensitive' } }] },
-    });
-  }
   const entity = params.entity?.trim();
-  if (entity) filters.push({ entityId: entity });
-  const from = parseDay(params.from, false);
-  const to = parseDay(params.to, true);
-  if (from || to) filters.push({ createdAt: { ...(from ? { gte: from } : {}), ...(to ? { lte: to } : {}) } });
-  const where: Prisma.AuditLogWhereInput = filters.length ? { AND: filters } : {};
-
-  const [rows, total] = await Promise.all([
-    db.auditLog.findMany({
-      where,
-      orderBy: { id: 'desc' },
-      skip: (page - 1) * PAGE_SIZE,
-      take: PAGE_SIZE,
-      select: {
-        id: true,
-        action: true,
-        entityType: true,
-        entityId: true,
-        actorRoles: true,
-        before: true,
-        after: true,
-        createdAt: true,
-        actor: { select: { fullName: true } },
-      },
-    }),
-    db.auditLog.count({ where }),
-  ]);
-  const filtered = filters.length > 0;
+  const { items: rows, total, filtered, page } = await auditLog(
+    user,
+    { action: params.action, actor: params.actor, entity: params.entity, from: params.from, to: params.to },
+    toPage(params.page, PAGE_SIZE),
+  );
 
   return (
     <>

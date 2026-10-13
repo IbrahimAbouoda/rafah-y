@@ -1,13 +1,14 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { isLive } from '@/lib/assignments';
-import { db } from '@/lib/db';
 import { guardPage } from '@/lib/page-guard';
 import { formatDate } from '@/lib/utils';
 import { DataTable } from '@/components/shared/data-table';
 import { PageHeader } from '@/components/shared/page-header';
 import { Forbidden } from '@/components/shared/states';
 import { UserRolesPanel } from './user-roles-panel';
+import { userList } from '@/lib/settings/queries';
+import { toPage } from '@/lib/paging';
 
 export const metadata: Metadata = { title: 'المستخدمون والأدوار' };
 
@@ -27,47 +28,7 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
   const { user: me, allowed, backHref } = await guardPage('/admin/settings/users', 'users:manage_roles');
   if (!allowed) return <Forbidden backHref={backHref} />;
 
-  const q = params.q?.trim() ?? '';
-  const page = Math.max(1, Number(params.page) || 1);
-  const where = q
-    ? {
-        OR: [
-          { fullName: { contains: q, mode: 'insensitive' as const } },
-          { email: { contains: q, mode: 'insensitive' as const } },
-          { phone: { contains: q } },
-        ],
-      }
-    : {};
-
-  const [users, total] = await Promise.all([
-    db.user.findMany({
-      where,
-      orderBy: { createdAt: 'desc' },
-      skip: (page - 1) * PAGE_SIZE,
-      take: PAGE_SIZE,
-      select: {
-        id: true,
-        fullName: true,
-        email: true,
-        phone: true,
-        isActive: true,
-        createdAt: true,
-        roleAssignments: {
-          where: { revokedAt: null },
-          select: {
-            id: true,
-            endsAt: true,
-            startsAt: true,
-            revokedAt: true,
-            role: { select: { nameAr: true, isTermBound: true } },
-            committee: { select: { nameAr: true } },
-            term: { select: { isCurrent: true } },
-          },
-        },
-      },
-    }),
-    db.user.count({ where }),
-  ]);
+  const { items: users, total, q, page } = await userList(me, params.q, toPage(params.page, PAGE_SIZE));
 
   return (
     <>
@@ -131,7 +92,7 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
             { key: 'created', header: 'التسجيل', cell: (u) => formatDate(u.createdAt), className: 'hidden md:table-cell' },
           ]}
         />
-        {params.user ? <UserRolesPanel userId={params.user} actorId={me.id} closeHref={hrefWith(params, { user: undefined })} /> : null}
+        {params.user ? <UserRolesPanel userId={params.user} actor={me} closeHref={hrefWith(params, { user: undefined })} /> : null}
       </div>
     </>
   );

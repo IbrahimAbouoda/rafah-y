@@ -1,9 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { db } from '@/lib/db';
-import { formatMoney, securedTotals } from '@/lib/initiatives/workflow';
+import { formatMoney } from '@/lib/initiatives/workflow';
 import { guardPage } from '@/lib/page-guard';
-import { can } from '@/lib/rbac';
 import { formatDate } from '@/lib/utils';
 import { approveFundingAction, recordFundingAction } from '@/server/actions/funding';
 import { ActionButtons } from '@/components/shared/action-buttons';
@@ -14,6 +12,7 @@ import { Forbidden } from '@/components/shared/states';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Input, Select, Textarea } from '@/components/ui/form-controls';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
+import { financeLedger } from '@/lib/finance/queries';
 
 export const metadata: Metadata = { title: 'السجل المالي' };
 
@@ -22,36 +21,10 @@ export const metadata: Metadata = { title: 'السجل المالي' };
 export default async function FinancePage() {
   const { user, allowed, backHref } = await guardPage('/admin/finance', 'finance:read');
   if (!allowed) return <Forbidden backHref={backHref} />;
-  const record = can(user, 'finance:record');
-  const approve = can(user, 'finance:approve');
-
-  const [records, awaiting, initiatives] = await Promise.all([
-    db.fundingRecord.findMany({
-      orderBy: [{ approvedAt: { sort: 'asc', nulls: 'first' } }, { occurredAt: 'desc' }],
-      take: 200,
-      select: {
-        id: true,
-        direction: true,
-        amount: true,
-        currency: true,
-        occurredAt: true,
-        description: true,
-        approvedAt: true,
-        recordedById: true,
-        recordedBy: { select: { fullName: true } },
-        approvedBy: { select: { fullName: true } },
-        initiative: { select: { id: true, title: true } },
-        organization: { select: { name: true } },
-      },
-    }),
-    db.supportOffer.findMany({
-      where: { status: 'ACCEPTED', types: { has: 'FUNDING' }, amount: { not: null }, fundingRecords: { none: {} } },
-      orderBy: { decidedAt: 'asc' },
-      select: { id: true, amount: true, currency: true, decidedAt: true, organization: { select: { name: true } }, initiative: { select: { title: true } } },
-    }),
-    record ? db.initiative.findMany({ where: { status: { notIn: ['DRAFT', 'CANCELLED'] } }, select: { id: true, title: true } }) : [],
-  ]);
-  const secured = Object.entries(securedTotals(records));
+  const ledger = await financeLedger(user);
+  const { records, awaiting, initiatives } = ledger;
+  const { record, approve } = ledger.can;
+  const secured = Object.entries(ledger.secured);
 
   return (
     <>

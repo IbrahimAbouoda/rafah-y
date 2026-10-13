@@ -1,24 +1,21 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { db } from '@/lib/db';
 import { guardPage } from '@/lib/page-guard';
 import { AreaForm } from '@/components/settings/reference-forms';
 import { DataTable } from '@/components/shared/data-table';
 import { PageHeader } from '@/components/shared/page-header';
 import { Forbidden } from '@/components/shared/states';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
+import { settingsAreas } from '@/lib/settings/queries';
 
 export const metadata: Metadata = { title: 'المناطق والأحياء' };
 
 export default async function AreasPage({ searchParams }: { searchParams: Promise<{ edit?: string }> }) {
   const { edit } = await searchParams;
-  const { allowed, backHref } = await guardPage('/admin/settings/areas', 'settings:manage');
+  const { user, allowed, backHref } = await guardPage('/admin/settings/areas', 'settings:manage');
   if (!allowed) return <Forbidden backHref={backHref} />;
 
-  const areas = await db.area.findMany({
-    orderBy: { nameAr: 'asc' },
-    select: { id: true, nameAr: true, parentId: true, parent: { select: { nameAr: true } }, _count: { select: { children: true } } },
-  });
+  const areas = await settingsAreas(user);
   const editing = areas.find((a) => a.id === edit);
 
   return (

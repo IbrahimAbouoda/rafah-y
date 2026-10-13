@@ -1,12 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { readableCommitteesWhere } from '@/lib/committees';
-import { OPEN_STATUSES } from '@/lib/complaints/workflow';
-import { db } from '@/lib/db';
 import { guardPage } from '@/lib/page-guard';
 import { PageHeader } from '@/components/shared/page-header';
 import { EmptyState, Forbidden } from '@/components/shared/states';
 import { Card } from '@/components/ui/surface';
+import { committeeList } from '@/lib/committees/queries';
 
 export const metadata: Metadata = { title: 'اللجان' };
 
@@ -14,25 +12,8 @@ export const metadata: Metadata = { title: 'اللجان' };
 export default async function CommitteesPage() {
   const { user, allowed, backHref } = await guardPage('/admin/committees', 'committees:read', { beyondOwn: true });
   if (!allowed) return <Forbidden backHref={backHref} />;
-  const where = readableCommitteesWhere(user);
-  if (!where) return <Forbidden backHref={backHref} />;
-
-  const committees = await db.committee.findMany({
-    where: { ...where, isActive: true },
-    orderBy: { sortOrder: 'asc' },
-    select: {
-      id: true,
-      slug: true,
-      nameAr: true,
-      mandate: true,
-      _count: {
-        select: {
-          complaints: { where: { status: { in: OPEN_STATUSES } } },
-          tasks: { where: { status: { not: 'DONE' } } },
-        },
-      },
-    },
-  });
+  const committees = await committeeList(user);
+  if (!committees) return <Forbidden backHref={backHref} />;
 
   return (
     <>

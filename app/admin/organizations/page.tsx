@@ -1,8 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { db } from '@/lib/db';
 import { guardPage } from '@/lib/page-guard';
-import { can } from '@/lib/rbac';
 import { formatDate } from '@/lib/utils';
 import { ORG_TYPE_LABELS, STAGE_LABELS } from '@/lib/organization-labels';
 import { ORGANIZATION_TYPES } from '@/lib/validation/initiatives';
@@ -13,6 +11,7 @@ import { PageHeader } from '@/components/shared/page-header';
 import { Forbidden } from '@/components/shared/states';
 import { Input, Select } from '@/components/ui/form-controls';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
+import { organizationList } from '@/lib/organizations/queries';
 
 export const metadata: Metadata = { title: 'المؤسسات' };
 
@@ -21,14 +20,8 @@ export default async function OrganizationsPage({ searchParams }: { searchParams
   const { q } = await searchParams;
   const { user, allowed, backHref } = await guardPage('/admin/organizations', 'organizations:read', { beyondOwn: true });
   if (!allowed) return <Forbidden backHref={backHref} />;
-  const query = q?.trim() ?? '';
-  const orgs = await db.organization.findMany({
-    where: query ? { name: { contains: query, mode: 'insensitive' } } : {},
-    orderBy: [{ lastContactAt: { sort: 'desc', nulls: 'last' } }, { name: 'asc' }],
-    take: 200,
-    select: { id: true, name: true, type: true, stage: true, lastContactAt: true, _count: { select: { offers: true, members: true } } },
-  });
-  const manage = can(user, 'organizations:manage');
+  const { orgs, query, can: allowedTo } = await organizationList(user, q);
+  const manage = allowedTo.manage;
 
   return (
     <>

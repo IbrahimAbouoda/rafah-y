@@ -2,9 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { KanbanSquare } from 'lucide-react';
-import { committeeMembers, myCommittees } from '@/lib/committees';
-import { OPEN_STATUSES } from '@/lib/complaints/workflow';
-import { db } from '@/lib/db';
+import { myCommittees } from '@/lib/committees';
 import { guardPage } from '@/lib/page-guard';
 import { can } from '@/lib/rbac';
 import { formatDate } from '@/lib/utils';
@@ -16,10 +14,9 @@ import { StatTile } from '@/components/shared/stat-tile';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
+import { committeeDashboard } from '@/lib/committees/queries';
 
 export const metadata: Metadata = { title: 'لوحة اللجنة' };
-
-const startOfToday = () => new Date(new Date().setHours(0, 0, 0, 0));
 
 // لوحة اللجنة — مساحة عملها: الشكاوى المحوّلة بمواعيد متابعتها (D23)، والمهام، والأفكار قيد مراجعتها.
 export default async function CommitteeDashboard({ params }: { params: Promise<{ slug: string }> }) {
@@ -27,39 +24,12 @@ export default async function CommitteeDashboard({ params }: { params: Promise<{
   const { user, allowed, backHref } = await guardPage(`/admin/committees/${slug}`, 'committees:read', { beyondOwn: true });
   if (!allowed) return <Forbidden backHref={backHref} />;
 
-  const committee = await db.committee.findUnique({ where: { slug }, select: { id: true, slug: true, nameAr: true, mandate: true } });
+  const dashboard = await committeeDashboard(user, slug);
   // لجنة غيره = غير موجودة، فلا يكشف التخمين وجودها (معيار Sprint 2)
-  if (!committee || !can(user, 'committees:read', { committeeId: committee.id })) notFound();
-
-  const today = startOfToday();
-  const readComplaints = can(user, 'complaints:read', { committeeId: committee.id });
-  const readTasks = can(user, 'tasks:read', { committeeId: committee.id });
-  const readIdeas = can(user, 'ideas:read_internal', { committeeId: committee.id });
-  const openWhere = { committeeId: committee.id, status: { in: OPEN_STATUSES } };
-
-  const [complaints, openCount, overdue, tasksInReview, openTasks, ideas, members] = await Promise.all([
-    readComplaints
-      ? db.complaint.findMany({
-          where: openWhere,
-          orderBy: [{ followUpAt: { sort: 'asc', nulls: 'last' } }, { updatedAt: 'asc' }],
-          take: 50,
-          select: { id: true, reference: true, title: true, status: true, followUpAt: true, updatedAt: true },
-        })
-      : null,
-    readComplaints ? db.complaint.count({ where: openWhere }) : null,
-    readComplaints ? db.complaint.count({ where: { ...openWhere, followUpAt: { lt: today } } }) : null,
-    readTasks ? db.task.count({ where: { committeeId: committee.id, status: 'REVIEW' } }) : null,
-    readTasks ? db.task.count({ where: { committeeId: committee.id, status: { not: 'DONE' } } }) : null,
-    readIdeas
-      ? db.idea.findMany({
-          where: { committeeId: committee.id, status: { in: ['COMMITTEE_REVIEW', 'CHANGES_REQUESTED'] } },
-          orderBy: { voteCount: 'desc' },
-          take: 20,
-          select: { id: true, reference: true, title: true, status: true, voteCount: true },
-        })
-      : null,
-    committeeMembers(db, committee.id),
-  ]);
+  if (!dashboard) notFound();
+  const { committee, complaints, openCount, overdue, tasksInReview, openTasks, ideas, members } = dashboard;
+  const { readTasks } = dashboard.can;
+  const today = new Date(new Date().setHours(0, 0, 0, 0));
 
   return (
     <>

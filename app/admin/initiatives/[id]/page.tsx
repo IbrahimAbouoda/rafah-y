@@ -1,26 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { db } from '@/lib/db';
-import {
-  formatMoney,
-  INITIATIVE_STATUS_LABELS,
-  INITIATIVE_TRANSITIONS,
-  securedTotals,
-  SUPPORT_TYPE_LABELS,
-} from '@/lib/initiatives/workflow';
+import { formatMoney, INITIATIVE_STATUS_LABELS, SUPPORT_TYPE_LABELS } from '@/lib/initiatives/workflow';
 import { guardPage } from '@/lib/page-guard';
-import { can } from '@/lib/rbac';
 import { formatDate, toDateInput } from '@/lib/utils';
 import { decideOfferAction } from '@/server/actions/offers';
-import {
-  postUpdateAction,
-  removeNeedAction,
-  saveInitiativeAction,
-  setInitiativeStatusAction,
-  updateProgressAction,
-  upsertNeedAction,
-} from '@/server/actions/initiatives';
+import { postUpdateAction, removeNeedAction, saveInitiativeAction, setInitiativeStatusAction, updateProgressAction, upsertNeedAction } from '@/server/actions/initiatives';
 import { ActionButtons } from '@/components/shared/action-buttons';
 import { ActionForm, Field, SubmitButton } from '@/components/shared/action-form';
 import { PageHeader } from '@/components/shared/page-header';
@@ -28,6 +13,7 @@ import { Forbidden } from '@/components/shared/states';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Checkbox, Input, Label, Select, Textarea } from '@/components/ui/form-controls';
 import { Alert, Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
+import { initiativeFile } from '@/lib/initiatives/admin';
 
 export const metadata: Metadata = { title: 'مبادرة' };
 
@@ -38,74 +24,18 @@ export default async function AdminInitiativePage({ params }: { params: Promise<
   const { id } = await params;
   const { user, allowed, backHref } = await guardPage(`/admin/initiatives/${id}`, 'initiatives:update');
   if (!allowed) return <Forbidden backHref={backHref} />;
-  if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
-
-  const initiative = await db.initiative.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      slug: true,
-      title: true,
-      summary: true,
-      description: true,
-      status: true,
-      committeeId: true,
-      estimatedBudget: true,
-      beneficiariesTarget: true,
-      beneficiariesReached: true,
-      impactSummary: true,
-      progressPct: true,
-      startsAt: true,
-      endsAt: true,
-      approvedAt: true,
-      approvedBy: { select: { fullName: true } },
-      committee: { select: { nameAr: true } },
-      needs: { orderBy: { sortOrder: 'asc' }, select: { id: true, type: true, description: true, quantity: true, unit: true, amount: true, status: true, sortOrder: true } },
-      offers: {
-        orderBy: { createdAt: 'desc' },
-        select: {
-          id: true,
-          types: true,
-          amount: true,
-          currency: true,
-          note: true,
-          status: true,
-          decisionNote: true,
-          createdAt: true,
-          organization: { select: { name: true } },
-          need: { select: { description: true } },
-          _count: { select: { fundingRecords: true } },
-        },
-      },
-      partners: { select: { role: true, since: true, organization: { select: { id: true, name: true } } } },
-      updates: { orderBy: { createdAt: 'desc' }, take: 30, select: { id: true, body: true, isPublic: true, createdAt: true, author: { select: { fullName: true } } } },
-      fundingRecords: { select: { direction: true, amount: true, currency: true, approvedAt: true } },
-    },
-  });
+  const file = await initiativeFile(user, id);
   // مبادرة لجنة غيره = غير موجودة
-  if (!initiative || !can(user, 'initiatives:update', { committeeId: initiative.committeeId })) notFound();
-
-  const ctx = { committeeId: initiative.committeeId };
-  const manageNeeds = can(user, 'initiatives:manage_needs', ctx);
-  const decide = can(user, 'offers:decide', ctx);
-  const post = can(user, 'initiatives:post_update', ctx);
-  const closed = initiative.status === 'COMPLETED' || initiative.status === 'CANCELLED';
-  const statusButtons = INITIATIVE_TRANSITIONS[initiative.status]
-    .filter((t) => can(user, t.permission, ctx))
-    .map((t) => ({
-      action: setInitiativeStatusAction,
-      fields: { initiativeId: initiative.id, toStatus: t.to },
-      label:
-        t.to === 'PUBLISHED'
-          ? 'اعتماد ونشر'
-          : t.to === 'PENDING_APPROVAL'
-            ? 'إرسال لاعتماد الرئيس'
-            : t.to === 'DRAFT'
-              ? 'إعادة للتعديل'
-              : `نقل إلى «${INITIATIVE_STATUS_LABELS[t.to]}»`,
-      variant: t.to === 'CANCELLED' ? ('destructive' as const) : t.to === 'PUBLISHED' ? ('default' as const) : ('outline' as const),
-    }));
-  const secured = Object.entries(securedTotals(initiative.fundingRecords));
+  if (!file) notFound();
+  const { initiative, closed, transitions } = file;
+  const { manageNeeds, decideOffers: decide, postUpdate: post } = file.can;
+  const statusButtons = transitions.map((t) => ({
+    action: setInitiativeStatusAction,
+    fields: { initiativeId: initiative.id, toStatus: t.to },
+    label: t.label,
+    variant: t.variant,
+  }));
+  const secured = Object.entries(file.secured);
 
   return (
     <>

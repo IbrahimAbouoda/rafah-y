@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { db } from '@/lib/db';
 import { PageHeader } from '@/components/shared/page-header';
 import { StatTile } from '@/components/shared/stat-tile';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
+import { publicCommittee } from '@/lib/committees/queries';
 
 export const metadata: Metadata = { title: 'لجنة' };
 export const dynamic = 'force-dynamic';
@@ -13,21 +13,9 @@ export const dynamic = 'force-dynamic';
 // /committees/[slug] — تعريف لجنة واحدة: المجال، وأرقام عامة، والأفكار المعتمدة لديها. بلا أسماء الأعضاء (Q15).
 export default async function PublicCommitteePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const committee = await db.committee.findFirst({
-    where: { slug, isActive: true },
-    select: { id: true, nameAr: true, mandate: true },
-  });
-  if (!committee) notFound();
-
-  const [resolved, ideas] = await Promise.all([
-    db.complaint.count({ where: { committeeId: committee.id, status: { in: ['RESOLVED', 'CLOSED'] } } }),
-    db.idea.findMany({
-      where: { committeeId: committee.id, status: { in: ['COMMITTEE_REVIEW', 'APPROVED'] } },
-      orderBy: { voteCount: 'desc' },
-      take: 10,
-      select: { id: true, title: true, status: true, voteCount: true },
-    }),
-  ]);
+  const found = await publicCommittee(slug);
+  if (!found) notFound();
+  const { committee, resolved, ideas } = found;
 
   return (
     <>

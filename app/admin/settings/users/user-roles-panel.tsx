@@ -1,44 +1,20 @@
 import Link from 'next/link';
 import { X } from 'lucide-react';
-import { z } from 'zod';
 import { assignmentStatus } from '@/lib/assignments';
-import { db } from '@/lib/db';
 import { formatDate } from '@/lib/utils';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { EmptyState } from '@/components/shared/states';
 import { Button } from '@/components/ui/button';
 import { Alert, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/surface';
 import { AssignRoleForm, RevokeButton } from './role-forms';
+import { userRoles } from '@/lib/settings/queries';
+import { type SessionUser } from '@/lib/rbac';
 
-export async function UserRolesPanel({ userId, actorId, closeHref }: { userId: string; actorId: string; closeHref: string }) {
-  const valid = z.uuid().safeParse(userId).success;
-  const user = valid
-    ? await db.user.findFirst({
-        where: { id: userId },
-        select: {
-          id: true,
-          fullName: true,
-          email: true,
-          phone: true,
-          isActive: true,
-          roleAssignments: {
-            orderBy: { createdAt: 'desc' },
-            select: {
-              id: true,
-              title: true,
-              startsAt: true,
-              endsAt: true,
-              revokedAt: true,
-              role: { select: { nameAr: true, isTermBound: true } },
-              committee: { select: { nameAr: true } },
-              term: { select: { name: true, isCurrent: true } },
-            },
-          },
-        },
-      })
-    : null;
+export async function UserRolesPanel({ userId, actor, closeHref }: { userId: string; actor: SessionUser; closeHref: string }) {
+  const panel = await userRoles(actor, userId);
+  const user = panel?.user;
 
-  if (!user) {
+  if (!panel || !user) {
     return (
       <Card>
         <EmptyState title="المستخدم غير موجود" hint="ربما حُذف أو الرابط غير صحيح. اختر مستخدمًا من القائمة.">
@@ -50,12 +26,7 @@ export async function UserRolesPanel({ userId, actorId, closeHref }: { userId: s
     );
   }
 
-  const [roles, committees, currentTerm] = await Promise.all([
-    db.role.findMany({ orderBy: { createdAt: 'asc' }, select: { id: true, nameAr: true, requiresCommittee: true, isTermBound: true } }),
-    db.committee.findMany({ where: { isActive: true }, orderBy: { sortOrder: 'asc' }, select: { id: true, nameAr: true } }),
-    db.councilTerm.findFirst({ where: { isCurrent: true }, select: { name: true } }),
-  ]);
-  const isSelf = user.id === actorId;
+  const { roles, committees, currentTerm, isSelf } = panel!;
 
   return (
     <Card className="h-fit xl:sticky xl:top-20">

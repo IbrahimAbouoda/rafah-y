@@ -1,34 +1,20 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { COUNCIL_EMAIL } from '@/lib/config';
-import { db } from '@/lib/db';
-import { formatMoney, OFFERABLE_INITIATIVE_STATUSES, OPEN_NEED_STATUSES, SUPPORT_TYPE_LABELS } from '@/lib/initiatives/workflow';
+import { formatMoney, SUPPORT_TYPE_LABELS } from '@/lib/initiatives/workflow';
 import { PageHeader } from '@/components/shared/page-header';
 import { EmptyState } from '@/components/shared/states';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
+import { openNeeds } from '@/lib/initiatives/queries';
 
 export const metadata: Metadata = { title: 'ادعمنا' };
 export const dynamic = 'force-dynamic';
 
 // /support — «ادعمنا» مدخل المؤسسات (§11.2). الاحتياجات المفتوحة للمبادرات المعتمدة فقط؛ المغطّى لا يظهر (AC-09 ③).
 export default async function SupportPage() {
-  const needs = await db.initiativeNeed.findMany({
-    where: { status: { in: OPEN_NEED_STATUSES }, initiative: { status: { in: OFFERABLE_INITIATIVE_STATUSES } } },
-    orderBy: [{ initiative: { isFlagship: 'desc' } }, { createdAt: 'asc' }],
-    take: 100,
-    select: {
-      id: true,
-      type: true,
-      description: true,
-      quantity: true,
-      unit: true,
-      amount: true,
-      status: true,
-      initiative: { select: { slug: true, title: true } },
-    },
-  });
+  const needs = await openNeeds();
 
   return (
     <>

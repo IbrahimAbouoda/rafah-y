@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { db } from '@/lib/db';
 import { guardPage } from '@/lib/page-guard';
 import { CommitteeForm } from '@/components/settings/reference-forms';
 import { DataTable } from '@/components/shared/data-table';
@@ -8,18 +7,16 @@ import { PageHeader } from '@/components/shared/page-header';
 import { Forbidden } from '@/components/shared/states';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
+import { settingsCommittees } from '@/lib/settings/queries';
 
 export const metadata: Metadata = { title: 'اللجان' };
 
 export default async function CommitteesPage({ searchParams }: { searchParams: Promise<{ edit?: string }> }) {
   const { edit } = await searchParams;
-  const { allowed, backHref } = await guardPage('/admin/settings/committees', 'committees:manage');
+  const { user, allowed, backHref } = await guardPage('/admin/settings/committees', 'committees:manage');
   if (!allowed) return <Forbidden backHref={backHref} />;
 
-  const committees = await db.committee.findMany({
-    orderBy: [{ sortOrder: 'asc' }, { nameAr: 'asc' }],
-    select: { id: true, slug: true, nameAr: true, mandate: true, isActive: true, sortOrder: true },
-  });
+  const committees = await settingsCommittees(user);
   const editing = committees.find((c) => c.id === edit);
 
   return (

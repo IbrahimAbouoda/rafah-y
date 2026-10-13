@@ -1,14 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { db } from '@/lib/db';
-import { OFFERABLE_INITIATIVE_STATUSES, OPEN_NEED_STATUSES } from '@/lib/initiatives/workflow';
-import { memberOrganizationIds } from '@/lib/organizations';
 import { guardPage } from '@/lib/page-guard';
 import { PageHeader } from '@/components/shared/page-header';
 import { EmptyState, Forbidden } from '@/components/shared/states';
 import { StatTile } from '@/components/shared/stat-tile';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
+import { partnerHome } from '@/lib/initiatives/queries';
 
 export const metadata: Metadata = { title: 'لوحة المؤسسة' };
 
@@ -16,16 +14,7 @@ export const metadata: Metadata = { title: 'لوحة المؤسسة' };
 export default async function PartnerHome() {
   const { user, allowed, backHref } = await guardPage('/partner', 'offers:create');
   if (!allowed) return <Forbidden backHref={backHref} />;
-  const orgIds = await memberOrganizationIds(db, user.id);
-
-  const [orgs, pending, accepted, openNeeds] = await Promise.all([
-    db.organization.findMany({ where: { id: { in: orgIds } }, select: { id: true, name: true, stage: true } }),
-    db.supportOffer.count({ where: { organizationId: { in: orgIds }, status: 'SUBMITTED' } }),
-    db.supportOffer.count({ where: { organizationId: { in: orgIds }, status: 'ACCEPTED' } }),
-    db.initiativeNeed.count({
-      where: { status: { in: OPEN_NEED_STATUSES }, initiative: { status: { in: OFFERABLE_INITIATIVE_STATUSES } } },
-    }),
-  ]);
+  const { orgs, pending, accepted, openNeeds } = await partnerHome(user);
 
   return (
     <>

@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { db } from '@/lib/db';
 import { formatMoney, SUPPORT_TYPE_LABELS } from '@/lib/initiatives/workflow';
 import { INTERACTION_LABELS, ORG_TYPE_LABELS, STAGE_LABELS } from '@/lib/organization-labels';
 import { guardPage } from '@/lib/page-guard';
-import { can } from '@/lib/rbac';
 import { formatDate } from '@/lib/utils';
 import { INTERACTION_TYPES, PARTNERSHIP_STAGES } from '@/lib/validation/initiatives';
 import { linkMemberAction, logInteractionAction, setOrganizationStageAction, unlinkMemberAction } from '@/server/actions/organizations';
@@ -16,6 +14,7 @@ import { Forbidden } from '@/components/shared/states';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Checkbox, Input, Label, Select, Textarea } from '@/components/ui/form-controls';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
+import { organizationFile } from '@/lib/organizations/queries';
 
 export const metadata: Metadata = { title: 'ملف مؤسسة' };
 
@@ -24,38 +23,10 @@ export default async function OrganizationPage({ params }: { params: Promise<{ i
   const { id } = await params;
   const { user, allowed, backHref } = await guardPage(`/admin/organizations/${id}`, 'organizations:read', { beyondOwn: true });
   if (!allowed) return <Forbidden backHref={backHref} />;
-  if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
-
-  const org = await db.organization.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      name: true,
-      type: true,
-      country: true,
-      sectors: true,
-      stage: true,
-      website: true,
-      lastContactAt: true,
-      owner: { select: { fullName: true } },
-      members: { select: { isAdmin: true, user: { select: { id: true, fullName: true, email: true } } } },
-      interactions: {
-        orderBy: { occurredAt: 'desc' },
-        take: 50,
-        select: { id: true, type: true, summary: true, occurredAt: true, followUpAt: true, loggedBy: { select: { fullName: true } } },
-      },
-      offers: {
-        orderBy: { createdAt: 'desc' },
-        take: 30,
-        select: { id: true, types: true, amount: true, currency: true, status: true, createdAt: true, initiative: { select: { id: true, title: true } } },
-      },
-      initiativePartners: { select: { role: true, initiative: { select: { id: true, title: true } } } },
-    },
-  });
-  if (!org) notFound();
-  const manage = can(user, 'organizations:manage');
-  const log = can(user, 'organizations:log');
-  const readOffers = can(user, 'offers:read');
+  const file = await organizationFile(user, id);
+  if (!file) notFound();
+  const { org } = file;
+  const { manage, log, readOffers } = file.can;
 
   return (
     <>

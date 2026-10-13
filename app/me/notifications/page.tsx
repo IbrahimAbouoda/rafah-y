@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import { db } from '@/lib/db';
 import { guardPage } from '@/lib/page-guard';
 import { NotificationCenter } from '@/components/shared/notification-center';
 import { PageHeader } from '@/components/shared/page-header';
+import { myNotifications } from '@/lib/notifications/queries';
 
 export const metadata: Metadata = { title: 'الإشعارات' };
 
@@ -15,17 +15,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
   const take = Math.min(MAX, Math.max(BATCH, Number(params.n) || BATCH));
 
   // الشرط userId هو النطاق: لا يُجلب إشعار غيره أصلًا
-  const where = { userId: user.id, channel: 'IN_APP' as const };
-  const [notifications, total, unread] = await Promise.all([
-    db.notification.findMany({
-      where,
-      orderBy: { createdAt: 'desc' },
-      take,
-      select: { id: true, title: true, body: true, link: true, readAt: true, createdAt: true },
-    }),
-    db.notification.count({ where }),
-    db.notification.count({ where: { ...where, readAt: null } }),
-  ]);
+  const { items: notifications, total, unread } = await myNotifications(user, { skip: 0, take });
 
   return (
     <>

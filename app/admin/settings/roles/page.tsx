@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import { db } from '@/lib/db';
 import { guardPage } from '@/lib/page-guard';
 import { PageHeader } from '@/components/shared/page-header';
 import { EmptyState, Forbidden } from '@/components/shared/states';
 import { Card } from '@/components/ui/surface';
 import { Table, TBody, TD, TH, THead, TR } from '@/components/ui/table';
+import { rolesMatrix } from '@/lib/settings/queries';
 
 export const metadata: Metadata = { title: 'الأدوار وصلاحياتها' };
 
@@ -13,22 +13,10 @@ const SCOPE_CLASS = { ALL: 'text-brand font-medium', COMMITTEE: 'text-accent fon
 
 // المصفوفة تُقرأ من قاعدة البيانات لا من الكود: ما يُعرض هنا هو ما يُطبَّق فعلًا.
 export default async function RolesPage() {
-  const { allowed, backHref } = await guardPage('/admin/settings/roles', 'users:manage_roles');
+  const { user, allowed, backHref } = await guardPage('/admin/settings/roles', 'users:manage_roles');
   if (!allowed) return <Forbidden backHref={backHref} />;
 
-  const [roles, permissions] = await Promise.all([
-    db.role.findMany({
-      orderBy: { createdAt: 'asc' },
-      select: {
-        id: true,
-        nameAr: true,
-        requiresCommittee: true,
-        permissions: { select: { permissionId: true, scope: true } },
-        _count: { select: { permissions: true } },
-      },
-    }),
-    db.permission.findMany({ orderBy: { key: 'asc' }, select: { id: true, key: true, descriptionAr: true, isPhase2: true } }),
-  ]);
+  const { roles, permissions } = await rolesMatrix(user);
 
   const grant = new Map<string, keyof typeof SCOPE_LABEL>();
   for (const r of roles) for (const p of r.permissions) grant.set(`${r.id}|${p.permissionId}`, p.scope);

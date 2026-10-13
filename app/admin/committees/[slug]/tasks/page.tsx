@@ -1,17 +1,15 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { committeeMembers, myCommittees } from '@/lib/committees';
-import { db } from '@/lib/db';
+import { myCommittees } from '@/lib/committees';
 import { guardPage } from '@/lib/page-guard';
-import { can } from '@/lib/rbac';
-import { boardTasks } from '@/lib/tasks/board';
 import { CommitteeSwitcher } from '@/components/shared/committee-switcher';
 import { PageHeader } from '@/components/shared/page-header';
 import { Forbidden } from '@/components/shared/states';
 import { CreateTaskForm } from '@/components/tasks/create-task-form';
 import { KanbanBoard } from '@/components/tasks/kanban-board';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
+import { committeeBoard } from '@/lib/committees/queries';
 
 export const metadata: Metadata = { title: 'مهام اللجنة' };
 
@@ -21,14 +19,9 @@ export default async function CommitteeTasksPage({ params }: { params: Promise<{
   const { user, allowed, backHref } = await guardPage(`/admin/committees/${slug}/tasks`, 'tasks:read', { beyondOwn: true });
   if (!allowed) return <Forbidden backHref={backHref} />;
 
-  const committee = await db.committee.findUnique({ where: { slug }, select: { id: true, slug: true, nameAr: true } });
-  if (!committee || !can(user, 'tasks:read', { committeeId: committee.id })) notFound();
-
-  const canCreate = can(user, 'tasks:create', { committeeId: committee.id });
-  const [tasks, members] = await Promise.all([
-    boardTasks(user, { committeeId: committee.id }),
-    canCreate ? committeeMembers(db, committee.id) : [],
-  ]);
+  const board = await committeeBoard(user, slug);
+  if (!board) notFound();
+  const { committee, tasks, members, canCreate } = board;
 
   return (
     <>

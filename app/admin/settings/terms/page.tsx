@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { db } from '@/lib/db';
 import { guardPage } from '@/lib/page-guard';
 import { formatDate } from '@/lib/utils';
 import { DataTable } from '@/components/shared/data-table';
@@ -8,17 +7,15 @@ import { Forbidden } from '@/components/shared/states';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/surface';
 import { StartTermForm } from './start-term-form';
+import { councilTerms } from '@/lib/settings/queries';
 
 export const metadata: Metadata = { title: 'دورات المجلس' };
 
 export default async function TermsPage() {
-  const { allowed, backHref } = await guardPage('/admin/settings/terms', 'users:manage_roles');
+  const { user, allowed, backHref } = await guardPage('/admin/settings/terms', 'users:manage_roles');
   if (!allowed) return <Forbidden backHref={backHref} />;
 
-  const terms = await db.councilTerm.findMany({
-    orderBy: { startsAt: 'desc' },
-    select: { id: true, name: true, startsAt: true, endsAt: true, isCurrent: true, _count: { select: { assignments: true } } },
-  });
+  const terms = await councilTerms(user);
 
   return (
     <>

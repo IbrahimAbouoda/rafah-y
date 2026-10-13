@@ -150,7 +150,10 @@ describe('/admin/complaints — نطاق اللجنة (AC-03 · AC-04)', () => {
     const secretary = await createUser(['secretary']);
     await actAs(secretary.id);
 
-    const box = await call<{ items: { id: string }[] }>(inbox);
+    // الأقدم أولًا: في القاعدة المشتركة قد لا تقع الجديدة في الصفحة الأولى — آخر صفحة تحويها
+    const first = await call<{ total: number; pageSize: number }>(inbox, { query: { pageSize: '50' } });
+    const last = Math.max(1, Math.ceil(first.data.total / 50));
+    const box = await call<{ items: { id: string }[] }>(inbox, { query: { pageSize: '50', page: String(last) } });
     expect(box.data.items.some((c) => c.id === s.id)).toBe(true);
 
     const file = await call<{ actions: { openForTriage: boolean } }>(complaintFile, { params: { id: s.id } });

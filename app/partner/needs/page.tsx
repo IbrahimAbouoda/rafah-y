@@ -1,14 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { db } from '@/lib/db';
-import { formatMoney, OFFERABLE_INITIATIVE_STATUSES, OPEN_NEED_STATUSES, SUPPORT_TYPE_LABELS } from '@/lib/initiatives/workflow';
-import { memberOrganizationIds } from '@/lib/organizations';
+import { formatMoney, SUPPORT_TYPE_LABELS } from '@/lib/initiatives/workflow';
 import { guardPage } from '@/lib/page-guard';
 import { OfferForm } from '@/components/initiatives/offer-form';
 import { PageHeader } from '@/components/shared/page-header';
 import { EmptyState, Forbidden } from '@/components/shared/states';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Card } from '@/components/ui/surface';
+import { partnerNeeds } from '@/lib/initiatives/queries';
 
 export const metadata: Metadata = { title: 'الاحتياجات المفتوحة' };
 
@@ -16,26 +15,7 @@ export const metadata: Metadata = { title: 'الاحتياجات المفتوح�
 export default async function PartnerNeedsPage() {
   const { user, allowed, backHref } = await guardPage('/partner/needs', 'offers:create');
   if (!allowed) return <Forbidden backHref={backHref} />;
-  const orgIds = await memberOrganizationIds(db, user.id);
-  const [orgs, initiatives] = await Promise.all([
-    db.organization.findMany({ where: { id: { in: orgIds } }, orderBy: { name: 'asc' }, select: { id: true, name: true } }),
-    db.initiative.findMany({
-      where: { status: { in: OFFERABLE_INITIATIVE_STATUSES }, needs: { some: { status: { in: OPEN_NEED_STATUSES } } } },
-      orderBy: [{ isFlagship: 'desc' }, { approvedAt: 'desc' }],
-      select: {
-        id: true,
-        slug: true,
-        title: true,
-        summary: true,
-        committee: { select: { nameAr: true } },
-        needs: {
-          where: { status: { in: OPEN_NEED_STATUSES } },
-          orderBy: { sortOrder: 'asc' },
-          select: { id: true, type: true, description: true, quantity: true, unit: true, amount: true, status: true },
-        },
-      },
-    }),
-  ]);
+  const { orgs, initiatives } = await partnerNeeds(user);
 
   return (
     <>

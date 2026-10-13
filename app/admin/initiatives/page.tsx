@@ -1,9 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { db } from '@/lib/db';
-import type { Prisma } from '@/lib/generated/prisma/client';
 import { guardPage } from '@/lib/page-guard';
-import { can, scopeFilter, type SessionUser } from '@/lib/rbac';
+import { type SessionUser } from '@/lib/rbac';
 import { cn, formatDate } from '@/lib/utils';
 import { approveConceptNoteAction, createPollAction, editConceptNoteAction, markConceptNoteSentAction, setThresholdAction } from '@/server/actions/demand';
 import { saveInitiativeAction } from '@/server/actions/initiatives';
@@ -15,22 +13,17 @@ import { EmptyState, Forbidden } from '@/components/shared/states';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Checkbox, Input, Label, Select, Textarea } from '@/components/ui/form-controls';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
+import { conceptNotes, demandAdmin, initiativeAdminList, initiativeTabsFor } from '@/lib/initiatives/admin';
 
 export const metadata: Metadata = { title: 'المبادرات' };
 
 // /admin/initiatives — initiatives:update. تبويبا «الطلب» و «Concept Note» هنا لأن §11.2 لا يعرّف لهما مسارًا (D30):
 // استطلاعات الطلب لـ demand:manage، والمسودات لـ concept_notes:approve — كل تبويب بصلاحيته.
-const TABS = [
-  { key: 'list', label: 'المبادرات', permission: 'initiatives:update' },
-  { key: 'demand', label: 'استطلاعات الطلب', permission: 'demand:manage' },
-  { key: 'notes', label: 'مسودات Concept Note', permission: 'concept_notes:approve' },
-] as const;
-
 export default async function AdminInitiativesPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const { tab } = await searchParams;
   const { user, allowed, backHref } = await guardPage('/admin/initiatives', ['initiatives:update', 'demand:manage', 'concept_notes:approve']);
   if (!allowed) return <Forbidden backHref={backHref} />;
-  const tabs = TABS.filter((t) => can(user, t.permission));
+  const tabs = initiativeTabsFor(user);
   const current = tabs.find((t) => t.key === tab) ?? tabs[0]!;
 
   return (
@@ -54,44 +47,16 @@ export default async function AdminInitiativesPage({ searchParams }: { searchPar
         </nav>
       ) : null}
       {current.key === 'list' ? <InitiativesTab user={user} /> : null}
-      {current.key === 'demand' ? <DemandTab /> : null}
-      {current.key === 'notes' ? <NotesTab /> : null}
+      {current.key === 'demand' ? <DemandTab user={user} /> : null}
+      {current.key === 'notes' ? <NotesTab user={user} /> : null}
     </>
   );
 }
 
 async function InitiativesTab({ user }: { user: SessionUser }) {
-  const scope = scopeFilter(user, 'initiatives:update');
-  const where: Prisma.InitiativeWhereInput = scope?.all ? {} : { committeeId: { in: scope?.committees ?? [] } };
-  const createScope = scopeFilter(user, 'initiatives:create');
-  const [rows, committees, ideas] = await Promise.all([
-    db.initiative.findMany({
-      where,
-      orderBy: { updatedAt: 'desc' },
-      select: {
-        id: true,
-        title: true,
-        status: true,
-        progressPct: true,
-        updatedAt: true,
-        committee: { select: { nameAr: true } },
-        _count: { select: { offers: { where: { status: 'SUBMITTED' } } } },
-      },
-    }),
-    createScope
-      ? db.committee.findMany({
-          where: { isActive: true, ...(createScope.all ? {} : { id: { in: createScope.committees } }) },
-          orderBy: { sortOrder: 'asc' },
-          select: { id: true, nameAr: true },
-        })
-      : [],
-    createScope
-      ? db.idea.findMany({
-          where: { status: 'APPROVED', initiativeId: null, ...(createScope.all ? {} : { committeeId: { in: createScope.committees } }) },
-          select: { id: true, reference: true, title: true },
-        })
-      : [],
-  ]);
+  const { rows, create } = await initiativeAdminList(user);
+  const committees = create?.committees ?? [];
+  const ideas = create?.ideas ?? [];
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
       <DataTable
@@ -161,25 +126,8 @@ async function InitiativesTab({ user }: { user: SessionUser }) {
   );
 }
 
-async function DemandTab() {
-  const [polls, initiatives] = await Promise.all([
-    db.demandPoll.findMany({
-      orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        title: true,
-        isActive: true,
-        proposalThreshold: true,
-        closesAt: true,
-        options: {
-          orderBy: { sortOrder: 'asc' },
-          select: { id: true, label: true, voteCount: true, conceptNote: { select: { status: true } } },
-        },
-        _count: { select: { votes: true } },
-      },
-    }),
-    db.initiative.findMany({ where: { status: { notIn: ['CANCELLED', 'COMPLETED'] } }, select: { id: true, title: true } }),
-  ]);
+async function DemandTab({ user }: { user: SessionUser }) {
+  const { polls, initiatives } = await demandAdmin(user);
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div className="flex flex-col gap-3">
@@ -268,22 +216,8 @@ async function DemandTab() {
   );
 }
 
-async function NotesTab() {
-  const notes = await db.conceptNote.findMany({
-    orderBy: { createdAt: 'desc' },
-    select: {
-      id: true,
-      title: true,
-      bodyMd: true,
-      status: true,
-      voterCount: true,
-      approvedAt: true,
-      sentAt: true,
-      createdAt: true,
-      approvedBy: { select: { fullName: true } },
-      demandOption: { select: { label: true, poll: { select: { title: true } } } },
-    },
-  });
+async function NotesTab({ user }: { user: SessionUser }) {
+  const notes = await conceptNotes(user);
   if (notes.length === 0) {
     return (
       <Card>

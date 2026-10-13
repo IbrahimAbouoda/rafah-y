@@ -1,20 +1,16 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { db } from '@/lib/db';
 import { PageHeader } from '@/components/shared/page-header';
 import { EmptyState } from '@/components/shared/states';
 import { Card } from '@/components/ui/surface';
+import { publicCommittees } from '@/lib/committees/queries';
 
 export const metadata: Metadata = { title: 'اللجان' };
 export const dynamic = 'force-dynamic';
 
 // /committees — عام. أسماء الأعضاء لا تُعرض حتى يُجاب Q15.
 export default async function PublicCommitteesPage() {
-  const committees = await db.committee.findMany({
-    where: { isActive: true },
-    orderBy: { sortOrder: 'asc' },
-    select: { slug: true, nameAr: true, mandate: true },
-  });
+  const committees = await publicCommittees();
   return (
     <>
       <PageHeader title="لجان المجلس" description="تسع لجان تعمل على شكاوى الشباب وأفكارهم ومبادراتهم، كلٌّ في مجالها." />
