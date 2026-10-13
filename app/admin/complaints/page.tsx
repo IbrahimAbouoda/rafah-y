@@ -1,11 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { readableComplaints } from '@/lib/complaints/queries';
-import { OPEN_STATUSES, STATUS_LABELS } from '@/lib/complaints/workflow';
-import { db } from '@/lib/db';
-import type { Prisma } from '@/lib/generated/prisma/client';
+import { complaintList } from '@/lib/complaints/queries';
+import { STATUS_LABELS } from '@/lib/complaints/workflow';
 import { guardPage } from '@/lib/page-guard';
-import { scopeFilter } from '@/lib/rbac';
 import { formatDate } from '@/lib/utils';
 import { COMPLAINT_STATUSES } from '@/lib/validation/complaints';
 import { DataTable } from '@/components/shared/data-table';
@@ -15,6 +12,7 @@ import { StatusBadge } from '@/components/shared/status-badge';
 import { Button } from '@/components/ui/button';
 import { Input, Label, Select } from '@/components/ui/form-controls';
 import { Card } from '@/components/ui/surface';
+import { toPage } from '@/lib/paging';
 
 export const metadata: Metadata = { title: 'الشكاوى' };
 
@@ -33,51 +31,15 @@ export default async function ComplaintsPage({ searchParams }: { searchParams: P
   const params = await searchParams;
   const { user, allowed, backHref } = await guardPage('/admin/complaints', 'complaints:read', { beyondOwn: true });
   if (!allowed) return <Forbidden backHref={backHref} />;
-  const scope = readableComplaints(user);
-  if (!scope) return <Forbidden backHref={backHref} />;
-
-  const page = Math.max(1, Number(params.page) || 1);
+  const list = await complaintList(
+    user,
+    { q: params.q, status: params.status, committee: params.committee },
+    toPage(params.page, PAGE_SIZE),
+  );
+  if (!list) return <Forbidden backHref={backHref} />;
+  const { items: rows, total, committees, page } = list;
   const q = params.q?.trim() ?? '';
   const status = params.status ?? '';
-  const filters: Prisma.ComplaintWhereInput[] = [scope];
-  if (status === 'open') filters.push({ status: { in: OPEN_STATUSES } });
-  else if ((COMPLAINT_STATUSES as readonly string[]).includes(status)) {
-    filters.push({ status: status as (typeof COMPLAINT_STATUSES)[number] });
-  }
-  if (params.committee) filters.push({ committeeId: params.committee });
-  if (q) {
-    filters.push({
-      OR: [{ reference: { contains: q.toUpperCase() } }, { title: { contains: q, mode: 'insensitive' } }],
-    });
-  }
-  const where: Prisma.ComplaintWhereInput = { AND: filters };
-
-  // قائمة اللجان في الفلتر: لجانه فقط ما لم يملك نطاق «الكل»
-  const readable = scopeFilter(user, 'complaints:read');
-  const [rows, total, committees] = await Promise.all([
-    db.complaint.findMany({
-      where,
-      orderBy: { updatedAt: 'desc' },
-      skip: (page - 1) * PAGE_SIZE,
-      take: PAGE_SIZE,
-      select: {
-        id: true,
-        reference: true,
-        title: true,
-        status: true,
-        updatedAt: true,
-        committee: { select: { nameAr: true } },
-        category: { select: { nameAr: true } },
-        area: { select: { nameAr: true } },
-      },
-    }),
-    db.complaint.count({ where }),
-    db.committee.findMany({
-      where: readable?.all ? {} : { id: { in: readable?.committees ?? [] } },
-      orderBy: { sortOrder: 'asc' },
-      select: { id: true, nameAr: true },
-    }),
-  ]);
   const filtered = !!(status || params.committee || q);
 
   return (

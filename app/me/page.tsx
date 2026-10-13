@@ -1,14 +1,14 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { FilePlus2, Search } from 'lucide-react';
-import { OPEN_STATUSES } from '@/lib/complaints/workflow';
-import { db } from '@/lib/db';
 import { guardPage } from '@/lib/page-guard';
 import { can } from '@/lib/rbac';
 import { PageHeader } from '@/components/shared/page-header';
 import { StatTile } from '@/components/shared/stat-tile';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/surface';
+import { myComplaintCounts } from '@/lib/complaints/queries';
+import { unreadCount } from '@/lib/shell';
 
 export const metadata: Metadata = { title: 'لوحتي' };
 
@@ -17,11 +17,7 @@ export default async function MePage() {
   const canCreate = can(user, 'complaints:create');
 
   // «شكاواي» = ما قدّمه باسمه فقط؛ المجهولة غير مربوطة بحسابه أصلًا (§6.7)
-  const [open, resolved, unread] = await Promise.all([
-    db.complaint.count({ where: { submitterId: user.id, status: { in: OPEN_STATUSES } } }),
-    db.complaint.count({ where: { submitterId: user.id, status: { in: ['RESOLVED', 'CLOSED'] } } }),
-    db.notification.count({ where: { userId: user.id, channel: 'IN_APP', readAt: null } }),
-  ]);
+  const [{ open, resolved }, unread] = await Promise.all([myComplaintCounts(user.id), unreadCount(user.id)]);
 
   return (
     <>

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { db } from '@/lib/db';
 import { guardPage } from '@/lib/page-guard';
 import { can } from '@/lib/rbac';
 import { formatDate } from '@/lib/utils';
@@ -9,6 +8,8 @@ import { PageHeader } from '@/components/shared/page-header';
 import { Forbidden } from '@/components/shared/states';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Button } from '@/components/ui/button';
+import { myComplaints } from '@/lib/complaints/queries';
+import { toPage } from '@/lib/paging';
 
 export const metadata: Metadata = { title: 'شكاواي' };
 
@@ -19,27 +20,7 @@ export default async function MyComplaintsPage({ searchParams }: { searchParams:
   const { user, allowed, backHref } = await guardPage('/me/complaints', 'complaints:read');
   if (!allowed) return <Forbidden backHref={backHref} />;
 
-  const page = Math.max(1, Number(params.page) || 1);
-  // «خاص»: ما قدّمه باسمه — حتى من يملك نطاق «الكل» لا يرى هنا إلا شكاواه
-  const where = { submitterId: user.id };
-  const [rows, total] = await Promise.all([
-    db.complaint.findMany({
-      where,
-      orderBy: { createdAt: 'desc' },
-      skip: (page - 1) * PAGE_SIZE,
-      take: PAGE_SIZE,
-      select: {
-        id: true,
-        reference: true,
-        title: true,
-        status: true,
-        createdAt: true,
-        updatedAt: true,
-        committee: { select: { nameAr: true } },
-      },
-    }),
-    db.complaint.count({ where }),
-  ]);
+  const { items: rows, total, page } = await myComplaints(user, toPage(params.page, PAGE_SIZE));
 
   return (
     <>

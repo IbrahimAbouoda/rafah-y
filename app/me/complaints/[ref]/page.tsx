@@ -1,15 +1,14 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { db } from '@/lib/db';
 import { guardPage } from '@/lib/page-guard';
-import { can } from '@/lib/rbac';
 import { formatDateTime } from '@/lib/utils';
 import { WorkflowTimeline } from '@/components/complaints/workflow-timeline';
 import { PageHeader } from '@/components/shared/page-header';
 import { Forbidden } from '@/components/shared/states';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
+import { myComplaint } from '@/lib/complaints/queries';
 
 export const metadata: Metadata = { title: 'مسار شكواي' };
 
@@ -20,26 +19,8 @@ export default async function MyComplaintPage({ params }: { params: Promise<{ re
   if (!allowed) return <Forbidden backHref={backHref} />;
 
   // الشرط submitterId = المستخدم جزء من الاستعلام: شكوى غيره = غير موجودة، لا «ممنوعة» تكشف وجودها
-  const complaint = await db.complaint.findFirst({
-    where: { reference, submitterId: user.id },
-    select: {
-      reference: true,
-      title: true,
-      body: true,
-      status: true,
-      submitterId: true,
-      createdAt: true,
-      category: { select: { nameAr: true } },
-      area: { select: { nameAr: true } },
-      committee: { select: { nameAr: true } },
-      events: {
-        where: { isPublic: true },
-        orderBy: { createdAt: 'asc' },
-        select: { id: true, toStatus: true, note: true, createdAt: true },
-      },
-    },
-  });
-  if (!complaint || !can(user, 'complaints:read', { ownerId: complaint.submitterId })) notFound();
+  const complaint = await myComplaint(user, reference);
+  if (!complaint) notFound();
 
   return (
     <>

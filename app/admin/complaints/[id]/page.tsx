@@ -1,14 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { committeeMembers } from '@/lib/committees';
-import { nextStatuses } from '@/lib/complaints/workflow';
-import { db } from '@/lib/db';
 import { formatBytes } from '@/lib/files';
 import { guardPage } from '@/lib/page-guard';
-import { can } from '@/lib/rbac';
 import { formatDate, formatDateTime } from '@/lib/utils';
-import { ComplaintActionsPanel, type ComplaintActions } from '@/components/complaints/admin-actions';
+import { ComplaintActionsPanel } from '@/components/complaints/admin-actions';
 import { ContactReveal } from '@/components/complaints/contact-reveal';
 import { FileDownload } from '@/components/complaints/file-download';
 import { WorkflowTimeline } from '@/components/complaints/workflow-timeline';
@@ -17,6 +13,7 @@ import { PageHeader } from '@/components/shared/page-header';
 import { Forbidden } from '@/components/shared/states';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Alert, Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
+import { complaintFile } from '@/lib/complaints/queries';
 
 export const metadata: Metadata = { title: 'ملف شكوى' };
 
@@ -32,91 +29,10 @@ export default async function ComplaintFilePage({ params }: { params: Promise<{ 
   const { id } = await params;
   const { user, allowed, backHref } = await guardPage(`/admin/complaints/${id}`, 'complaints:read', { beyondOwn: true });
   if (!allowed) return <Forbidden backHref={backHref} />;
-  if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
-
-  // بيانات التواصل غير مُختارة هنا إطلاقًا — تُطلب بـ ContactReveal وحدها (§12 DataTable)
-  const complaint = await db.complaint.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      reference: true,
-      title: true,
-      body: true,
-      status: true,
-      isAnonymous: true,
-      submitterId: true,
-      committeeId: true,
-      dismissReason: true,
-      resolutionNote: true,
-      closedAt: true,
-      followUpAt: true,
-      createdAt: true,
-      category: { select: { nameAr: true, defaultCommitteeId: true } },
-      area: { select: { nameAr: true } },
-      committee: { select: { nameAr: true } },
-      contact: { select: { id: true } },
-      events: {
-        orderBy: { createdAt: 'asc' },
-        select: { id: true, toStatus: true, note: true, isPublic: true, createdAt: true, actor: { select: { fullName: true } } },
-      },
-      referrals: {
-        orderBy: { createdAt: 'desc' },
-        select: {
-          id: true,
-          target: true,
-          targetName: true,
-          note: true,
-          followUpAt: true,
-          respondedAt: true,
-          response: true,
-          createdAt: true,
-        },
-      },
-      tasks: {
-        orderBy: { createdAt: 'asc' },
-        select: { id: true, title: true, status: true, dueAt: true, assignee: { select: { fullName: true } } },
-      },
-      files: {
-        where: { scan: { in: ['PENDING', 'CLEAN'] } },
-        orderBy: { createdAt: 'asc' },
-        select: { id: true, mimeType: true, sizeBytes: true, scan: true, createdAt: true },
-      },
-    },
-  });
+  const file = await complaintFile(user, id);
   // شكوى خارج نطاقه = غير موجودة، فلا يكشف التخمين وجودها (AC-04 ①)
-  if (!complaint || !can(user, 'complaints:read', { committeeId: complaint.committeeId, ownerId: complaint.submitterId })) {
-    notFound();
-  }
-
-  const ctx = { committeeId: complaint.committeeId };
-  const triage = can(user, 'complaints:triage', ctx);
-  const closeable = can(user, 'complaints:close', ctx) ? nextStatuses(complaint.status, 'complaints:close') : [];
-  const assignTargets = triage && nextStatuses(complaint.status, 'complaints:triage').includes('ASSIGNED');
-  const actions: ComplaintActions = {
-    openForTriage: triage && nextStatuses(complaint.status, 'complaints:triage').includes('UNDER_REVIEW'),
-    assign: assignTargets
-      ? {
-          committees: await db.committee.findMany({
-            where: { isActive: true },
-            orderBy: { sortOrder: 'asc' },
-            select: { id: true, nameAr: true },
-          }),
-          suggestedId: complaint.category?.defaultCommitteeId ?? null,
-        }
-      : null,
-    dismiss: closeable.includes('DISMISSED'),
-    close: closeable.includes('CLOSED'),
-    updateStatus: can(user, 'complaints:update_status', ctx) ? nextStatuses(complaint.status, 'complaints:update_status') : [],
-    refer: can(user, 'complaints:refer', ctx) && nextStatuses(complaint.status, 'complaints:refer').length > 0,
-    awaitingResponse: complaint.status === 'WAITING_RESPONSE',
-  };
-  const canContact = can(user, 'complaints:read_contact', ctx);
-  // AC-05: «أنشئ مهمة» من الشكوى المحوّلة للجنة، لمن يملك tasks:create بنطاقها
-  const taskMembers =
-    complaint.committeeId && can(user, 'tasks:create', ctx) && complaint.status !== 'CLOSED' && complaint.status !== 'DISMISSED'
-      ? await committeeMembers(db, complaint.committeeId)
-      : null;
-  const submitterLabel = complaint.isAnonymous ? 'مجهول' : complaint.submitterId ? 'حساب مسجّل' : 'زائر بلا حساب';
+  if (!file) notFound();
+  const { complaint, actions, canContact, taskMembers, submitterLabel } = file;
 
   return (
     <>

@@ -1,11 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { readableComplaints } from '@/lib/complaints/queries';
-import { OPEN_STATUSES } from '@/lib/complaints/workflow';
-import { db } from '@/lib/db';
+import { complaintTiles } from '@/lib/complaints/queries';
 import { navFor } from '@/lib/nav';
 import { guardPage } from '@/lib/page-guard';
-import { can, canBeyondOwn } from '@/lib/rbac';
 import { PageHeader } from '@/components/shared/page-header';
 import { EmptyState } from '@/components/shared/states';
 import { StatTile } from '@/components/shared/stat-tile';
@@ -13,28 +10,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surfac
 
 export const metadata: Metadata = { title: 'لوحة المجلس' };
 
-const daysAgo = (days: number) => new Date(Date.now() - days * 24 * 60 * 60 * 1000);
-
 // /admin — «لوحة تتغيّر حسب الدور» (PRD §11.2): كل مؤشر يظهر لمن يملك صلاحيته،
 // ويُحسب من السجلات التي يحق له رؤيتها فقط (StatTile §12).
 export default async function AdminHome() {
   const { user } = await guardPage('/admin', null);
 
-  const triage = can(user, 'complaints:triage');
-  const readScope = canBeyondOwn(user, 'complaints:read') ? readableComplaints(user) : null;
-  const monthAgo = daysAgo(30);
-
-  const count = (where: object) => db.complaint.count({ where }).catch(() => null);
-  const [newCount, reviewing, open, awaitingCommittee, resolved30] = await Promise.all([
-    triage ? count({ status: 'SUBMITTED' }) : null,
-    triage ? count({ status: 'UNDER_REVIEW' }) : null,
-    readScope ? count({ AND: [readScope, { status: { in: OPEN_STATUSES } }] }) : null,
-    readScope ? count({ AND: [readScope, { status: 'ASSIGNED' }] }) : null,
-    readScope ? count({ AND: [readScope, { status: { in: ['RESOLVED', 'CLOSED'] }, updatedAt: { gte: monthAgo } }] }) : null,
-  ]);
+  const { triage, readable, newCount, reviewing, open, awaitingCommittee, resolved30 } = await complaintTiles(user);
 
   const settings = navFor(user).find((g) => g.label === 'الإعدادات')?.items ?? [];
-  const hasTiles = triage || readScope;
+  const hasTiles = triage || readable;
 
   return (
     <>
@@ -48,7 +32,7 @@ export default async function AdminHome() {
               <StatTile label="قيد الفرز" value={reviewing} href="/admin/inbox" meta="بانتظار اختيار لجنة" />
             </>
           ) : null}
-          {readScope ? (
+          {readable ? (
             <>
               <StatTile label="شكاوى مفتوحة" value={open} href="/admin/complaints?status=open" />
               <StatTile

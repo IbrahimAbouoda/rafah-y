@@ -2,7 +2,8 @@ import 'server-only';
 import { NextResponse, type NextRequest } from 'next/server';
 import { toErrorInfo, type ErrorCode } from '@/lib/action';
 import { userFromRequest } from '@/lib/api/auth';
-import { invalid, unauthenticated } from '@/lib/errors';
+import { invalid, notFound, unauthenticated } from '@/lib/errors';
+import { toPage, type Page } from '@/lib/paging';
 import type { SessionUser } from '@/lib/rbac';
 
 // غلاف كل مسار في app/api/mobile/v1 — قالب CLAUDE.md نفسه: الهوية هنا، والصلاحية والتحقق والمعاملة
@@ -92,15 +93,19 @@ export function apiRoute<P>(
   };
 }
 
-/** ترقيم بالمؤشر: ?cursor=&limit= (افتراضي 20، أقصى 50) */
-export function pageParams(query: URLSearchParams, max = 50): { cursor: string | null; take: number } {
-  const n = Number(query.get('limit'));
-  const take = Number.isInteger(n) && n > 0 ? Math.min(n, max) : 20;
-  return { cursor: query.get('cursor') || null, take };
+/** ?page=&pageSize= — الترقيم نفسه الذي تستعمله صفحات الويب (lib/paging.ts) */
+export function pageOf(query: URLSearchParams, defaultSize = 20): Page {
+  return toPage(query.get('page'), defaultSize, query.get('pageSize'));
 }
 
-/** يقصّ صفًّا زائدًا جُلب لمعرفة وجود صفحة تالية */
-export function paginate<T extends { id: string }>(rows: T[], take: number): { items: T[]; next_cursor: string | null } {
-  const items = rows.slice(0, take);
-  return { items, next_cursor: rows.length > take ? items[items.length - 1]!.id : null };
+/** معرّف المسار يدخل المدخلات قبل Zod — فيُتحقق منه بالمخطط نفسه الذي يتحقق به نموذج الويب */
+export function merge(body: unknown, extra: Record<string, string>): Record<string, unknown> {
+  const base = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
+  return { ...base, ...extra };
+}
+
+/** null من دالة قراءة ⇒ 404 بالرسالة العربية المعتادة */
+export function found<T>(value: T | null, what: string): T {
+  if (value === null) throw notFound(what);
+  return value;
 }

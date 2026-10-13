@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { db } from '@/lib/db';
 import { guardPage } from '@/lib/page-guard';
 import { can } from '@/lib/rbac';
 import { formatDateTime } from '@/lib/utils';
@@ -9,6 +8,8 @@ import { PageHeader } from '@/components/shared/page-header';
 import { EmptyState, Forbidden } from '@/components/shared/states';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Card } from '@/components/ui/surface';
+import { complaintInbox } from '@/lib/complaints/queries';
+import { toPage } from '@/lib/paging';
 
 export const metadata: Metadata = { title: 'صندوق الوارد' };
 
@@ -39,27 +40,7 @@ export default async function InboxPage({ searchParams }: { searchParams: Promis
     );
   }
 
-  const page = Math.max(1, Number(params.page) || 1);
-  const where = { status: { in: ['SUBMITTED' as const, 'UNDER_REVIEW' as const] } };
-  const [rows, total] = await Promise.all([
-    db.complaint.findMany({
-      where,
-      // الأقدم أولًا: لا تنتظر شكوى أطول من غيرها
-      orderBy: { createdAt: 'asc' },
-      skip: (page - 1) * PAGE_SIZE,
-      take: PAGE_SIZE,
-      select: {
-        id: true,
-        reference: true,
-        title: true,
-        status: true,
-        createdAt: true,
-        category: { select: { nameAr: true, defaultCommittee: { select: { nameAr: true } } } },
-        area: { select: { nameAr: true } },
-      },
-    }),
-    db.complaint.count({ where }),
-  ]);
+  const { items: rows, total, page } = await complaintInbox(user, toPage(params.page, PAGE_SIZE));
 
   return (
     <>

@@ -1,7 +1,6 @@
 'use client';
 
 import { STATUS_LABELS } from '@/lib/complaints/workflow';
-import type { ComplaintStatus } from '@/lib/generated/prisma/enums';
 import {
   assignToCommitteeAction,
   closeComplaintAction,
@@ -13,20 +12,13 @@ import {
 import { ActionForm, Field, SubmitButton } from '@/components/shared/action-form';
 import { Checkbox, Input, Label, Select, Textarea } from '@/components/ui/form-controls';
 import { Alert, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/surface';
+import type { ComplaintActions } from '@/lib/complaints/queries';
 
 // لوحة إجراءات الشكوى. الخادم يقرّر ما يُعرض هنا (can() بنطاق الشكوى + جدول الانتقالات)،
 // ثم يفحص كل إجراء من جديد عند الاستدعاء — إخفاء الزر ليس حماية.
 
-export type ComplaintActions = {
-  openForTriage: boolean;
-  assign: { committees: { id: string; nameAr: string }[]; suggestedId: string | null } | null;
-  dismiss: boolean;
-  updateStatus: ComplaintStatus[];
-  refer: boolean;
-  close: boolean;
-  /** WAITING_RESPONSE: حقل رد الجهة الخارجية عند الانتقال */
-  awaitingResponse: boolean;
-};
+// الإجراءات المتاحة يحسبها الخادم في complaintFile() — الشكل نفسه يصل الجوّال
+export type { ComplaintActions };
 
 const REFERRAL_TARGETS: [string, string][] = [
   ['MUNICIPALITY', 'البلدية'],
