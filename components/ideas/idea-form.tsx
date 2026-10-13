@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { CloudOff, Loader2, Save } from 'lucide-react';
 import type { DataState } from '@/lib/action';
 import { deleteDraft, draftsAvailable, loadDraft, saveDraft } from '@/lib/drafts';
-import type { SubmittedIdea } from '@/server/actions/ideas';
+import type { SubmittedIdea } from '@/lib/ideas/actions';
 import { Button } from '@/components/ui/button';
 import { Input, Label, Select, Textarea } from '@/components/ui/form-controls';
 import { Alert, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/surface';
