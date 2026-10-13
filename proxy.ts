@@ -76,10 +76,11 @@ export async function proxy(request: NextRequest) {
   return response;
 }
 
+// api/mobile مستثنى: الجوّال يحمل Bearer لا كوكي، فلا جلسة تُجدَّد ولا CSP لاستجابة JSON (D31)
 export const config = {
   matcher: [
     {
-      source: '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|webp|ico|woff2?)$).*)',
+      source: '/((?!_next/static|_next/image|api/mobile/|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|webp|ico|woff2?)$).*)',
       missing: [
         { type: 'header', key: 'next-router-prefetch' },
         { type: 'header', key: 'purpose', value: 'prefetch' },

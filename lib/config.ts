@@ -18,6 +18,10 @@ export const PARTNER_ROLE_KEY = 'partner';
 export const CURRENCIES = ['ILS', 'USD'] as const;
 
 /** البريد الرسمي للمجلس — مرسِل كل الإشعارات والقوالب (PRD §19.3 D19، مؤقت حتى النطاق الدائم Q8) */
+/** اسم المنصة وشعارها — يقرؤهما الويب والجوّال (/api/mobile/v1/config) من هنا فقط */
+export const APP_NAME_AR = 'نبض رفح';
+export const APP_TAGLINE_AR = 'صوت الشباب... فكرة تتحول إلى أثر';
+
 export const COUNCIL_EMAIL = 'info.rafahyouth@gmail.com';
 export const COUNCIL_SENDER_NAME = 'نبض رفح — المجلس البلدي الشبابي';
 

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { appUrl } from '@/lib/config';
-import { db } from '@/lib/db';
+import { complaintFormOptions } from '@/lib/reference';
 import { submitPublicComplaintAction } from '@/server/actions/complaints/submit';
 import { ComplaintForm } from '@/components/complaints/complaint-form';
 import { PrivacyNotice } from '@/components/complaints/privacy-notice';
@@ -16,14 +16,7 @@ export const dynamic = 'force-dynamic';
 
 // شكوى زائر — PRD §19.3 D1: بلا حساب، submitterId = NULL دائمًا، حد معدل مشدّد (D21)
 export default async function PublicComplaintPage() {
-  const [categories, areas] = await Promise.all([
-    db.complaintCategory.findMany({
-      where: { isActive: true },
-      orderBy: [{ sortOrder: 'asc' }, { nameAr: 'asc' }],
-      select: { id: true, nameAr: true },
-    }),
-    db.area.findMany({ orderBy: { nameAr: 'asc' }, select: { id: true, nameAr: true } }),
-  ]);
+  const { categories, areas } = await complaintFormOptions();
 
   return (
     <>

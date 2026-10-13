@@ -40,3 +40,13 @@ vi.mock('@/lib/request', async (importOriginal) => {
   const { currentTestIp } = await import('./identity');
   return { ...actual, clientIp: vi.fn(async () => currentTestIp()) };
 });
+
+// واجهة الجوّال: الطلب الذي يحمل Bearer يُعامَل كمستخدم actAs()، وبلا رمز كزائر
+vi.mock('@/lib/api/auth', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/lib/api/auth')>();
+  const { currentTestUser } = await import('./identity');
+  return {
+    ...actual,
+    userFromRequest: vi.fn(async (req: Request) => (actual.bearerToken(req) ? currentTestUser() : null)),
+  };
+});

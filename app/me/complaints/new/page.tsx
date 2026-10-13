@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { appUrl } from '@/lib/config';
-import { db } from '@/lib/db';
+import { complaintFormOptions } from '@/lib/reference';
 import { guardPage } from '@/lib/page-guard';
 import { submitComplaintAction } from '@/server/actions/complaints/submit';
 import { ComplaintForm } from '@/components/complaints/complaint-form';
@@ -15,14 +15,7 @@ export default async function NewComplaintPage() {
   const { user, allowed, backHref } = await guardPage('/me/complaints/new', 'complaints:create');
   if (!allowed) return <Forbidden backHref={backHref} />;
 
-  const [categories, areas] = await Promise.all([
-    db.complaintCategory.findMany({
-      where: { isActive: true },
-      orderBy: [{ sortOrder: 'asc' }, { nameAr: 'asc' }],
-      select: { id: true, nameAr: true },
-    }),
-    db.area.findMany({ orderBy: { nameAr: 'asc' }, select: { id: true, nameAr: true } }),
-  ]);
+  const { categories, areas } = await complaintFormOptions();
 
   return (
     <>

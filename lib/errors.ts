@@ -5,6 +5,8 @@ export class AppError extends Error {
     message: string,
     public readonly code: 'UNAUTHENTICATED' | 'FORBIDDEN' | 'NOT_FOUND' | 'CONFLICT' | 'INVALID' | 'RATE_LIMITED',
     public readonly fieldErrors?: Record<string, string[]>,
+    /** RATE_LIMITED فقط — يصل العميل الجوّال في رأس Retry-After */
+    public readonly retryAfterSec?: number,
   ) {
     super(message);
     this.name = 'AppError';
@@ -30,5 +32,10 @@ export const invalid = (message: string, fieldErrors?: Record<string, string[]>)
 
 export const rateLimited = (retryAfterSec: number) => {
   const minutes = Math.max(1, Math.ceil(retryAfterSec / 60));
-  return new AppError(`محاولات كثيرة خلال وقت قصير. انتظر ${minutes} دقيقة ثم أعد المحاولة.`, 'RATE_LIMITED');
+  return new AppError(
+    `محاولات كثيرة خلال وقت قصير. انتظر ${minutes} دقيقة ثم أعد المحاولة.`,
+    'RATE_LIMITED',
+    undefined,
+    retryAfterSec,
+  );
 };

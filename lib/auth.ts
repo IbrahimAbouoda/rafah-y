@@ -45,13 +45,18 @@ export async function provisionUser(authUser: AuthUser): Promise<string> {
   }
 }
 
+/** حساب Supabase تحقّق منه الخادم ← مستخدم الجلسة ومنحه. المسار نفسه للكوكي (الويب) و Bearer (الجوّال). */
+export async function sessionFromAuthUser(authUser: AuthUser): Promise<SessionUser | null> {
+  const userId = await provisionUser(authUser);
+  return loadSessionUser(db, userId);
+}
+
 /** المستخدم الحالي ومنحه — مرة واحدة لكل طلب. */
 export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
   const supabase = await supabaseServer();
   const { data } = await supabase.auth.getUser();
   if (!data.user) return null;
-  const userId = await provisionUser(data.user);
-  return loadSessionUser(db, userId);
+  return sessionFromAuthUser(data.user);
 });
 
 export async function requireUser(): Promise<SessionUser> {

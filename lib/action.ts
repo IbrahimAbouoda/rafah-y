@@ -34,27 +34,43 @@ export function formToObject(form: FormData): Record<string, string> {
   return out;
 }
 
-/** يحوّل كل خطأ إلى رسالة عربية قابلة للعرض. لا رسائل تقنية خام للمستخدم (DoD بند 6). */
-function errorState(e: unknown): NonNullable<ActionState> {
-  unstable_rethrow(e);
+export type ErrorCode = AppError['code'] | 'SERVER';
+
+export type ErrorInfo = {
+  code: ErrorCode;
+  message: string;
+  fieldErrors?: Record<string, string[] | undefined>;
+  retryAfterSec?: number;
+};
+
+/**
+ * يحوّل كل خطأ إلى رسالة عربية قابلة للعرض. لا رسائل تقنية خام للمستخدم (DoD بند 6).
+ * مشترك بين Server Actions وواجهة الجوّال (lib/api/handler.ts) — الرسالة نفسها في العميلين.
+ */
+export function toErrorInfo(e: unknown): ErrorInfo {
   if (e instanceof AppError) {
-    return { ok: false, message: e.message, fieldErrors: e.fieldErrors, at: Date.now() };
+    return { code: e.code, message: e.message, fieldErrors: e.fieldErrors, retryAfterSec: e.retryAfterSec };
   }
   if (e instanceof z.ZodError) {
     return {
-      ok: false,
+      code: 'INVALID',
       message: 'بعض الحقول تحتاج تصحيحًا. راجع الرسائل تحت كل حقل.',
       fieldErrors: z.flattenError(e).fieldErrors as Record<string, string[]>,
-      at: Date.now(),
     };
   }
   if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
-    return { ok: false, message: 'هذه القيمة مستخدمة في سجل آخر. اختر قيمة مختلفة.', at: Date.now() };
+    return { code: 'CONFLICT', message: 'هذه القيمة مستخدمة في سجل آخر. اختر قيمة مختلفة.' };
   }
   const constraint = constraintMessage(e);
-  if (constraint) return { ok: false, message: constraint, at: Date.now() };
+  if (constraint) return { code: 'INVALID', message: constraint };
   console.error('[action]', e);
-  return { ok: false, message: 'تعذّر إتمام العملية بسبب خطأ في الخادم. أعد المحاولة بعد قليل.', at: Date.now() };
+  return { code: 'SERVER', message: 'تعذّر إتمام العملية بسبب خطأ في الخادم. أعد المحاولة بعد قليل.' };
+}
+
+function errorState(e: unknown): NonNullable<ActionState> {
+  unstable_rethrow(e);
+  const { message, fieldErrors } = toErrorInfo(e);
+  return { ok: false, message, fieldErrors, at: Date.now() };
 }
 
 export async function runAction(fn: () => Promise<string | void>): Promise<ActionState> {
