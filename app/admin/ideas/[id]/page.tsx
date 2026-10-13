@@ -1,16 +1,14 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { db } from '@/lib/db';
-import { nextIdeaStatuses } from '@/lib/ideas/workflow';
 import { guardPage } from '@/lib/page-guard';
-import { can } from '@/lib/rbac';
 import { formatDate } from '@/lib/utils';
-import { IdeaReviewPanel, type IdeaActions } from '@/components/ideas/review-panel';
+import { IdeaReviewPanel } from '@/components/ideas/review-panel';
 import { PageHeader } from '@/components/shared/page-header';
 import { Forbidden } from '@/components/shared/states';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Alert, Card, CardContent, CardHeader, CardTitle } from '@/components/ui/surface';
+import { ideaReviewFile } from '@/lib/ideas/queries';
 
 export const metadata: Metadata = { title: 'مراجعة فكرة' };
 
@@ -19,50 +17,10 @@ export default async function AdminIdeaPage({ params }: { params: Promise<{ id: 
   const { id } = await params;
   const { user, allowed, backHref } = await guardPage(`/admin/ideas/${id}`, 'ideas:review');
   if (!allowed) return <Forbidden backHref={backHref} />;
-  if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
-
-  const idea = await db.idea.findUnique({
-    where: { id },
-    select: {
-      id: true,
-      reference: true,
-      title: true,
-      problem: true,
-      solution: true,
-      estimatedCost: true,
-      status: true,
-      voteCount: true,
-      committeeId: true,
-      reviewNote: true,
-      decidedAt: true,
-      createdAt: true,
-      committee: { select: { nameAr: true } },
-      area: { select: { nameAr: true } },
-      decidedBy: { select: { fullName: true } },
-      mergedInto: { select: { reference: true, id: true } },
-      mergedFrom: { select: { reference: true, id: true, title: true } },
-    },
-  });
+  const file = await ideaReviewFile(user, id);
   // فكرة خارج نطاقه = غير موجودة (رئيس لجنة لا يرى لجنة غيره)
-  if (!idea || !can(user, 'ideas:review', { committeeId: idea.committeeId })) notFound();
-
-  const ctx = { committeeId: idea.committeeId };
-  const reviewNext = nextIdeaStatuses(idea.status, 'ideas:review');
-  const actions: IdeaActions = {
-    screen: reviewNext.includes('SCREENING'),
-    toCommittee: reviewNext.includes('COMMITTEE_REVIEW')
-      ? {
-          committees: await db.committee.findMany({
-            where: { isActive: true },
-            orderBy: { sortOrder: 'asc' },
-            select: { id: true, nameAr: true },
-          }),
-        }
-      : null,
-    requestChanges: reviewNext.includes('CHANGES_REQUESTED'),
-    merge: can(user, 'ideas:merge', ctx) && nextIdeaStatuses(idea.status, 'ideas:merge').length > 0,
-    decide: can(user, 'ideas:approve', ctx) && nextIdeaStatuses(idea.status, 'ideas:approve').length > 0,
-  };
+  if (!file) notFound();
+  const { idea, actions } = file;
 
   return (
     <>

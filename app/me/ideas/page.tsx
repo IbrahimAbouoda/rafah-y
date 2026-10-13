@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { db } from '@/lib/db';
 import { PUBLIC_IDEA_STATUSES } from '@/lib/ideas/workflow';
 import { guardPage } from '@/lib/page-guard';
 import { formatDate } from '@/lib/utils';
@@ -10,6 +9,7 @@ import { EmptyState, Forbidden } from '@/components/shared/states';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { Button } from '@/components/ui/button';
 import { Alert, Card } from '@/components/ui/surface';
+import { myIdeas } from '@/lib/ideas/queries';
 
 export const metadata: Metadata = { title: 'أفكاري' };
 
@@ -18,24 +18,7 @@ export default async function MyIdeasPage() {
   const { user, allowed, backHref } = await guardPage('/me/ideas', 'ideas:create');
   if (!allowed) return <Forbidden backHref={backHref} />;
 
-  const ideas = await db.idea.findMany({
-    where: { submitterId: user.id },
-    orderBy: { createdAt: 'desc' },
-    select: {
-      id: true,
-      reference: true,
-      title: true,
-      problem: true,
-      solution: true,
-      estimatedCost: true,
-      status: true,
-      voteCount: true,
-      reviewNote: true,
-      createdAt: true,
-      committee: { select: { nameAr: true } },
-      mergedInto: { select: { id: true, reference: true } },
-    },
-  });
+  const ideas = await myIdeas(user);
 
   return (
     <>

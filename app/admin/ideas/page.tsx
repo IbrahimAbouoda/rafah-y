@@ -1,11 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { db } from '@/lib/db';
-import type { Prisma } from '@/lib/generated/prisma/client';
-import type { IdeaStatus } from '@/lib/generated/prisma/enums';
 import { IDEA_STATUS_LABELS } from '@/lib/ideas/workflow';
 import { guardPage } from '@/lib/page-guard';
-import { scopeFilter } from '@/lib/rbac';
 import { formatDate } from '@/lib/utils';
 import { DataTable } from '@/components/shared/data-table';
 import { PageHeader } from '@/components/shared/page-header';
@@ -14,46 +10,22 @@ import { StatusBadge } from '@/components/shared/status-badge';
 import { Label, Select } from '@/components/ui/form-controls';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/surface';
+import { ideaReviewList, REVIEW_STATUSES } from '@/lib/ideas/queries';
+import { toPage } from '@/lib/paging';
 
 export const metadata: Metadata = { title: 'فرز الأفكار' };
 
 const PAGE_SIZE = 25;
-const STATUSES = Object.keys(IDEA_STATUS_LABELS) as IdeaStatus[];
+const STATUSES = REVIEW_STATUSES;
 
 // /admin/ideas — ideas:review. «الكل» يرى كل الأفكار؛ رئيس اللجنة يرى أفكار لجنته فقط.
 export default async function AdminIdeasPage({ searchParams }: { searchParams: Promise<{ status?: string; page?: string }> }) {
   const params = await searchParams;
   const { user, allowed, backHref } = await guardPage('/admin/ideas', 'ideas:review');
   if (!allowed) return <Forbidden backHref={backHref} />;
-  const scope = scopeFilter(user, 'ideas:review');
-  if (!scope) return <Forbidden backHref={backHref} />;
-
-  const page = Math.max(1, Number(params.page) || 1);
-  const status = STATUSES.includes(params.status as IdeaStatus) ? (params.status as IdeaStatus) : null;
-  // الافتراضي: ما ينتظر عملًا
-  const statusWhere: Prisma.IdeaWhereInput['status'] = status ?? { in: ['SUBMITTED', 'SCREENING', 'COMMITTEE_REVIEW'] };
-  const where: Prisma.IdeaWhereInput = {
-    status: statusWhere,
-    ...(scope.all ? {} : { committeeId: { in: scope.committees } }),
-  };
-  const [rows, total] = await Promise.all([
-    db.idea.findMany({
-      where,
-      orderBy: [{ createdAt: 'asc' }],
-      skip: (page - 1) * PAGE_SIZE,
-      take: PAGE_SIZE,
-      select: {
-        id: true,
-        reference: true,
-        title: true,
-        status: true,
-        voteCount: true,
-        createdAt: true,
-        committee: { select: { nameAr: true } },
-      },
-    }),
-    db.idea.count({ where }),
-  ]);
+  const list = await ideaReviewList(user, params.status, toPage(params.page, PAGE_SIZE));
+  if (!list) return <Forbidden backHref={backHref} />;
+  const { items: rows, total, status, page } = list;
 
   return (
     <>

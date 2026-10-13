@@ -1,5 +1,6 @@
 'use client';
 
+import type { IdeaActions } from '@/lib/ideas/queries';
 import { decideIdeaAction, mergeIdeaAction, reviewIdeaAction } from '@/server/actions/ideas';
 import { ActionForm, Field, SubmitButton } from '@/components/shared/action-form';
 import { Input, Select, Textarea } from '@/components/ui/form-controls';
@@ -7,13 +8,7 @@ import { Alert, Card, CardContent, CardDescription, CardHeader, CardTitle } from
 
 // لوحة مراجعة الفكرة. الخادم يقرّر ما يُعرض (جدول §5.2 + can() بنطاق الفكرة) ويفحص من جديد عند كل إجراء.
 
-export type IdeaActions = {
-  screen: boolean;
-  toCommittee: { committees: { id: string; nameAr: string }[] } | null;
-  requestChanges: boolean;
-  merge: boolean;
-  decide: boolean;
-};
+export type { IdeaActions };
 
 function Section({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
   return (
