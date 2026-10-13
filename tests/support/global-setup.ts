@@ -24,9 +24,25 @@ export async function applyMigrations(pg: PGlite) {
   for (const m of migrations) await pg.exec(await readFile(path.join(dir, m, 'migration.sql'), 'utf8'));
 }
 
+/**
+ * دورا Data API في Supabase بامتيازاتهما الافتراضية (كل جدول جديد في public مكشوف لهما) —
+ * لتثبت migration الإغلاق (D32) أنها تسحب ما يمنحه Supabase فعلًا، لا ما لم يُمنح أصلًا.
+ */
+export async function supabaseApiRoles(pg: PGlite) {
+  await pg.exec(`
+    CREATE ROLE anon NOLOGIN;
+    CREATE ROLE authenticated NOLOGIN;
+    GRANT USAGE ON SCHEMA public TO anon, authenticated;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO anon, authenticated;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO anon, authenticated;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON FUNCTIONS TO anon, authenticated;
+  `);
+}
+
 export default async function setup(project: TestProject) {
   const dataDir = await mkdtemp(path.join(tmpdir(), 'rafah-pglite-'));
   const pg = new PGlite(dataDir);
+  await supabaseApiRoles(pg);
   await applyMigrations(pg);
 
   const db = new PrismaClient({ adapter: new PrismaPGlite(pg) });
