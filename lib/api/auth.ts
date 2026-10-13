@@ -1,5 +1,5 @@
 import 'server-only';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type Session } from '@supabase/supabase-js';
 import { sessionFromAuthUser } from '@/lib/auth';
 import type { SessionUser } from '@/lib/rbac';
 import { supabaseEnv } from '@/lib/supabase/server';
@@ -13,13 +13,28 @@ export function bearerToken(req: Request): string | null {
   return match?.[1] ?? null;
 }
 
+/** عميل Supabase بلا كوكي ولا تخزين — لكل طلب جوّال عميله */
+export function statelessSupabase() {
+  const { url, key } = supabaseEnv();
+  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
+}
+
+/** الجلسة كما يحتاجها supabase_flutter ليحفظها ويجدّدها — لا شيء غيرها */
+export function mobileSession(session: Session | null) {
+  if (!session) return null;
+  return {
+    accessToken: session.access_token,
+    refreshToken: session.refresh_token,
+    expiresAt: session.expires_at ?? null,
+    tokenType: session.token_type,
+  };
+}
+
 /** null ⇒ بلا رمز، أو رمز منتهٍ أو مزوّر، أو حساب معطّل. */
 export async function userFromRequest(req: Request): Promise<SessionUser | null> {
   const token = bearerToken(req);
   if (!token) return null;
-  const { url, key } = supabaseEnv();
-  const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
-  const { data } = await supabase.auth.getUser(token);
+  const { data } = await statelessSupabase().auth.getUser(token);
   if (!data.user) return null;
   return sessionFromAuthUser(data.user);
 }
