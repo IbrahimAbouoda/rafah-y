@@ -18,6 +18,7 @@
     "db:seed": "prisma db seed",
     "postinstall": "prisma generate",
     "admin:grant": "tsx scripts/grant-role.ts",
+    "finance:import": "tsx scripts/import-ledger.ts",
     "api:fixtures": "node -e \"require('fs').rmSync('docs/mobile/fixtures',{recursive:true,force:true})\" && vitest run --project integration tests/integration/api && tsx scripts/openapi.ts",
     "api:openapi": "tsx scripts/openapi.ts"
   },

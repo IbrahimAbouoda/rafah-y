@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { db } from '@/lib/db';
+import { writeLedgerEntries } from '@/lib/finance/ledger-import';
+import { publicFinance } from '@/lib/finance/queries';
 import { PUBLIC_INITIATIVE_STATUSES, securedTotals } from '@/lib/initiatives/workflow';
 import {
   approveConceptNoteAction,
@@ -7,7 +9,7 @@ import {
   demandVoteAction,
   markConceptNoteSentAction,
 } from '@/server/actions/demand';
-import { approveFundingAction, recordFundingAction } from '@/server/actions/funding';
+import { approveFundingAction, deleteFundingAction, recordFundingAction, updateFundingAction } from '@/server/actions/funding';
 import { saveInitiativeAction, setInitiativeStatusAction, upsertNeedAction } from '@/server/actions/initiatives';
 import { decideOfferAction, submitOfferAction } from '@/server/actions/offers';
 import { linkMemberAction, unlinkMemberAction } from '@/server/actions/organizations';
@@ -204,6 +206,155 @@ describe('عرض الدعم وقراره — AC-10', () => {
     await recordFundingAction(null, form({ direction: 'INCOMING', amount: '5', occurredAt: '2026-09-02' }));
     const record = await db.fundingRecord.findFirstOrThrow({ where: { recordedById: treasurer.id } });
     expect(await approveFundingAction(null, form({ fundingId: record.id }))).toMatchObject({ ok: false, message: expect.stringMatching(/لا تملك صلاحية/) });
+  });
+});
+
+describe('الشفافية المالية العامة — D38', () => {
+  it('بلا مستخدم: المعتمد فقط، ولا اسم فرد ولا بيان في الناتج', async () => {
+    const baseline = await publicFinance();
+    const treasurer = await createUser(['treasurer']);
+    await actAs(treasurer.id);
+    const secret = 'اسم متبرع فرد';
+    await recordFundingAction(null, form({ direction: 'INCOMING', amount: '700', occurredAt: '2026-10-01', counterparty: secret, description: `بيان ${secret}` }));
+    await recordFundingAction(null, form({ direction: 'OUTGOING', amount: '45', occurredAt: '2026-10-02', counterparty: secret, category: 'الاتصالات' }));
+    await recordFundingAction(null, form({ direction: 'OUTGOING', amount: '9000', occurredAt: '2026-10-03', category: 'التأجير' }));
+    const entries = await db.fundingRecord.findMany({ where: { recordedById: treasurer.id }, orderBy: { occurredAt: 'asc' } });
+
+    const president = await createUser(['council_president']);
+    await actAs(president.id);
+    for (const entry of entries.slice(0, 2)) {
+      expect(await approveFundingAction(null, form({ fundingId: entry.id }))).toMatchObject({ ok: true });
+    }
+
+    // القاعدة مشتركة بين اختبارات الملف، فالمقارنة بالفرق عمّا قبل هذه القيود
+    const result = await publicFinance();
+    expect(Number(result.totals.ILS.incoming) - Number(baseline.totals.ILS.incoming)).toBe(700);
+    expect(Number(result.totals.ILS.outgoing) - Number(baseline.totals.ILS.outgoing)).toBe(45);
+    expect(Number(result.others.ILS) - Number(baseline.others.ILS ?? 0)).toBe(700);
+    expect(result.categories.map((c) => c.name)).toContain('الاتصالات');
+    // القيد المعلّق (9000) لا يدخل، ولا التأجير الذي لم يُعتمد
+    expect(result.categories.map((c) => c.name)).not.toContain('التأجير');
+    expect(JSON.stringify(result)).not.toContain(secret);
+  });
+});
+
+describe('المؤسسة في القيد وإدخال السجل', () => {
+  it('القيد المرتبط بمؤسسة يظهر باسمها للعامة بعد الاعتماد، والتعديل يغيّر الربط', async () => {
+    const organization = await db.organization.create({ data: { name: 'مركز اختبار الربط', type: 'LOCAL_NGO' } });
+    const treasurer = await createUser(['treasurer']);
+    await actAs(treasurer.id);
+    expect(await recordFundingAction(null, form({ direction: 'INCOMING', amount: '300', occurredAt: '2026-10-01', organizationId: organization.id }))).toMatchObject({ ok: true });
+    const record = await db.fundingRecord.findFirstOrThrow({ where: { recordedById: treasurer.id } });
+    expect(record.organizationId).toBe(organization.id);
+
+    expect(await updateFundingAction(null, form({ fundingId: record.id, direction: 'INCOMING', amount: '300', occurredAt: '2026-10-01' }))).toMatchObject({ ok: true });
+    expect((await db.fundingRecord.findUniqueOrThrow({ where: { id: record.id } })).organizationId).toBeNull();
+    expect(await updateFundingAction(null, form({ fundingId: record.id, direction: 'INCOMING', amount: '300', occurredAt: '2026-10-01', organizationId: organization.id }))).toMatchObject({ ok: true });
+    expect((await publicFinance()).organizations.map((o) => o.name)).not.toContain(organization.name);
+
+    const president = await createUser(['council_president']);
+    await actAs(president.id);
+    expect(await approveFundingAction(null, form({ fundingId: record.id }))).toMatchObject({ ok: true });
+    expect((await publicFinance()).organizations).toContainEqual({ name: organization.name, amounts: { ILS: '300.00' } });
+  });
+
+  it('مؤسسة غير موجودة تُرفض برسالة واضحة', async () => {
+    const treasurer = await createUser(['treasurer']);
+    await actAs(treasurer.id);
+    const result = await recordFundingAction(null, form({ direction: 'INCOMING', amount: '1', occurredAt: '2026-10-01', organizationId: '00000000-0000-4000-8000-000000000000' }));
+    expect(result).toMatchObject({ ok: false, message: expect.stringMatching(/المؤسسة/) });
+  });
+
+  it('السجل المُدخل معلّق بسطر تدقيق لكل قيد، ويعتمده الرئيس لا المسجِّل', async () => {
+    const treasurer = await createUser(['treasurer']);
+    await db.$transaction((tx) =>
+      writeLedgerEntries(
+        tx,
+        [
+          { n: 7, direction: 'INCOMING', occurredAt: new Date('2026-10-01T00:00:00Z'), party: 'متبرع فرد', description: 'تمويل', amount: '6450', currency: 'USD', organizationId: null, category: null },
+          { n: 26, direction: 'OUTGOING', occurredAt: new Date('2026-10-17T00:00:00Z'), party: null, description: 'وجبات', amount: '1000', currency: 'ILS', organizationId: null, category: 'الضيافة والوجبات' },
+        ],
+        treasurer.id,
+      ),
+    );
+    const records = await db.fundingRecord.findMany({ where: { recordedById: treasurer.id }, orderBy: { occurredAt: 'asc' } });
+    expect(records).toHaveLength(2);
+    expect(records.every((r) => r.approvedAt === null)).toBe(true);
+    expect(records[0]).toMatchObject({ counterparty: 'متبرع فرد', currency: 'USD' });
+    expect(records[1]).toMatchObject({ category: 'الضيافة والوجبات' });
+    expect(await db.auditLog.count({ where: { action: 'funding.record', entityId: { in: records.map((r) => r.id) } } })).toBe(2);
+
+    await actAs(treasurer.id);
+    expect(await approveFundingAction(null, form({ fundingId: records[0]!.id }))).toMatchObject({ ok: false });
+    const president = await createUser(['council_president']);
+    await actAs(president.id);
+    expect(await approveFundingAction(null, form({ fundingId: records[0]!.id }))).toMatchObject({ ok: true });
+  });
+});
+
+describe('تعديل القيد وحذفه قبل الاعتماد', () => {
+  async function pendingEntry() {
+    const treasurer = await createUser(['treasurer']);
+    await actAs(treasurer.id);
+    await recordFundingAction(
+      null,
+      form({ direction: 'OUTGOING', amount: '50', occurredAt: '2026-10-01', counterparty: 'أحمد', category: 'الاتصالات', documentNumber: 'R-1' }),
+    );
+    const record = await db.fundingRecord.findFirstOrThrow({ where: { recordedById: treasurer.id } });
+    return { treasurer, record };
+  }
+  const edited = (fundingId: string) => form({ fundingId, direction: 'OUTGOING', currency: 'USD', amount: '75.50', occurredAt: '2026-10-02', category: 'التأجير' });
+
+  it('القيد الجديد يحفظ الجهة والبند ورقم المستند', async () => {
+    const { record } = await pendingEntry();
+    expect(record).toMatchObject({ counterparty: 'أحمد', category: 'الاتصالات', documentNumber: 'R-1', approvedAt: null });
+  });
+
+  it('المُدخل يعدّل قيده المعلّق، والتدقيق يحفظ ما قبل التعديل وما بعده', async () => {
+    const { record } = await pendingEntry();
+    expect(await updateFundingAction(null, edited(record.id))).toMatchObject({ ok: true });
+    const after = await db.fundingRecord.findUniqueOrThrow({ where: { id: record.id } });
+    expect(after).toMatchObject({ currency: 'USD', category: 'التأجير', counterparty: null, approvedAt: null });
+    expect(after.amount.toString()).toBe('75.5');
+    const audit = await db.auditLog.findFirstOrThrow({ where: { action: 'funding.update', entityId: record.id } });
+    expect(audit.before).toMatchObject({ amount: '50', currency: 'ILS' });
+    expect(audit.after).toMatchObject({ amount: '75.50', currency: 'USD' });
+  });
+
+  it('المُدخل يحذف قيده المعلّق، ونسخته تبقى في التدقيق', async () => {
+    const { record } = await pendingEntry();
+    expect(await deleteFundingAction(null, form({ fundingId: record.id }))).toMatchObject({ ok: true });
+    expect(await db.fundingRecord.count({ where: { id: record.id } })).toBe(0);
+    const audit = await db.auditLog.findFirstOrThrow({ where: { action: 'funding.delete', entityId: record.id } });
+    expect(audit.before).toMatchObject({ amount: '50', documentNumber: 'R-1' });
+  });
+
+  it('القيد المعتمد ثابت: لا تعديل ولا حذف', async () => {
+    const { treasurer, record } = await pendingEntry();
+    const president = await createUser(['council_president']);
+    await actAs(president.id);
+    expect(await approveFundingAction(null, form({ fundingId: record.id }))).toMatchObject({ ok: true });
+    await actAs(treasurer.id);
+    expect(await updateFundingAction(null, edited(record.id))).toMatchObject({ ok: false, message: expect.stringMatching(/اعتُمد/) });
+    expect(await deleteFundingAction(null, form({ fundingId: record.id }))).toMatchObject({ ok: false, message: expect.stringMatching(/اعتُمد/) });
+    expect((await db.fundingRecord.findUniqueOrThrow({ where: { id: record.id } })).amount.toString()).toBe('50');
+  });
+
+  it('غير المُدخل لا يعدّل ولا يحذف، ولو كان أمين صندوق آخر', async () => {
+    const { record } = await pendingEntry();
+    const other = await createUser(['treasurer']);
+    await actAs(other.id);
+    expect(await updateFundingAction(null, edited(record.id))).toMatchObject({ ok: false, message: expect.stringMatching(/من أدخله/) });
+    expect(await deleteFundingAction(null, form({ fundingId: record.id }))).toMatchObject({ ok: false, message: expect.stringMatching(/من أدخله/) });
+  });
+
+  it('من لا يملك finance:record يُرفض قبل لمس المدخلات', async () => {
+    const { record } = await pendingEntry();
+    const president = await createUser(['council_president']);
+    await actAs(president.id);
+    expect(await updateFundingAction(null, form({ fundingId: 'ليس-معرّفًا' }))).toMatchObject({ ok: false, message: expect.stringMatching(/لا تملك صلاحية/) });
+    expect(await deleteFundingAction(null, form({ fundingId: record.id }))).toMatchObject({ ok: false, message: expect.stringMatching(/لا تملك صلاحية/) });
+    expect(await db.fundingRecord.count({ where: { id: record.id } })).toBe(1);
   });
 });
 
