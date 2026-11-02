@@ -20,6 +20,8 @@ export type AuditAction =
   | 'offer.decide'
   | 'funding.record'
   | 'funding.approve'
+  | 'funding.update'
+  | 'funding.delete'
   | 'task.assign'
   | 'task.approve'
   | 'opportunity.publish'

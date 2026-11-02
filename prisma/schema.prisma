@@ -1041,6 +1041,9 @@ model FundingRecord {
   amount         Decimal          @db.Decimal(12, 2)
   currency       String           @default("ILS") @db.Char(3) // ILS أو USD (PRD §4.1)
   description    String? // افتراض
+  counterparty   String? // مصدر الوارد أو المستفيد من المصروف، حين لا تمثّله مؤسسة مسجّلة
+  category       String? // بند المصروف في التقرير المالي
+  documentNumber String? // رقم المستند أو الإيصال
   occurredAt     DateTime // افتراض: تاريخ الحركة الفعلي
   initiativeId   String?          @db.Uuid
   organizationId String?          @db.Uuid

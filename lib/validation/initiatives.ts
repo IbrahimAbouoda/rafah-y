@@ -133,12 +133,17 @@ export const RecordFundingSchema = z.object({
   currency,
   occurredAt: requiredDate('اكتب تاريخ الحركة.'),
   description: optionalText(1000, 'الوصف أطول من 1000 محرف.'),
+  counterparty: optionalText(200, 'اسم الجهة أطول من 200 محرف.'),
+  category: optionalText(100, 'بند المصروف أطول من 100 محرف.'),
+  documentNumber: optionalText(100, 'رقم المستند أطول من 100 محرف.'),
   initiativeId: optionalUuid('اختر المبادرة من القائمة.'),
   organizationId: optionalUuid('اختر المؤسسة من القائمة.'),
   offerId: optionalUuid('العرض غير محدد.'),
 });
 
 export const FundingIdSchema = z.object({ fundingId: z.uuid('القيد غير محدد. حدّث الصفحة.') });
+
+export const UpdateFundingSchema = RecordFundingSchema.omit({ offerId: true }).extend(FundingIdSchema.shape);
 
 // ─── المؤسسات ────────────────────────────────────────────────────────
 
