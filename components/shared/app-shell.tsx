@@ -54,7 +54,7 @@ export function AppShell({
         <div className="flex h-14 items-center gap-3 px-4">
           <Link href={home} className="flex items-baseline gap-2">
             <span className="text-lg font-bold text-brand">نبض رفح</span>
-            <span className="hidden text-xs text-muted-foreground sm:inline">منصة الشباب</span>
+            <span className="hidden text-xs text-muted-foreground sm:inline">المجلس الشبابي البلدي - رفح</span>
           </Link>
           <div className="ms-auto flex items-center gap-1">
             <div className="hidden text-end leading-tight sm:block">

@@ -23,7 +23,9 @@ export const APP_NAME_AR = 'نبض رفح';
 export const APP_TAGLINE_AR = 'صوت الشباب... فكرة تتحول إلى أثر';
 
 export const COUNCIL_EMAIL = 'info.rafahyouth@gmail.com';
-export const COUNCIL_SENDER_NAME = 'نبض رفح — المجلس البلدي الشبابي';
+export const COUNCIL_NAME_AR = 'المجلس الشبابي البلدي - رفح';
+export const COUNCIL_NAME_EN = 'Municipal Youth Council - Rafah';
+export const COUNCIL_SENDER_NAME = `نبض رفح — ${COUNCIL_NAME_AR}`;
 
 /** أساس الروابط في البريد ورسائل المشاركة */
 export const appUrl = () => (process.env.APP_URL ?? 'http://localhost:3000').replace(/\/$/, '');

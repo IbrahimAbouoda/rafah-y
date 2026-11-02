@@ -8,12 +8,14 @@
  * افتراض: الدرجات المشتقة (الفاتحة والداكنة) محسوبة هنا؛ النموذج التفاعلي المرجعي غير متاح في المستودع.
  */
 :root {
-  --brand: #0b5c4b; /* أخضر زيتوني — أساسي */
+  --brand: #0b568f; /* أزرق المجلس — أساسي */
   --brand-foreground: #ffffff;
-  --brand-soft: #e6f0ed;
-  --accent: #a87d1f; /* ذهبي — ثانوي */
+  --brand-soft: #e4eff8;
+  --accent: #3e8e28; /* أخضر المجلس — ثانوي */
   --accent-foreground: #ffffff;
-  --alert: #9e2b25; /* أحمر تطريز — للتنبيه */
+  --accent-soft: #e9f5e5;
+  --accent-strong: #2c6a1b; /* نص أخضر على خلفية فاتحة: #3e8e28 دون تباين AA للنص الصغير */
+  --alert: #c81d25; /* أحمر المجلس — بارز */
   --alert-foreground: #ffffff;
 
   --success: #1f7a3d;
@@ -31,17 +33,19 @@
   --muted: #f1efe9;
   --muted-foreground: #5d6560;
   --border: #e2ded4;
-  --ring: #0b5c4b;
+  --ring: #0b568f;
 }
 
 .dark {
-  --brand: #3fa58c;
-  --brand-foreground: #06201a;
-  --brand-soft: #12342c;
-  --accent: #d4a94a;
-  --accent-foreground: #221803;
-  --alert: #e0645c;
-  --alert-foreground: #230604;
+  --brand: #5aa9e0;
+  --brand-foreground: #06192a;
+  --brand-soft: #10293f;
+  --accent: #76c25e;
+  --accent-foreground: #0c2005;
+  --accent-soft: #16301a;
+  --accent-strong: #8fd478;
+  --alert: #ef6a70;
+  --alert-foreground: #2a0507;
 
   --success: #5cc27f;
   --success-soft: #133222;
@@ -58,7 +62,7 @@
   --muted: #1f2824;
   --muted-foreground: #a0aba5;
   --border: #2b3631;
-  --ring: #3fa58c;
+  --ring: #5aa9e0;
 }
 
 @theme inline {
@@ -67,6 +71,11 @@
   --color-brand-soft: var(--brand-soft);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-strong: var(--accent-strong);
+  --color-council-blue: var(--brand);
+  --color-council-green: var(--accent);
+  --color-council-red: var(--alert);
   --color-alert: var(--alert);
   --color-alert-foreground: var(--alert-foreground);
   --color-success: var(--success);
