@@ -194,7 +194,7 @@ export default async function FinancePage({ searchParams }: { searchParams: Prom
         ))}
       </datalist>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="flex min-w-0 flex-col gap-4">
           <section className="flex flex-col gap-2">
             <h2 className="font-semibold">جدول المقبوضات (الوارد)</h2>

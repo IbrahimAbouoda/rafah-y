@@ -71,9 +71,11 @@ export async function committeeDashboard(user: SessionUser, slug: string) {
   const readComplaints = can(user, 'complaints:read', ctx);
   const readTasks = can(user, 'tasks:read', ctx);
   const readIdeas = can(user, 'ideas:read_internal', ctx);
+  // عضو اللجنة يسجّل الحضور ولا يملك activities:update، فيصل لصفحة الحضور من هنا (AC-13)
+  const markAttendance = can(user, 'activities:attendance', ctx);
   const openWhere = { committeeId: committee.id, status: { in: OPEN_STATUSES } };
 
-  const [complaints, openCount, overdue, tasksInReview, openTasks, ideas, members] = await Promise.all([
+  const [complaints, openCount, overdue, tasksInReview, openTasks, ideas, members, activities] = await Promise.all([
     readComplaints
       ? db.complaint.findMany({
           where: openWhere,
@@ -95,10 +97,18 @@ export async function committeeDashboard(user: SessionUser, slug: string) {
         })
       : null,
     committeeMembers(db, committee.id),
+    markAttendance
+      ? db.activity.findMany({
+          where: { committeeId: committee.id, status: { in: ['PUBLISHED', 'COMPLETED'] } },
+          orderBy: { startsAt: 'desc' },
+          take: 10,
+          select: { id: true, title: true, status: true, startsAt: true },
+        })
+      : null,
   ]);
   return {
     committee,
-    can: { readComplaints, readTasks, readIdeas },
+    can: { readComplaints, readTasks, readIdeas, markAttendance },
     complaints,
     openCount,
     overdue,
@@ -106,6 +116,7 @@ export async function committeeDashboard(user: SessionUser, slug: string) {
     openTasks,
     ideas,
     members,
+    activities,
   };
 }
 

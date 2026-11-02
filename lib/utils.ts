@@ -43,3 +43,30 @@ export function gazaDayStart(day: string): Date | null {
   const localAsUtc = Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day), Number(parts.hour), Number(parts.minute));
   return new Date(utcGuess - (localAsUtc - utcGuess));
 }
+
+/** قيمة <input type="datetime-local"> (YYYY-MM-DDTHH:mm) بتوقيت غزة ← لحظة UTC */
+export function gazaDateTime(value: string): Date | null {
+  const m = /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})/.exec(value);
+  if (!m) return null;
+  const day = gazaDayStart(m[1]!);
+  return day ? new Date(day.getTime() + (Number(m[2]) * 60 + Number(m[3])) * 60_000) : null;
+}
+
+/** لحظة ← قيمة <input type="datetime-local"> بتوقيت غزة */
+export function toDateTimeInput(d: Date | null | undefined): string {
+  if (!d) return '';
+  const p = Object.fromEntries(
+    new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Gaza',
+      hourCycle: 'h23',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+      .formatToParts(d)
+      .map((x) => [x.type, x.value]),
+  );
+  return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}`;
+}

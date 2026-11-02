@@ -30,6 +30,11 @@ const ACTIONS: Record<string, string> = {
   'role.revoke': 'سحب دور',
   'term.change': 'تغيير دورة المجلس',
   'settings.change': 'تعديل إعدادات',
+  'report.publish': 'نشر تقرير',
+  'report.export': 'تصدير تقرير',
+  'complaint.export': 'تصدير سجل الشكاوى',
+  'application.export': 'تصدير قائمة المتقدّمين',
+  'attendance.export': 'تصدير سجل الحضور',
 };
 
 type Search = { action?: string; actor?: string; from?: string; to?: string; entity?: string; page?: string };

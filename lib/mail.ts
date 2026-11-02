@@ -1,6 +1,7 @@
 import 'server-only';
 import nodemailer, { type Transporter } from 'nodemailer';
 import { COUNCIL_EMAIL, COUNCIL_SENDER_NAME } from '@/lib/config';
+import { logError } from '@/lib/log';
 
 // البريد الصادر — PRD §8.1 · D19. المرسِل دائمًا بريد المجلس الرسمي.
 // الإنتاج: SMTP الخاص بـ Gmail بكلمة مرور تطبيق. التطوير: Mailpit المحلي من Supabase (بلا مصادقة).
@@ -8,37 +9,64 @@ import { COUNCIL_EMAIL, COUNCIL_SENDER_NAME } from '@/lib/config';
 
 export type MailMessage = { to: string; subject: string; text: string; html: string };
 
-const globalForMail = globalThis as unknown as { mailTransport?: Transporter | null };
+/**
+ * الناقل (adapter): smtp حين يُضبط SMTP_HOST، أو memory حين MAIL_TRANSPORT=memory (للاختبارات والتطوير بلا Mailpit):
+ * يلتقط الرسائل في صندوق داخل العملية ولا يرسل شيئًا. memory ممنوع في الإنتاج — يُعامَل كغير مضبوط.
+ */
+type Adapter = { kind: 'smtp'; transporter: Transporter } | { kind: 'memory' };
 
-function transport(): Transporter | null {
-  if (globalForMail.mailTransport !== undefined) return globalForMail.mailTransport;
-  const { SMTP_HOST: host, SMTP_PORT: port, SMTP_USER: user, SMTP_PASS: pass } = process.env;
-  globalForMail.mailTransport = host
-    ? nodemailer.createTransport({
-        host,
-        port: Number(port ?? 587),
-        secure: Number(port) === 465,
-        auth: user && pass ? { user, pass } : undefined,
-      })
-    : null;
-  return globalForMail.mailTransport;
+const globalForMail = globalThis as unknown as { mailAdapter?: Adapter | null; mailOutbox?: MailMessage[] };
+
+function adapter(): Adapter | null {
+  if (globalForMail.mailAdapter !== undefined) return globalForMail.mailAdapter;
+  const { SMTP_HOST: host, SMTP_PORT: port, SMTP_USER: user, SMTP_PASS: pass, MAIL_TRANSPORT: kind, NODE_ENV } = process.env;
+  if (kind === 'memory' && NODE_ENV !== 'production') {
+    globalForMail.mailAdapter = { kind: 'memory' };
+  } else {
+    globalForMail.mailAdapter = host
+      ? {
+          kind: 'smtp',
+          transporter: nodemailer.createTransport({
+            host,
+            port: Number(port ?? 587),
+            secure: Number(port) === 465,
+            auth: user && pass ? { user, pass } : undefined,
+          }),
+        }
+      : null;
+  }
+  return globalForMail.mailAdapter;
 }
 
-export const mailConfigured = () => transport() !== null;
+export const mailConfigured = () => adapter() !== null;
+
+/** صندوق الناقل memory — ما «أُرسل» في هذه العملية (للاختبارات) */
+export function mailOutbox(): MailMessage[] {
+  return (globalForMail.mailOutbox ??= []);
+}
+
+/** يعيد قراءة الإعداد من البيئة في الطلب التالي (للاختبارات التي تبدّل الناقل) */
+export function resetMailAdapter() {
+  globalForMail.mailAdapter = undefined;
+}
 
 /** يرسل رسالة واحدة. لا يرمي أبدًا: النتيجة true/false. */
 export async function sendMail(message: MailMessage): Promise<boolean> {
-  const t = transport();
-  if (!t) return false;
+  const a = adapter();
+  if (!a) return false;
+  if (a.kind === 'memory') {
+    mailOutbox().push(message);
+    return true;
+  }
   try {
-    await t.sendMail({
+    await a.transporter.sendMail({
       from: { name: COUNCIL_SENDER_NAME, address: COUNCIL_EMAIL },
       replyTo: COUNCIL_EMAIL,
       ...message,
     });
     return true;
   } catch (e) {
-    console.error('[mail]', e instanceof Error ? e.message : e);
+    logError('mail', e);
     return false;
   }
 }

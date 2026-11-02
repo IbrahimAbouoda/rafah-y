@@ -1,10 +1,10 @@
 'use client';
 
-import { cloneElement, createContext, startTransition, use, useActionState, useEffect, useId, useRef } from 'react';
+import { createContext, startTransition, use, useActionState, useEffect, useId, useRef } from 'react';
 import { Loader2 } from 'lucide-react';
 import type { ActionState } from '@/lib/action';
 import { Button, type ButtonProps } from '@/components/ui/button';
-import { Label } from '@/components/ui/form-controls';
+import { FieldControlContext, Label } from '@/components/ui/form-controls';
 import { Alert } from '@/components/ui/surface';
 import { useFlash } from './flash';
 import { cn } from '@/lib/utils';
@@ -24,12 +24,15 @@ export function ActionForm({
   className,
   resetOnSuccess = false,
   hideSuccess = false,
+  id,
 }: {
   action: Action;
   children: React.ReactNode;
   className?: string;
   resetOnSuccess?: boolean;
   hideSuccess?: boolean;
+  /** لإرسال النموذج من خارجه، مثل قرار ConsentDialog */
+  id?: string;
 }) {
   const flash = useFlash();
   // النجاح يُسجَّل في رسالة الهيكل من داخل الاستدعاء: قد يزول النموذج نفسه مع تحديث الصفحة
@@ -48,6 +51,7 @@ export function ActionForm({
     <FormStateContext value={{ state, pending }}>
       <form
         ref={ref}
+        id={id}
         action={formAction}
         onSubmit={(e) => {
           e.preventDefault();
@@ -68,7 +72,7 @@ export function ActionForm({
   );
 }
 
-/** حقل بعنوانه ورسالة خطئه. يضبط id و name و aria-invalid على العنصر الممرَّر. */
+/** حقل بعنوانه ورسالة خطئه. يضبط id و name و aria-* على عنصر الإدخال بداخله (Input · Textarea · Select) عبر FieldControlContext. */
 export function Field({
   name,
   label,
@@ -79,7 +83,7 @@ export function Field({
   name: string;
   label: string;
   hint?: string;
-  children: React.ReactElement<Record<string, unknown>>;
+  children: React.ReactNode;
   className?: string;
 }) {
   const { state } = use(FormStateContext);
@@ -92,12 +96,16 @@ export function Field({
   return (
     <div className={cn('flex flex-col gap-1.5', className)}>
       <Label htmlFor={id}>{label}</Label>
-      {cloneElement(children, {
-        id,
-        name,
-        'aria-invalid': errors ? true : undefined,
-        'aria-describedby': [errors ? errorId : null, hint ? hintId : null].filter(Boolean).join(' ') || undefined,
-      })}
+      <FieldControlContext
+        value={{
+          id,
+          name,
+          'aria-invalid': errors ? true : undefined,
+          'aria-describedby': [errors ? errorId : null, hint ? hintId : null].filter(Boolean).join(' ') || undefined,
+        }}
+      >
+        {children}
+      </FieldControlContext>
       {hint ? (
         <p id={hintId} className="text-xs text-muted-foreground">
           {hint}

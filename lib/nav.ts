@@ -21,7 +21,12 @@ export type NavIcon =
   | 'rocket'
   | 'building'
   | 'wallet'
-  | 'handshake';
+  | 'handshake'
+  | 'briefcase'
+  | 'sparkles'
+  | 'chart'
+  | 'help'
+  | 'user';
 
 /**
  * permission = null ⇒ يكفي تسجيل الدخول.
@@ -57,9 +62,12 @@ export const ADMIN_NAV: NavGroup[] = [
       },
       { href: '/admin/organizations', label: 'المؤسسات', permission: 'organizations:read', beyondOwn: true, icon: 'building' },
       { href: '/admin/finance', label: 'السجل المالي', permission: 'finance:read', icon: 'wallet' },
+      { href: '/admin/opportunities', label: 'الفرص', permission: 'opportunities:publish', icon: 'briefcase' },
+      // activities:update بنطاق لجنة أو الكل؛ عضو اللجنة (حضور فقط) يصل لصفحة الحضور من لوحة لجنته
+      { href: '/admin/activities', label: 'الأنشطة', permission: 'activities:update', icon: 'sparkles' },
+      { href: '/admin/support', label: 'الدعم والاستفسارات', permission: 'support:read', icon: 'help' },
+      { href: '/admin/reports', label: 'التقارير والمؤشرات', permission: 'reports:read', icon: 'chart' },
       { href: '/admin/audit', label: 'سجل التدقيق', permission: 'audit:read', beyondOwn: true, icon: 'history' },
-      // التقرير الحالي مالي، فالعنصر لمن يقرأ السجل المالي (كل من يملكها يملك reports:read)؛ يتّسع مع Sprint 5
-      { href: '/admin/reports', label: 'التقارير', permission: 'finance:read', icon: 'file' },
     ],
   },
   {
@@ -71,6 +79,7 @@ export const ADMIN_NAV: NavGroup[] = [
       { href: '/admin/settings/committees', label: 'اللجان', permission: 'committees:manage', icon: 'layers' },
       { href: '/admin/settings/categories', label: 'تصنيفات الشكاوى', permission: 'settings:manage', icon: 'tags' },
       { href: '/admin/settings/areas', label: 'المناطق والأحياء', permission: 'settings:manage', icon: 'map' },
+      { href: '/admin/settings/faq', label: 'الأسئلة المعتمدة', permission: 'faq:manage', icon: 'help' },
     ],
   },
 ];
@@ -83,6 +92,8 @@ export const ME_NAV: NavGroup[] = [
       { href: '/me/complaints', label: 'شكاواي', permission: 'complaints:read', icon: 'file' },
       { href: '/me/complaints/new', label: 'تقديم شكوى', permission: 'complaints:create', icon: 'plus' },
       { href: '/me/ideas', label: 'أفكاري', permission: 'ideas:create', icon: 'lightbulb' },
+      { href: '/me/applications', label: 'طلباتي على الفرص', permission: 'opportunities:apply', icon: 'briefcase' },
+      { href: '/me/profile', label: 'ملفي ومهاراتي', permission: 'profiles:update', icon: 'user' },
       { href: '/me/notifications', label: 'الإشعارات', permission: null, icon: 'bell' },
     ],
   },
@@ -96,6 +107,7 @@ export const PARTNER_NAV: NavGroup[] = [
       { href: '/partner', label: 'لوحة المؤسسة', permission: 'offers:create', icon: 'home' },
       { href: '/partner/needs', label: 'الاحتياجات المفتوحة', permission: 'offers:create', icon: 'handshake' },
       { href: '/partner/offers', label: 'عروض دعمنا', permission: 'offers:read', icon: 'file' },
+      { href: '/partner/opportunities', label: 'فرصنا', permission: 'opportunities:create', icon: 'briefcase' },
     ],
   },
 ];

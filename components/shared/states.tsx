@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { Inbox, Lock } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, Skeleton } from '@/components/ui/surface';
+import { EmptyIllustration } from './empty-illustration';
 
 // الحالات الثلاث الإلزامية لكل شاشة: فارغ · تحميل · خطأ (PRD §12 · DoD 6–8)
 
@@ -9,8 +10,8 @@ import { Card, Skeleton } from '@/components/ui/surface';
 export function EmptyState({ title, hint, children }: { title: string; hint: string; children?: React.ReactNode }) {
   return (
     <div className="flex flex-col items-center gap-2 px-4 py-10 text-center">
-      <Inbox className="size-8 text-muted-foreground" aria-hidden />
-      <p className="font-medium">{title}</p>
+      <EmptyIllustration className="mb-1" />
+      <p className="font-semibold">{title}</p>
       <p className="max-w-sm text-sm text-muted-foreground">{hint}</p>
       {children}
     </div>

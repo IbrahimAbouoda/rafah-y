@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { Bell, CheckCheck } from 'lucide-react';
-import { markAllReadAction, markReadAction } from '@/server/actions/notifications';
+import { markAllReadAction, markReadAction, openNotificationAction } from '@/server/actions/notifications';
 import { cn, formatDate, formatDateTime } from '@/lib/utils';
 import { ActionForm, SubmitButton } from './action-form';
+import { PulseDot } from './pulse-dot';
 import { EmptyState } from './states';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/surface';
@@ -68,16 +69,23 @@ export function NotificationCenter({
                   className={cn('flex items-start gap-3 p-3 sm:p-4', !n.readAt && 'bg-brand-soft/40')}
                   aria-label={n.readAt ? undefined : 'غير مقروء'}
                 >
-                  <Bell className={cn('mt-0.5 size-4 shrink-0', n.readAt ? 'text-muted-foreground' : 'text-brand')} aria-hidden />
+                  <span className="relative mt-0.5 shrink-0">
+                    <Bell className={cn('size-4', n.readAt ? 'text-muted-foreground' : 'text-brand')} aria-hidden />
+                    {!n.readAt ? <PulseDot className="absolute -end-1 -top-1 size-2" /> : null}
+                  </span>
                   <div className="flex min-w-0 flex-1 flex-col gap-1">
                     <p className={cn('text-sm', !n.readAt && 'font-semibold')}>{n.title}</p>
                     {n.body ? <p className="text-sm text-muted-foreground">{n.body}</p> : null}
                     <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                       <time dateTime={n.createdAt.toISOString()}>{formatDateTime(n.createdAt)}</time>
                       {n.link ? (
-                        <Link href={n.link} className="text-brand hover:underline">
-                          افتح
-                        </Link>
+                        // يعلّمه مقروءًا ثم ينتقل لرابطه (openNotificationAction)
+                        <ActionForm action={openNotificationAction} hideSuccess className="gap-0">
+                          <input type="hidden" name="notificationId" value={n.id} />
+                          <button type="submit" className="text-brand hover:underline">
+                            افتح
+                          </button>
+                        </ActionForm>
                       ) : null}
                     </div>
                   </div>

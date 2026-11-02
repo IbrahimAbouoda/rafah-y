@@ -6,7 +6,7 @@ import { clearLoginFailures, limit, loginBlockedFor, recordLoginFailure } from '
 import { LoginSchema, RegisterSchema, ResetRequestSchema } from '@/lib/validation/auth';
 
 // مسارات المصادقة عامة بطبيعتها: لا مستخدم قبلها، فالحماية بحد المعدل لا بـ can() (PRD §6.4).
-// مشتركة بين الويب (عميل Supabase بالكوكي) والجوّال (عميل بلا تخزين، والجلسة تعود للتطبيق) — D33.
+// مشتركة بين الويب (عميل Supabase بالكوكي) والجوّال (عميل بلا تخزين، والجلسة تعود للتطبيق) — D46.
 
 type Auth = Pick<SupabaseClient, 'auth'>;
 
@@ -48,9 +48,11 @@ export async function registerFlow(supabase: Auth, input: unknown, ip: string): 
 }
 
 /** §6.4: بعد 5 إخفاقات حظر يتضاعف. رسالة واحدة لا تكشف إن كان الحساب موجودًا. */
-export async function loginFlow(supabase: Auth, input: unknown, ip: string): Promise<SignedIn> {
+export async function loginFlow(supabase: Auth, input: unknown): Promise<SignedIn> {
   const data = LoginSchema.parse(input);
-  const who = `${ip}|${data.email ?? data.phone}`;
+  // M-3: العدّاد على الحساب نفسه لا على IP+الحساب — تزوير IP كان يعطي عدّادًا جديدًا مع كل طلب.
+  // الحظر تصاعدي مؤقت (1، 2، 4… دقائق بحد 60) لا قفل دائم، فلا يُقفل صاحب الحساب طويلًا بمحاولات غيره.
+  const who = `account:${(data.email ?? data.phone ?? '').toLowerCase()}`;
 
   const blockedFor = await loginBlockedFor(who);
   if (blockedFor > 0) throw rateLimited(blockedFor);
@@ -68,7 +70,7 @@ export async function loginFlow(supabase: Auth, input: unknown, ip: string): Pro
   return { userId, session: result.session };
 }
 
-/** D17: الاستعادة بالبريد فقط. الرابط يفتح صفحة الويب لتعيين كلمة المرور (D36 للجوّال). */
+/** D17: الاستعادة بالبريد فقط. الرابط يفتح صفحة الويب لتعيين كلمة المرور (D49 للجوّال). */
 export async function resetRequestFlow(supabase: Auth, input: unknown, ip: string, appUrl: string): Promise<string> {
   const gate = await limit('resetPassword', ip);
   if (!gate.allowed) throw rateLimited(gate.retryAfterSec);

@@ -7,7 +7,7 @@ import { db } from '@/lib/db';
 import { call } from '../../support/api';
 import { freshIp } from '../../support/factories';
 
-// واجهة الجوّال — المصادقة عبر الخادم (D33): حد المعدل والحظر المتضاعف وقواعد كلمة المرور هنا لا في التطبيق.
+// واجهة الجوّال — المصادقة عبر الخادم (D46): حد المعدل والحظر المتضاعف وقواعد كلمة المرور هنا لا في التطبيق.
 // Supabase Auth نفسه بديل وهمي: الاختبار يفحص ما يفعله خادمنا حوله.
 
 const fake = vi.hoisted(() => ({
@@ -125,7 +125,7 @@ describe('POST /auth/login — §6.4', () => {
   });
 });
 
-describe('POST /auth/reset-request — D17 · D36', () => {
+describe('POST /auth/reset-request — D17 · D49', () => {
   it('الرسالة نفسها سواء وُجد البريد أم لا، والحد 5 في الساعة لكل IP', async () => {
     const unknown = await call(resetRequest, { auth: false, body: { email: email() } });
     expect(unknown.status).toBe(200);

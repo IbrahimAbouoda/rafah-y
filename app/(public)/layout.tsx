@@ -1,55 +1,39 @@
 import Link from 'next/link';
-import { PublicNav, type PublicNavGroup } from '@/components/shared/public-nav';
-import { ThemeToggle } from '@/components/shared/theme-toggle';
-import { APP_NAME_AR, COUNCIL_NAME_AR } from '@/lib/config';
+import { getCurrentUser } from '@/lib/auth';
+import { landingPath } from '@/lib/nav';
+import { BrandMark } from '@/components/shared/brand-mark';
+import { FlashProvider } from '@/components/shared/flash';
+import { PublicNav } from '@/components/shared/public-nav';
+import { SiteFooter } from '@/components/shared/site-footer';
+import { StickyHeader } from '@/components/shared/sticky-header';
 
-// الروابط هنا لمسارات منفَّذة فقط؛ /transparency وتقاريره تُضاف مع Sprint 5
-const NAV_GROUPS: PublicNavGroup[] = [
-  {
-    label: 'الخدمات والأنشطة',
-    items: [
-      { href: '/initiatives', label: 'المبادرات' },
-      { href: '/ideas', label: 'الأفكار' },
-      { href: '/demand', label: 'مجالات التدريب' },
-      { href: '/track', label: 'تتبّع شكوى' },
-    ],
-  },
-  {
-    label: 'المجلس والشفافية',
-    items: [
-      { href: '/committees', label: 'اللجان' },
-      { href: '/transparency/finance', label: 'الشفافية المالية' },
-      { href: '/support', label: 'ادعمنا' },
-    ],
-  },
-];
-
-// الصفحات العامة — بلا تسجيل دخول (PRD §11.1).
-export default function PublicLayout({ children }: { children: React.ReactNode }) {
+// الصفحات العامة — بلا تسجيل دخول (PRD §11.1). الروابط من lib/public-nav.ts (مسارات منفَّذة فقط).
+export default async function PublicLayout({ children }: { children: React.ReactNode }) {
+  // تعذّر قراءة الجلسة لا يكسر الصفحات العامة: يظهر «دخول» فقط
+  const user = await getCurrentUser().catch(() => null);
+  const account = user ? { href: landingPath(user), label: 'لوحتي' } : { href: '/login', label: 'دخول' };
   return (
     <div className="flex min-h-[calc(100dvh-1.5rem)] flex-col">
-      <header className="border-b bg-surface">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2">
-          <Link href="/" className="flex items-baseline gap-2">
-            <span className="text-lg font-bold text-brand">{APP_NAME_AR}</span>
-            <span className="hidden text-xs text-muted-foreground sm:inline">{COUNCIL_NAME_AR}</span>
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:start-2 focus:top-2 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-3 focus:py-2"
+      >
+        تخطَّ إلى المحتوى
+      </a>
+      <StickyHeader>
+        <div className="mx-auto flex h-16 max-w-5xl items-center gap-2 px-4">
+          <Link href="/" className="min-w-0 shrink">
+            <BrandMark />
           </Link>
-          <nav aria-label="روابط عامة" className="flex flex-wrap items-center gap-0.5 text-sm sm:ms-auto">
-            <PublicNav groups={NAV_GROUPS} />
-            <Link href="/login" className="rounded-lg px-2 py-1.5 hover:bg-muted">
-              دخول
-            </Link>
-            <Link
-              href="/complaints/public-new"
-              className="rounded-lg bg-council-blue px-3 py-1.5 font-medium text-brand-foreground transition-colors hover:bg-council-blue/90"
-            >
-              قدم شكوى
-            </Link>
-            <ThemeToggle />
-          </nav>
+          <PublicNav account={account} />
         </div>
-      </header>
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">{children}</main>
+      </StickyHeader>
+      {/* نتيجة الإجراء تبقى ظاهرة حين يتغيّر النموذج نفسه بعد النجاح (التقديم على فرصة، التسجيل في نشاط) */}
+      {/* ارتفاع الشاشة ناقص الترويسة (h-16): التذييل يبدأ تحت الطيّة، فلا يقفز أمام القارئ حين يُبث المحتوى بعد الهيكل (CLS · §1.4) */}
+      <main id="main" className="mx-auto min-h-[calc(100dvh-4rem)] w-full max-w-5xl flex-1 px-4 py-6 sm:py-8">
+        <FlashProvider>{children}</FlashProvider>
+      </main>
+      <SiteFooter />
     </div>
   );
 }

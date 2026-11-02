@@ -113,6 +113,22 @@ test('مهمة من شكوى: الرئيس ينشئ ← العضو إلى «مر
   await expect(head.getByText('اللجنة الصحية')).toHaveCount(0);
 });
 
+/**
+ * قائمة الفرز مرتّبة الأقدم أولًا بصفحات من 25، وقاعدة الاختبار المحلية تتراكم فيها أفكار التشغيلات السابقة —
+ * فالفكرة الجديدة قد تكون في صفحة لاحقة (مثل صندوق الوارد في sprint1.spec). المحتوى يُبث خلف Suspense
+ * و count() لا ينتظر، فننتظر العنوان أولًا.
+ */
+async function openFromIdeas(page: Page, title: string) {
+  for (let n = 1; n <= 40; n++) {
+    await page.goto(`/admin/ideas?page=${n}`);
+    await expect(page.getByRole('heading', { name: 'فرز الأفكار' })).toBeVisible();
+    const link = page.getByRole('link', { name: title });
+    if ((await link.count()) > 0) return link.click();
+    if ((await page.getByRole('link', { name: 'التالية' }).count()) === 0) break;
+  }
+  throw new Error(`لم تظهر الفكرة «${title}» في أي صفحة من قائمة الفرز`);
+}
+
 test('فكرة: تقديم ← فرز أمانة السر ← تأييد شاب آخر مرة واحدة', async ({ browser }) => {
   test.setTimeout(240_000);
   const tag = randomUUID().slice(0, 6);
@@ -128,8 +144,7 @@ test('فكرة: تقديم ← فرز أمانة السر ← تأييد شاب 
   await expect(youth.getByTestId('idea-reference')).toHaveText(/^RF-IDA-\d{4}-\d{6}$/);
 
   const secretary = await accountPage(browser, `أمين-سر-${tag}`, 'secretary');
-  await secretary.goto('/admin/ideas');
-  await secretary.getByRole('link', { name: ideaTitle }).click();
+  await openFromIdeas(secretary, ideaTitle);
   await secretary.waitForURL(/\/admin\/ideas\/[0-9a-f-]{36}$/);
   const ideaId = secretary.url().split('/').pop()!;
   await secretary.getByRole('button', { name: 'بدء الفرز ونشرها' }).click();

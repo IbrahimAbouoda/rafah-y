@@ -34,8 +34,8 @@ function AmountsList({ rows }: { rows: { name: string; amounts: Amounts }[] }) {
   );
 }
 
-// /transparency/finance — عام (D38). القيود المعتمدة فقط، بالمجاميع وأسماء المؤسسات؛ لا أسماء أفراد ولا قيود مفردة.
-// التفاصيل تبقى في /admin/finance (finance:read) و /admin/reports (reports:read)، والخادم يفحصهما هناك.
+// /transparency/finance — عام (D51). القيود المعتمدة فقط، بالمجاميع وأسماء المؤسسات؛ لا أسماء أفراد ولا قيود مفردة.
+// التفاصيل تبقى في /admin/finance (finance:read) و /admin/reports?view=financial (reports:read + finance:read)، والخادم يفحصهما هناك.
 export default async function TransparencyFinancePage() {
   const [finance, user] = await Promise.all([publicFinance(), getCurrentUser()]);
   const canReadLedger = user ? can(user, 'finance:read') : false;
@@ -54,7 +54,7 @@ export default async function TransparencyFinancePage() {
             ) : null}
             {canReadReports ? (
               <Button asChild variant="outline" size="sm">
-                <Link href="/admin/reports">التقرير الإداري والمالي</Link>
+                <Link href="/admin/reports?view=financial">التقرير الإداري والمالي</Link>
               </Button>
             ) : null}
           </div>

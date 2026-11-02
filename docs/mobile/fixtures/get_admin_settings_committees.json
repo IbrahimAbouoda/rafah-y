@@ -77,11 +77,11 @@
       },
       {
         "id": "00000000-K7QM-3XWD-8000-000000000000",
-        "slug": "test-2f4c92eb",
-        "nameAr": "لجنة اختبار معدّلة",
-        "mandate": null,
-        "isActive": false,
-        "sortOrder": 999
+        "slug": "training-development",
+        "nameAr": "لجنة التدريب والتطوير",
+        "mandate": "تنظيم الورش التدريبية، المحاضرات التثقيفية، والدورات التأهيلية لبناء وتطوير قدرات الشباب والكوادر.",
+        "isActive": true,
+        "sortOrder": 10
       }
     ]
   }

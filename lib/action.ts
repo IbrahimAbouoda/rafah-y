@@ -3,6 +3,7 @@ import { unstable_rethrow } from 'next/navigation';
 import { z } from 'zod';
 import { Prisma } from '@/lib/generated/prisma/client';
 import { AppError } from '@/lib/errors';
+import { logError } from '@/lib/log';
 
 export type ActionState = {
   ok: boolean;
@@ -18,6 +19,7 @@ const CONSTRAINT_MESSAGES: Record<string, string> = {
   tasks_no_self_approval: 'لا يمكنك اعتماد مهمة مسندة إليك. يعتمدها رئيس اللجنة.',
   funding_four_eyes: 'لا يمكنك اعتماد قيد سجّلته بنفسك. يعتمده شخص آخر.',
   complaints_dismissed_needs_reason: 'اكتب سبب الاستبعاد قبل استبعاد الشكوى.',
+  activity_registrations_rating_range: 'التقييم رقم من 1 إلى 5.',
 };
 
 function constraintMessage(e: unknown): string | null {
@@ -63,7 +65,7 @@ export function toErrorInfo(e: unknown): ErrorInfo {
   }
   const constraint = constraintMessage(e);
   if (constraint) return { code: 'INVALID', message: constraint };
-  console.error('[action]', e);
+  logError('action', e);
   return { code: 'SERVER', message: 'تعذّر إتمام العملية بسبب خطأ في الخادم. أعد المحاولة بعد قليل.' };
 }
 

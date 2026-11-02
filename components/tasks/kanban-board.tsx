@@ -164,7 +164,7 @@ function TaskCard({
             const back = forward(to) < forward(task.status);
             return (
               <Button key={to} type="button" size="sm" variant={isApprove ? 'default' : 'outline'} onClick={() => onMove(to)}>
-                {isApprove ? <Check aria-hidden /> : back ? <ArrowRight className="flip-rtl" aria-hidden /> : <ArrowLeft className="flip-rtl" aria-hidden />}
+                {isApprove ? <Check aria-hidden /> : back ? <ArrowLeft className="flip-rtl" aria-hidden /> : <ArrowRight className="flip-rtl" aria-hidden />}
                 {isApprove ? 'اعتماد' : TASK_STATUS_LABELS[to]}
               </Button>
             );

@@ -12,7 +12,7 @@ export async function createUploadUrlAction(input: unknown): Promise<DataState<U
 }
 
 export async function confirmUploadAction(input: unknown): Promise<DataState<{ fileId: string }>> {
-  return runActionData(async () => confirmUpload(input));
+  return runActionData(async () => confirmUpload(input, await clientIp()));
 }
 
 export async function getDownloadUrlAction(_prev: unknown, form: FormData): Promise<DataState<{ url: string }>> {

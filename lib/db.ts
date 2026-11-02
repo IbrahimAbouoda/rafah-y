@@ -1,6 +1,7 @@
 import 'server-only';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@/lib/generated/prisma/client';
+import { pgConnection } from '@/lib/pg-ssl.js';
 
 // النماذج الاثنا عشر ذات الحذف الناعم — PRD §4.1
 export const SOFT_DELETE_MODELS = new Set([
@@ -55,8 +56,16 @@ function withSoftDelete(client: PrismaClient) {
   });
 }
 
-export function createDb(connectionString: string) {
-  return withSoftDelete(new PrismaClient({ adapter: new PrismaPg({ connectionString }) }));
+export function createDb(url: string) {
+  const adapter = new PrismaPg({
+    ...pgConnection(url),
+    // الاستضافة بلا خادم: نسخ كثيرة تتقاسم pooler واحدًا، فالمجمّع صغير لكل نسخة
+    max: Number(process.env.DB_POOL_MAX) || 5,
+    // انقطاع القاعدة يفشل سريعًا فتصل رسالة runAction العربية بدل تعليق الطلب حتى مهلة الدالة
+    connectionTimeoutMillis: 5_000,
+    idleTimeoutMillis: 10_000,
+  });
+  return withSoftDelete(new PrismaClient({ adapter }));
 }
 
 /** للاختبارات فقط: عميل على محوّل آخر (PGlite) بنفس امتداد الحذف الناعم. */

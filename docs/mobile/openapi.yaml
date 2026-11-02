@@ -3,7 +3,7 @@ openapi: "3.0.3"
 info:
   title: "Rafah Pulse — Mobile API"
   version: "1.0.0"
-  description: "واجهة تطبيق الجوّال (Flutter) — العميل الثاني للخادم وقاعدة البيانات نفسيهما (D31).\nكل مسار يمرّ بقالب Server Action نفسه: الهوية ← الصلاحية ← Zod ← الدالة المشتركة في lib/** داخل معاملة مع سطر التدقيق.\nالهوية: Authorization: Bearer <رمز وصول Supabase>. الأخطاء: { error: { code, message_ar, field_errors? } } بالرسالة العربية نفسها التي يعرضها الويب.\nالأرقام المرجعية ورموز التتبّع يولّدها الخادم وحده. المبالغ نصوص عشرية. بيانات التواصل لا تُخزَّن على الجهاز.\nمسارات بلا مثال استجابة مسجَّل: 0"
+  description: "واجهة تطبيق الجوّال (Flutter) — العميل الثاني للخادم وقاعدة البيانات نفسيهما (D44).\nكل مسار يمرّ بقالب Server Action نفسه: الهوية ← الصلاحية ← Zod ← الدالة المشتركة في lib/** داخل معاملة مع سطر التدقيق.\nالهوية: Authorization: Bearer <رمز وصول Supabase>. الأخطاء: { error: { code, message_ar, field_errors? } } بالرسالة العربية نفسها التي يعرضها الويب.\nالأرقام المرجعية ورموز التتبّع يولّدها الخادم وحده. المبالغ نصوص عشرية. بيانات التواصل لا تُخزَّن على الجهاز.\nمسارات بلا مثال استجابة مسجَّل: 0"
 servers:
   - url: "/api/mobile/v1"
 security:
@@ -82,29 +82,22 @@ paths:
                               items:
                                 type: string
                             before:
-                              nullable: true
+                              type: object
+                              properties:
+                                status:
+                                  type: string
+                              required:
+                                - status
                             after:
                               type: object
                               properties:
-                                areaId:
-                                  nullable: true
                                 status:
                                   type: string
-                                reference:
+                                approvedById:
                                   type: string
-                                categoryId:
-                                  type: string
-                                hasContact:
-                                  type: boolean
-                                isAnonymous:
-                                  type: boolean
                               required:
-                                - areaId
                                 - status
-                                - reference
-                                - categoryId
-                                - hasContact
-                                - isAnonymous
+                                - approvedById
                             createdAt:
                               type: string
                               format: date-time
@@ -144,118 +137,6 @@ paths:
               example:
                 data:
                   items:
-                    - id: "67"
-                      action: complaint.create
-                      entityType: Complaint
-                      entityId: "00000000-K7QM-3XWD-8000-000000000000"
-                      actorRoles:
-                        - youth
-                      before: null
-                      after:
-                        areaId: null
-                        status: SUBMITTED
-                        reference: RF-CMP-2026-000001
-                        categoryId: "00000000-K7QM-3XWD-8000-000000000000"
-                        hasContact: false
-                        isAnonymous: false
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      actor:
-                        fullName: "مستخدم اختبار 0000"
-                    - id: "66"
-                      action: file.download
-                      entityType: FileObject
-                      entityId: "00000000-K7QM-3XWD-8000-000000000000"
-                      actorRoles:
-                        - council_president
-                      before: null
-                      after:
-                        reference: RF-CMP-2026-000001
-                        complaintId: "00000000-K7QM-3XWD-8000-000000000000"
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      actor:
-                        fullName: "مستخدم اختبار 0000"
-                    - id: "65"
-                      action: complaint.create
-                      entityType: Complaint
-                      entityId: "00000000-K7QM-3XWD-8000-000000000000"
-                      actorRoles:
-                        - youth
-                      before: null
-                      after:
-                        areaId: null
-                        status: SUBMITTED
-                        reference: RF-CMP-2026-000001
-                        categoryId: "00000000-K7QM-3XWD-8000-000000000000"
-                        hasContact: false
-                        isAnonymous: false
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      actor:
-                        fullName: "مستخدم اختبار 0000"
-                    - id: "64"
-                      action: role.revoke
-                      entityType: RoleAssignment
-                      entityId: "00000000-K7QM-3XWD-8000-000000000000"
-                      actorRoles:
-                        - council_president
-                      before:
-                        id: "00000000-K7QM-3XWD-8000-000000000000"
-                        role:
-                          key: committee_member
-                          nameAr: "عضو اللجنة"
-                        title: null
-                        endsAt: null
-                        roleId: "00000000-K7QM-3XWD-8000-000000000000"
-                        termId: "00000000-K7QM-3XWD-8000-000000000000"
-                        userId: "00000000-K7QM-3XWD-8000-000000000000"
-                        startsAt: "2026-01-01T09:00:00.000Z"
-                        createdAt: "2026-01-01T09:00:00.000Z"
-                        revokedAt: null
-                        updatedAt: "2026-01-01T09:00:00.000Z"
-                        committeeId: "00000000-K7QM-3XWD-8000-000000000000"
-                        revokedById: null
-                        assignedById: "00000000-K7QM-3XWD-8000-000000000000"
-                      after:
-                        id: "00000000-K7QM-3XWD-8000-000000000000"
-                        title: null
-                        endsAt: null
-                        roleId: "00000000-K7QM-3XWD-8000-000000000000"
-                        termId: "00000000-K7QM-3XWD-8000-000000000000"
-                        userId: "00000000-K7QM-3XWD-8000-000000000000"
-                        startsAt: "2026-01-01T09:00:00.000Z"
-                        createdAt: "2026-01-01T09:00:00.000Z"
-                        revokedAt: "2026-01-01T09:00:00.000Z"
-                        updatedAt: "2026-01-01T09:00:00.000Z"
-                        committeeId: "00000000-K7QM-3XWD-8000-000000000000"
-                        revokedById: "00000000-K7QM-3XWD-8000-000000000000"
-                        assignedById: "00000000-K7QM-3XWD-8000-000000000000"
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      actor:
-                        fullName: "مستخدم اختبار 0000"
-                    - id: "63"
-                      action: role.assign
-                      entityType: RoleAssignment
-                      entityId: "00000000-K7QM-3XWD-8000-000000000000"
-                      actorRoles:
-                        - council_president
-                      before: null
-                      after:
-                        id: "00000000-K7QM-3XWD-8000-000000000000"
-                        title: null
-                        endsAt: null
-                        roleId: "00000000-K7QM-3XWD-8000-000000000000"
-                        termId: "00000000-K7QM-3XWD-8000-000000000000"
-                        userId: "00000000-K7QM-3XWD-8000-000000000000"
-                        roleKey: committee_member
-                        startsAt: "2026-01-01T09:00:00.000Z"
-                        createdAt: "2026-01-01T09:00:00.000Z"
-                        revokedAt: null
-                        updatedAt: "2026-01-01T09:00:00.000Z"
-                        committeeId: "00000000-K7QM-3XWD-8000-000000000000"
-                        revokedById: null
-                        assignedById: "00000000-K7QM-3XWD-8000-000000000000"
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      actor:
-                        fullName: "مستخدم اختبار 0000"
                     - id: "62"
                       action: task.approve
                       entityType: Task
@@ -295,6 +176,7 @@ paths:
                         description: null
                         approvedById: null
                         initiativeId: null
+                        dueSoonNotifiedFor: null
                       createdAt: "2026-01-01T09:00:00.000Z"
                       actor:
                         fullName: "مستخدم اختبار 0000"
@@ -322,6 +204,7 @@ paths:
                         id: "00000000-K7QM-3XWD-8000-000000000000"
                         amount: "100"
                         offerId: null
+                        category: null
                         currency: ILS
                         createdAt: "2026-01-01T09:00:00.000Z"
                         direction: INCOMING
@@ -330,8 +213,10 @@ paths:
                         occurredAt: "2026-01-01T09:00:00.000Z"
                         description: null
                         approvedById: null
+                        counterparty: null
                         initiativeId: null
                         recordedById: "00000000-K7QM-3XWD-8000-000000000000"
+                        documentNumber: null
                         organizationId: null
                       createdAt: "2026-01-01T09:00:00.000Z"
                       actor:
@@ -688,7 +573,113 @@ paths:
                         isAnonymous: false
                       createdAt: "2026-01-01T09:00:00.000Z"
                       actor: null
-                  total: 67
+                    - id: "37"
+                      action: complaint.create
+                      entityType: Complaint
+                      entityId: "00000000-K7QM-3XWD-8000-000000000000"
+                      actorRoles:
+                        - "system:public"
+                      before: null
+                      after:
+                        areaId: null
+                        status: SUBMITTED
+                        reference: RF-CMP-2026-000001
+                        categoryId: "00000000-K7QM-3XWD-8000-000000000000"
+                        hasContact: false
+                        isAnonymous: false
+                      createdAt: "2026-01-01T09:00:00.000Z"
+                      actor: null
+                    - id: "36"
+                      action: complaint.create
+                      entityType: Complaint
+                      entityId: "00000000-K7QM-3XWD-8000-000000000000"
+                      actorRoles:
+                        - "system:public"
+                      before: null
+                      after:
+                        areaId: null
+                        status: SUBMITTED
+                        reference: RF-CMP-2026-000001
+                        categoryId: "00000000-K7QM-3XWD-8000-000000000000"
+                        hasContact: false
+                        isAnonymous: false
+                      createdAt: "2026-01-01T09:00:00.000Z"
+                      actor: null
+                    - id: "35"
+                      action: term.change
+                      entityType: CouncilTerm
+                      entityId: "00000000-K7QM-3XWD-8000-000000000000"
+                      actorRoles:
+                        - council_president
+                      before:
+                        id: "00000000-K7QM-3XWD-8000-000000000000"
+                        name: "دورة تجريبية — للتطوير فقط"
+                        endsAt: null
+                        startsAt: "2026-01-01T09:00:00.000Z"
+                        createdAt: "2026-01-01T09:00:00.000Z"
+                        isCurrent: true
+                        updatedAt: "2026-01-01T09:00:00.000Z"
+                      after:
+                        id: "00000000-K7QM-3XWD-8000-000000000000"
+                        name: "دورة اختبار 0000"
+                        endsAt: null
+                        startsAt: "2026-01-01T09:00:00.000Z"
+                        createdAt: "2026-01-01T09:00:00.000Z"
+                        isCurrent: true
+                        updatedAt: "2026-01-01T09:00:00.000Z"
+                      createdAt: "2026-01-01T09:00:00.000Z"
+                      actor:
+                        fullName: "مستخدم اختبار 0000"
+                    - id: "34"
+                      action: settings.change
+                      entityType: Committee
+                      entityId: "00000000-K7QM-3XWD-8000-000000000000"
+                      actorRoles:
+                        - super_admin
+                      before:
+                        id: "00000000-K7QM-3XWD-8000-000000000000"
+                        slug: test-b3d42101
+                        nameAr: "لجنة اختبار"
+                        mandate: null
+                        isActive: false
+                        createdAt: "2026-01-01T09:00:00.000Z"
+                        deletedAt: null
+                        sortOrder: 999
+                        updatedAt: "2026-01-01T09:00:00.000Z"
+                      after:
+                        id: "00000000-K7QM-3XWD-8000-000000000000"
+                        slug: test-b3d42101
+                        nameAr: "لجنة اختبار معدّلة"
+                        mandate: null
+                        isActive: false
+                        createdAt: "2026-01-01T09:00:00.000Z"
+                        deletedAt: null
+                        sortOrder: 999
+                        updatedAt: "2026-01-01T09:00:00.000Z"
+                      createdAt: "2026-01-01T09:00:00.000Z"
+                      actor:
+                        fullName: "مستخدم اختبار 0000"
+                    - id: "33"
+                      action: settings.change
+                      entityType: Committee
+                      entityId: "00000000-K7QM-3XWD-8000-000000000000"
+                      actorRoles:
+                        - super_admin
+                      before: null
+                      after:
+                        id: "00000000-K7QM-3XWD-8000-000000000000"
+                        slug: test-b3d42101
+                        nameAr: "لجنة اختبار"
+                        mandate: null
+                        isActive: false
+                        createdAt: "2026-01-01T09:00:00.000Z"
+                        deletedAt: null
+                        sortOrder: 999
+                        updatedAt: "2026-01-01T09:00:00.000Z"
+                      createdAt: "2026-01-01T09:00:00.000Z"
+                      actor:
+                        fullName: "مستخدم اختبار 0000"
+                  total: 62
                   filtered: false
                   page: 1
                   pageSize: 30
@@ -776,35 +767,16 @@ paths:
                             type: boolean
                           readIdeas:
                             type: boolean
+                          markAttendance:
+                            type: boolean
                         required:
                           - readComplaints
                           - readTasks
                           - readIdeas
+                          - markAttendance
                       complaints:
                         type: array
-                        items:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                            reference:
-                              type: string
-                            title:
-                              type: string
-                            status:
-                              type: string
-                            followUpAt:
-                              nullable: true
-                            updatedAt:
-                              type: string
-                              format: date-time
-                          required:
-                            - id
-                            - reference
-                            - title
-                            - status
-                            - followUpAt
-                            - updatedAt
+                        items: {}
                       openCount:
                         type: integer
                       overdue:
@@ -833,6 +805,9 @@ paths:
                             - id
                             - fullName
                             - roles
+                      activities:
+                        type: array
+                        items: {}
                     required:
                       - committee
                       - can
@@ -843,6 +818,7 @@ paths:
                       - openTasks
                       - ideas
                       - members
+                      - activities
                 required:
                   - data
               example:
@@ -856,20 +832,9 @@ paths:
                     readComplaints: true
                     readTasks: true
                     readIdeas: true
-                  complaints:
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "حفرة في الطريق"
-                      status: REFERRED
-                      followUpAt: null
-                      updatedAt: "2026-01-01T09:00:00.000Z"
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "انقطاع الإنارة في الشارع"
-                      status: COMMITTEE_REVIEW
-                      followUpAt: null
-                      updatedAt: "2026-01-01T09:00:00.000Z"
-                  openCount: 2
+                    markAttendance: true
+                  complaints: []
+                  openCount: 0
                   overdue: 0
                   tasksInReview: 0
                   openTasks: 0
@@ -879,10 +844,7 @@ paths:
                       fullName: "مستخدم اختبار 0000"
                       roles:
                         - "رئيس اللجنة"
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      roles:
-                        - "رئيس اللجنة"
+                  activities: []
         "401":
           description: "بلا رمز صالح — UNAUTHENTICATED"
           content:
@@ -1156,7 +1118,7 @@ paths:
                     mandate: null
                     _count:
                       complaints: 0
-                      tasks: 1
+                      tasks: 0
                   - id: "00000000-K7QM-3XWD-8000-000000000000"
                     slug: women-empowerment
                     nameAr: "لجنة المرأة"
@@ -1169,7 +1131,7 @@ paths:
                     nameAr: "اللجنة القانونية"
                     mandate: null
                     _count:
-                      complaints: 2
+                      complaints: 0
                       tasks: 0
                   - id: "00000000-K7QM-3XWD-8000-000000000000"
                     slug: sports-arts
@@ -1191,11 +1153,18 @@ paths:
                     mandate: null
                     _count:
                       complaints: 0
-                      tasks: 1
+                      tasks: 0
                   - id: "00000000-K7QM-3XWD-8000-000000000000"
                     slug: logistical-support
                     nameAr: "لجنة الدعم اللوجستي"
                     mandate: null
+                    _count:
+                      complaints: 0
+                      tasks: 0
+                  - id: "00000000-K7QM-3XWD-8000-000000000000"
+                    slug: training-development
+                    nameAr: "لجنة التدريب والتطوير"
+                    mandate: "تنظيم الورش التدريبية، المحاضرات التثقيفية، والدورات التأهيلية لبناء وتطوير قدرات الشباب والكوادر."
                     _count:
                       complaints: 0
                       tasks: 0
@@ -2146,40 +2115,7 @@ paths:
                     properties:
                       items:
                         type: array
-                        items:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                            reference:
-                              type: string
-                            title:
-                              type: string
-                            status:
-                              type: string
-                            updatedAt:
-                              type: string
-                              format: date-time
-                            committee:
-                              nullable: true
-                            category:
-                              type: object
-                              properties:
-                                nameAr:
-                                  type: string
-                              required:
-                                - nameAr
-                            area:
-                              nullable: true
-                          required:
-                            - id
-                            - reference
-                            - title
-                            - status
-                            - updatedAt
-                            - committee
-                            - category
-                            - area
+                        items: {}
                       total:
                         type: integer
                       committees:
@@ -2208,155 +2144,8 @@ paths:
                   - data
               example:
                 data:
-                  items:
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "مرفق مزيف"
-                      status: SUBMITTED
-                      updatedAt: "2026-01-01T09:00:00.000Z"
-                      committee: null
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                      area: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "تسرب مياه في الشارع"
-                      status: SUBMITTED
-                      updatedAt: "2026-01-01T09:00:00.000Z"
-                      committee: null
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                      area: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "انقطاع الإنارة في الشارع"
-                      status: SUBMITTED
-                      updatedAt: "2026-01-01T09:00:00.000Z"
-                      committee: null
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                      area: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "انقطاع الإنارة في الشارع"
-                      status: SUBMITTED
-                      updatedAt: "2026-01-01T09:00:00.000Z"
-                      committee: null
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                      area: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "انقطاع الإنارة في الشارع"
-                      status: COMMITTEE_REVIEW
-                      updatedAt: "2026-01-01T09:00:00.000Z"
-                      committee:
-                        nameAr: "اللجنة القانونية"
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                      area: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "انقطاع الإنارة في الشارع"
-                      status: SUBMITTED
-                      updatedAt: "2026-01-01T09:00:00.000Z"
-                      committee: null
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                      area: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "انقطاع الإنارة في الشارع"
-                      status: SUBMITTED
-                      updatedAt: "2026-01-01T09:00:00.000Z"
-                      committee: null
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                      area: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "انقطاع الإنارة في الشارع"
-                      status: SUBMITTED
-                      updatedAt: "2026-01-01T09:00:00.000Z"
-                      committee: null
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                      area: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "انقطاع الإنارة في الشارع"
-                      status: SUBMITTED
-                      updatedAt: "2026-01-01T09:00:00.000Z"
-                      committee: null
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                      area: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "انقطاع الإنارة في الشارع"
-                      status: SUBMITTED
-                      updatedAt: "2026-01-01T09:00:00.000Z"
-                      committee: null
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                      area: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "انقطاع الإنارة في الشارع"
-                      status: SUBMITTED
-                      updatedAt: "2026-01-01T09:00:00.000Z"
-                      committee: null
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                      area: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "انقطاع الإنارة في الشارع"
-                      status: SUBMITTED
-                      updatedAt: "2026-01-01T09:00:00.000Z"
-                      committee: null
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                      area: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "انقطاع الإنارة في الشارع"
-                      status: SUBMITTED
-                      updatedAt: "2026-01-01T09:00:00.000Z"
-                      committee: null
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                      area: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "حفرة في الطريق"
-                      status: CLOSED
-                      updatedAt: "2026-01-01T09:00:00.000Z"
-                      committee:
-                        nameAr: "اللجنة القانونية"
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                      area: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "حفرة في الطريق"
-                      status: REFERRED
-                      updatedAt: "2026-01-01T09:00:00.000Z"
-                      committee:
-                        nameAr: "اللجنة القانونية"
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                      area: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "حفرة في الطريق"
-                      status: DISMISSED
-                      updatedAt: "2026-01-01T09:00:00.000Z"
-                      committee: null
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                      area: null
-                  total: 16
+                  items: []
+                  total: 0
                   committees:
                     - id: "00000000-K7QM-3XWD-8000-000000000000"
                       nameAr: "لجنة التكنولوجيا والأنظمة الرقمية"
@@ -2377,7 +2166,7 @@ paths:
                     - id: "00000000-K7QM-3XWD-8000-000000000000"
                       nameAr: "لجنة الدعم اللوجستي"
                     - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      nameAr: "لجنة اختبار معدّلة"
+                      nameAr: "لجنة التدريب والتطوير"
                   page: 1
                   pageSize: 25
         "401":
@@ -3017,9 +2806,20 @@ paths:
                               format: date-time
                             description:
                               nullable: true
+                            counterparty:
+                              nullable: true
+                            category:
+                              nullable: true
+                            documentNumber:
+                              nullable: true
+                            initiativeId:
+                              nullable: true
+                            organizationId:
+                              nullable: true
+                            offerId:
+                              nullable: true
                             approvedAt:
-                              type: string
-                              format: date-time
+                              nullable: true
                             recordedById:
                               type: string
                             recordedBy:
@@ -3030,12 +2830,7 @@ paths:
                               required:
                                 - fullName
                             approvedBy:
-                              type: object
-                              properties:
-                                fullName:
-                                  type: string
-                              required:
-                                - fullName
+                              nullable: true
                             initiative:
                               nullable: true
                             organization:
@@ -3047,6 +2842,12 @@ paths:
                             - currency
                             - occurredAt
                             - description
+                            - counterparty
+                            - category
+                            - documentNumber
+                            - initiativeId
+                            - organizationId
+                            - offerId
                             - approvedAt
                             - recordedById
                             - recordedBy
@@ -3090,23 +2891,58 @@ paths:
                             - initiative
                       initiatives:
                         type: array
-                        items:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                            title:
-                              type: string
-                          required:
-                            - id
-                            - title
+                        items: {}
+                      organizations:
+                        type: array
+                        items: {}
                       secured:
+                        type: object
+                        properties: {}
+                        required: []
+                      totals:
                         type: object
                         properties:
                           ILS:
-                            type: string
+                            type: object
+                            properties:
+                              incoming:
+                                type: string
+                              outgoing:
+                                type: string
+                              remaining:
+                                type: string
+                              pendingIncoming:
+                                type: string
+                              pendingOutgoing:
+                                type: string
+                            required:
+                              - incoming
+                              - outgoing
+                              - remaining
+                              - pendingIncoming
+                              - pendingOutgoing
+                          USD:
+                            type: object
+                            properties:
+                              incoming:
+                                type: string
+                              outgoing:
+                                type: string
+                              remaining:
+                                type: string
+                              pendingIncoming:
+                                type: string
+                              pendingOutgoing:
+                                type: string
+                            required:
+                              - incoming
+                              - outgoing
+                              - remaining
+                              - pendingIncoming
+                              - pendingOutgoing
                         required:
                           - ILS
+                          - USD
                       can:
                         type: object
                         properties:
@@ -3121,7 +2957,9 @@ paths:
                       - records
                       - awaiting
                       - initiatives
+                      - organizations
                       - secured
+                      - totals
                       - can
                 required:
                   - data
@@ -3134,12 +2972,17 @@ paths:
                       currency: ILS
                       occurredAt: "2026-01-01T09:00:00.000Z"
                       description: null
-                      approvedAt: "2026-01-01T09:00:00.000Z"
+                      counterparty: null
+                      category: null
+                      documentNumber: null
+                      initiativeId: null
+                      organizationId: null
+                      offerId: null
+                      approvedAt: null
                       recordedById: "00000000-K7QM-3XWD-8000-000000000000"
                       recordedBy:
                         fullName: "مستخدم اختبار 0000"
-                      approvedBy:
-                        fullName: "مستخدم اختبار 0000"
+                      approvedBy: null
                       initiative: null
                       organization: null
                   awaiting:
@@ -3151,17 +2994,24 @@ paths:
                         name: "مؤسسة اختبار 0"
                       initiative:
                         title: "مبادرة صيف الشباب"
-                  initiatives:
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      title: "دوري الأحياء الرمضاني"
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      title: "مبادرة صيف الشباب"
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      title: "مبادرة صيف الشباب"
-                  secured:
-                    ILS: "100.00"
+                  initiatives: []
+                  organizations: []
+                  secured: {}
+                  totals:
+                    ILS:
+                      incoming: "0.00"
+                      outgoing: "0.00"
+                      remaining: "0.00"
+                      pendingIncoming: "100.00"
+                      pendingOutgoing: "0.00"
+                    USD:
+                      incoming: "0.00"
+                      outgoing: "0.00"
+                      remaining: "0.00"
+                      pendingIncoming: "0.00"
+                      pendingOutgoing: "0.00"
                   can:
-                    record: true
+                    record: false
                     approve: true
         "401":
           description: "بلا رمز صالح — UNAUTHENTICATED"
@@ -3769,32 +3619,7 @@ paths:
                     properties:
                       items:
                         type: array
-                        items:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                            reference:
-                              type: string
-                            title:
-                              type: string
-                            status:
-                              type: string
-                            voteCount:
-                              type: integer
-                            createdAt:
-                              type: string
-                              format: date-time
-                            committee:
-                              nullable: true
-                          required:
-                            - id
-                            - reference
-                            - title
-                            - status
-                            - voteCount
-                            - createdAt
-                            - committee
+                        items: {}
                       total:
                         type: integer
                       status:
@@ -3813,15 +3638,8 @@ paths:
                   - data
               example:
                 data:
-                  items:
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-IDA-2026-000001
-                      title: "ملعب للحي الشرقي"
-                      status: SCREENING
-                      voteCount: 0
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      committee: null
-                  total: 1
+                  items: []
+                  total: 0
                   status: null
                   page: 1
                   pageSize: 25
@@ -4038,39 +3856,9 @@ paths:
                         defaultCommittee:
                           nameAr: "لجنة الدعم اللوجستي"
                       area: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "انقطاع الإنارة في الشارع"
-                      status: SUBMITTED
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                        defaultCommittee:
-                          nameAr: "لجنة الدعم اللوجستي"
-                      area: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "تسرب مياه في الشارع"
-                      status: SUBMITTED
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                        defaultCommittee:
-                          nameAr: "لجنة الدعم اللوجستي"
-                      area: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      reference: RF-CMP-2026-000001
-                      title: "مرفق مزيف"
-                      status: SUBMITTED
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      category:
-                        nameAr: "الخدمات البلدية والبنية التحتية"
-                        defaultCommittee:
-                          nameAr: "لجنة الدعم اللوجستي"
-                      area: null
-                  total: 12
+                  total: 9
                   page: 1
-                  pageSize: 25
+                  pageSize: 50
         "401":
           description: "بلا رمز صالح — UNAUTHENTICATED"
           content:
@@ -4508,7 +4296,7 @@ paths:
                 data:
                   initiative:
                     id: "00000000-K7QM-3XWD-8000-000000000000"
-                    slug: m-2026-b1cb9cc3
+                    slug: m-2026-b79eac7a
                     title: "دوري الأحياء الرمضاني"
                     summary: null
                     description: null
@@ -4909,42 +4697,7 @@ paths:
                         properties:
                           rows:
                             type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                title:
-                                  type: string
-                                status:
-                                  type: string
-                                progressPct:
-                                  type: integer
-                                updatedAt:
-                                  type: string
-                                  format: date-time
-                                committee:
-                                  type: object
-                                  properties:
-                                    nameAr:
-                                      type: string
-                                  required:
-                                    - nameAr
-                                _count:
-                                  type: object
-                                  properties:
-                                    offers:
-                                      type: integer
-                                  required:
-                                    - offers
-                              required:
-                                - id
-                                - title
-                                - status
-                                - progressPct
-                                - updatedAt
-                                - committee
-                                - _count
+                            items: {}
                           create:
                             type: object
                             properties:
@@ -4986,34 +4739,7 @@ paths:
                       label: "مسودات Concept Note"
                   tab: list
                   list:
-                    rows:
-                      - id: "00000000-K7QM-3XWD-8000-000000000000"
-                        title: "مبادرة صيف الشباب"
-                        status: PUBLISHED
-                        progressPct: 0
-                        updatedAt: "2026-01-01T09:00:00.000Z"
-                        committee:
-                          nameAr: "لجنة الأنشطة والمبادرات"
-                        _count:
-                          offers: 0
-                      - id: "00000000-K7QM-3XWD-8000-000000000000"
-                        title: "مبادرة صيف الشباب"
-                        status: PUBLISHED
-                        progressPct: 0
-                        updatedAt: "2026-01-01T09:00:00.000Z"
-                        committee:
-                          nameAr: "لجنة الأنشطة والمبادرات"
-                        _count:
-                          offers: 0
-                      - id: "00000000-K7QM-3XWD-8000-000000000000"
-                        title: "دوري الأحياء الرمضاني"
-                        status: PUBLISHED
-                        progressPct: 40
-                        updatedAt: "2026-01-01T09:00:00.000Z"
-                        committee:
-                          nameAr: "اللجنة الرياضية والفنية"
-                        _count:
-                          offers: 0
+                    rows: []
                     create:
                       committees:
                         - id: "00000000-K7QM-3XWD-8000-000000000000"
@@ -5034,6 +4760,8 @@ paths:
                           nameAr: "اللجنة الصحية"
                         - id: "00000000-K7QM-3XWD-8000-000000000000"
                           nameAr: "لجنة الدعم اللوجستي"
+                        - id: "00000000-K7QM-3XWD-8000-000000000000"
+                          nameAr: "لجنة التدريب والتطوير"
                       ideas: []
         "401":
           description: "بلا رمز صالح — UNAUTHENTICATED"
@@ -5309,7 +5037,7 @@ paths:
                   - message_ar
               example:
                 data: null
-                message_ar: "قُبل العرض وأُضيفت مؤسسة اختبار 1791914138455 شريكًا. يسجّل أمين الصندوق القيد عند وصول المبلغ."
+                message_ar: "قُبل العرض وأُضيفت مؤسسة اختبار 1793641437303 شريكًا. يسجّل أمين الصندوق القيد عند وصول المبلغ."
       requestBody:
         required: true
         content:
@@ -5566,7 +5294,7 @@ paths:
                   - message_ar
               example:
                 data: null
-                message_ar: "رُبط ممثل مؤسسة 0000 بمؤسسة مؤسسة اختبار 1791914138455، ويدخل الآن بوابة المؤسسات."
+                message_ar: "رُبط ممثل مؤسسة 0000 بمؤسسة مؤسسة اختبار 1793641437303، ويدخل الآن بوابة المؤسسات."
       requestBody:
         required: true
         content:
@@ -5953,8 +5681,7 @@ paths:
                             stage:
                               type: string
                             lastContactAt:
-                              type: string
-                              format: date-time
+                              nullable: true
                             _count:
                               type: object
                               properties:
@@ -5990,30 +5717,6 @@ paths:
               example:
                 data:
                   orgs:
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      name: "جمعية الشباب 0000"
-                      type: LOCAL_NGO
-                      stage: CONTACTED
-                      lastContactAt: "2026-01-01T09:00:00.000Z"
-                      _count:
-                        offers: 0
-                        members: 0
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      name: "مؤسسة اختبار 0"
-                      type: LOCAL_NGO
-                      stage: PROSPECT
-                      lastContactAt: null
-                      _count:
-                        offers: 1
-                        members: 1
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      name: "مؤسسة اختبار 0"
-                      type: LOCAL_NGO
-                      stage: PROSPECT
-                      lastContactAt: null
-                      _count:
-                        offers: 0
-                        members: 1
                     - id: "00000000-K7QM-3XWD-8000-000000000000"
                       name: "مؤسسة فحص 0"
                       type: LOCAL_NGO
@@ -6364,12 +6067,6 @@ paths:
               example:
                 data:
                   - id: "00000000-K7QM-3XWD-8000-000000000000"
-                    nameAr: "حي 0000 الغربي"
-                    parentId: null
-                    parent: null
-                    _count:
-                      children: 0
-                  - id: "00000000-K7QM-3XWD-8000-000000000000"
                     nameAr: "منطقة تجريبية (أ)"
                     parentId: null
                     parent: null
@@ -6481,7 +6178,7 @@ paths:
                   - message_ar
               example:
                 data: null
-                message_ar: "أُضيفت منطقة «حي 03f7172d»."
+                message_ar: "أُضيفت منطقة «حي 2713b112»."
       requestBody:
         required: true
         content:
@@ -6532,7 +6229,7 @@ paths:
                   - message_ar
               example:
                 data: null
-                message_ar: "حُفظ تصنيف «تصنيف f787d710»."
+                message_ar: "حُفظ تصنيف «تصنيف fd96defc»."
         "401":
           description: "بلا رمز صالح — UNAUTHENTICATED"
           content:
@@ -6709,12 +6406,6 @@ paths:
                       sortOrder: 7
                       defaultCommittee:
                         nameAr: "لجنة التكنولوجيا والأنظمة الرقمية"
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      nameAr: "تصنيف 0000"
-                      defaultCommitteeId: null
-                      isActive: false
-                      sortOrder: 998
-                      defaultCommittee: null
                   committees:
                     - id: "00000000-K7QM-3XWD-8000-000000000000"
                       nameAr: "لجنة التكنولوجيا والأنظمة الرقمية"
@@ -6734,6 +6425,8 @@ paths:
                       nameAr: "اللجنة الصحية"
                     - id: "00000000-K7QM-3XWD-8000-000000000000"
                       nameAr: "لجنة الدعم اللوجستي"
+                    - id: "00000000-K7QM-3XWD-8000-000000000000"
+                      nameAr: "لجنة التدريب والتطوير"
         "401":
           description: "بلا رمز صالح — UNAUTHENTICATED"
           content:
@@ -6828,7 +6521,7 @@ paths:
                   - message_ar
               example:
                 data: null
-                message_ar: "أُضيف تصنيف «تصنيف f787d710»."
+                message_ar: "أُضيف تصنيف «تصنيف fd96defc»."
       requestBody:
         required: true
         content:
@@ -7050,11 +6743,11 @@ paths:
                     isActive: true
                     sortOrder: 9
                   - id: "00000000-K7QM-3XWD-8000-000000000000"
-                    slug: test-2f4c92eb
-                    nameAr: "لجنة اختبار معدّلة"
-                    mandate: null
-                    isActive: false
-                    sortOrder: 999
+                    slug: training-development
+                    nameAr: "لجنة التدريب والتطوير"
+                    mandate: "تنظيم الورش التدريبية، المحاضرات التثقيفية، والدورات التأهيلية لبناء وتطوير قدرات الشباب والكوادر."
+                    isActive: true
+                    sortOrder: 10
         "401":
           description: "بلا رمز صالح — UNAUTHENTICATED"
           content:
@@ -7278,8 +6971,10 @@ paths:
                           scope: ALL
                         - permissionId: "00000000-K7QM-3XWD-8000-000000000000"
                           scope: ALL
+                        - permissionId: "00000000-K7QM-3XWD-8000-000000000000"
+                          scope: ALL
                       _count:
-                        permissions: 6
+                        permissions: 7
                     - id: "00000000-K7QM-3XWD-8000-000000000000"
                       nameAr: "رئيس المجلس"
                       requiresCommittee: false
@@ -7382,8 +7077,10 @@ paths:
                           scope: ALL
                         - permissionId: "00000000-K7QM-3XWD-8000-000000000000"
                           scope: ALL
+                        - permissionId: "00000000-K7QM-3XWD-8000-000000000000"
+                          scope: ALL
                       _count:
-                        permissions: 49
+                        permissions: 50
                     - id: "00000000-K7QM-3XWD-8000-000000000000"
                       nameAr: "نائب الرئيس"
                       requiresCommittee: false
@@ -7526,8 +7223,10 @@ paths:
                           scope: ALL
                         - permissionId: "00000000-K7QM-3XWD-8000-000000000000"
                           scope: ALL
+                        - permissionId: "00000000-K7QM-3XWD-8000-000000000000"
+                          scope: ALL
                       _count:
-                        permissions: 32
+                        permissions: 33
                     - id: "00000000-K7QM-3XWD-8000-000000000000"
                       nameAr: "أمين الصندوق"
                       requiresCommittee: false
@@ -7940,6 +7639,10 @@ paths:
                       descriptionAr: "تعديل الملف الشخصي والمهارات والموافقات"
                       isPhase2: false
                     - id: "00000000-K7QM-3XWD-8000-000000000000"
+                      key: "reports:create"
+                      descriptionAr: "توليد تقرير (لقطة مؤشرات لفترة)"
+                      isPhase2: false
+                    - id: "00000000-K7QM-3XWD-8000-000000000000"
                       key: "reports:export"
                       descriptionAr: "تصدير التقارير"
                       isPhase2: false
@@ -8093,14 +7796,7 @@ paths:
                     endsAt: null
                     isCurrent: true
                     _count:
-                      assignments: 39
-                  - id: "00000000-K7QM-3XWD-8000-000000000000"
-                    name: "دورة اختبار 0000"
-                    startsAt: "2026-01-01T09:00:00.000Z"
-                    endsAt: null
-                    isCurrent: false
-                    _count:
-                      assignments: 0
+                      assignments: 3
         "401":
           description: "بلا رمز صالح — UNAUTHENTICATED"
           content:
@@ -8195,7 +7891,7 @@ paths:
                   - message_ar
               example:
                 data: null
-                message_ar: "بدأت الدورة «دورة اختبار 6bb3d5b9». أدوار الدورة السابقة لم تعد فعّالة — عيّن أعضاء الدورة الجديدة من صفحة المستخدمين."
+                message_ar: "بدأت الدورة «دورة اختبار 9b8b0f4d». أدوار الدورة السابقة لم تعد فعّالة — عيّن أعضاء الدورة الجديدة من صفحة المستخدمين."
       requestBody:
         required: true
         content:
@@ -8277,7 +7973,7 @@ paths:
                   - message_ar
               example:
                 data: null
-                message_ar: "عُيّن دور «عضو اللجنة» للمستخدم مستخدم اختبار 5c72ff0a."
+                message_ar: "عُيّن دور «عضو اللجنة» للمستخدم مستخدم اختبار a7f4e48c."
       requestBody:
         required: true
         content:
@@ -8577,6 +8273,8 @@ paths:
                       nameAr: "اللجنة الصحية"
                     - id: "00000000-K7QM-3XWD-8000-000000000000"
                       nameAr: "لجنة الدعم اللوجستي"
+                    - id: "00000000-K7QM-3XWD-8000-000000000000"
+                      nameAr: "لجنة التدريب والتطوير"
                   currentTerm:
                     name: "دورة تجريبية — للتطوير فقط"
                   isSelf: true
@@ -8797,324 +8495,7 @@ paths:
                             nameAr: "اللجنة القانونية"
                           term:
                             isCurrent: true
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "شاب"
-                            isTermBound: false
-                          committee: null
-                          term: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "رئيس اللجنة"
-                            isTermBound: true
-                          committee:
-                            nameAr: "اللجنة الصحية"
-                          term:
-                            isCurrent: true
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "رئيس المجلس"
-                            isTermBound: true
-                          committee: null
-                          term:
-                            isCurrent: true
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "شاب"
-                            isTermBound: false
-                          committee: null
-                          term: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "شاب"
-                            isTermBound: false
-                          committee: null
-                          term: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "شاب"
-                            isTermBound: false
-                          committee: null
-                          term: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "رئيس المجلس"
-                            isTermBound: true
-                          committee: null
-                          term:
-                            isCurrent: true
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "رئيس المجلس"
-                            isTermBound: true
-                          committee: null
-                          term:
-                            isCurrent: true
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "شاب"
-                            isTermBound: false
-                          committee: null
-                          term: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "شاب"
-                            isTermBound: false
-                          committee: null
-                          term: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "شاب"
-                            isTermBound: false
-                          committee: null
-                          term: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "شاب"
-                            isTermBound: false
-                          committee: null
-                          term: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "رئيس اللجنة"
-                            isTermBound: true
-                          committee:
-                            nameAr: "اللجنة الصحية"
-                          term:
-                            isCurrent: true
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "عضو اللجنة"
-                            isTermBound: true
-                          committee:
-                            nameAr: "لجنة الدعم اللوجستي"
-                          term:
-                            isCurrent: true
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "رئيس اللجنة"
-                            isTermBound: true
-                          committee:
-                            nameAr: "لجنة الدعم اللوجستي"
-                          term:
-                            isCurrent: true
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "شاب"
-                            isTermBound: false
-                          committee: null
-                          term: null
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "رئيس المجلس"
-                            isTermBound: true
-                          committee: null
-                          term:
-                            isCurrent: true
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "أمين الصندوق"
-                            isTermBound: true
-                          committee: null
-                          term:
-                            isCurrent: true
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      fullName: "مستخدم اختبار 0000"
-                      email: "test-00000000@example.test"
-                      phone: null
-                      isActive: true
-                      createdAt: "2026-01-01T09:00:00.000Z"
-                      roleAssignments:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          endsAt: null
-                          startsAt: "2026-01-01T09:00:00.000Z"
-                          revokedAt: null
-                          role:
-                            nameAr: "شاب"
-                            isTermBound: false
-                          committee: null
-                          term: null
-                  total: 70
+                  total: 1
                   q: ""
                   page: 1
                   pageSize: 20
@@ -9678,7 +9059,7 @@ paths:
     post:
       tags:
         - auth
-      summary: "الدخول بالبريد أو الهاتف — حظر متضاعف بعد 5 إخفاقات (§6.4). الجلسة تعود للتطبيق ليحفظها supabase_flutter (D33)."
+      summary: "الدخول بالبريد أو الهاتف — حظر متضاعف بعد 5 إخفاقات (§6.4). الجلسة تعود للتطبيق ليحفظها supabase_flutter (D46)."
       operationId: postAuthLogin
       security: []
       responses:
@@ -9883,7 +9264,7 @@ paths:
     post:
       tags:
         - auth
-      summary: "طلب رابط استعادة بالبريد (D17). الرابط يفتح صفحة الويب لتعيين كلمة المرور، ثم يعود الشاب للتطبيق (D36)."
+      summary: "طلب رابط استعادة بالبريد (D17). الرابط يفتح صفحة الويب لتعيين كلمة المرور، ثم يعود الشاب للتطبيق (D49)."
       operationId: postAuthResetRequest
       security: []
       responses:
@@ -10089,6 +9470,9 @@ paths:
                     - id: "00000000-K7QM-3XWD-8000-000000000000"
                       slug: logistical-support
                       nameAr: "لجنة الدعم اللوجستي"
+                    - id: "00000000-K7QM-3XWD-8000-000000000000"
+                      slug: training-development
+                      nameAr: "لجنة التدريب والتطوير"
         "403":
           description: "لا تملك الصلاحية — FORBIDDEN"
           content:
@@ -10770,7 +10154,7 @@ paths:
                   complaints:
                     open: 0
                     resolved: 0
-                  unread: 2
+                  unread: 0
         "401":
           description: "بلا رمز صالح — UNAUTHENTICATED"
           content:
@@ -11379,7 +10763,7 @@ paths:
     get:
       tags:
         - me
-      summary: "الجلسة: المستخدم وأدواره ومنحه (لـ can() في التطبيق — إخفاء بصري فقط)، والتنقل كما يبنيه الويب (D34)"
+      summary: "الجلسة: المستخدم وأدواره ومنحه (لـ can() في التطبيق — إخفاء بصري فقط)، والتنقل كما يبنيه الويب (D47)"
       operationId: getMeSession
       responses:
         "200":
@@ -11465,6 +10849,20 @@ paths:
                               - own
                               - committees
                           "reports:read":
+                            type: object
+                            properties:
+                              all:
+                                type: boolean
+                              own:
+                                type: boolean
+                              committees:
+                                type: array
+                                items: {}
+                            required:
+                              - all
+                              - own
+                              - committees
+                          "reports:create":
                             type: object
                             properties:
                               all:
@@ -12433,6 +11831,7 @@ paths:
                           - "committees:read"
                           - "committees:manage"
                           - "reports:read"
+                          - "reports:create"
                           - "audit:read"
                           - "users:manage_roles"
                           - "settings:manage"
@@ -12658,6 +12057,10 @@ paths:
                       own: false
                       committees: []
                     "reports:read":
+                      all: true
+                      own: false
+                      committees: []
+                    "reports:create":
                       all: true
                       own: false
                       committees: []
@@ -12998,6 +12401,22 @@ paths:
                             label: "السجل المالي"
                             permission: "finance:read"
                             icon: wallet
+                          - href: "/admin/opportunities"
+                            label: "الفرص"
+                            permission: "opportunities:publish"
+                            icon: briefcase
+                          - href: "/admin/activities"
+                            label: "الأنشطة"
+                            permission: "activities:update"
+                            icon: sparkles
+                          - href: "/admin/support"
+                            label: "الدعم والاستفسارات"
+                            permission: "support:read"
+                            icon: help
+                          - href: "/admin/reports"
+                            label: "التقارير والمؤشرات"
+                            permission: "reports:read"
+                            icon: chart
                           - href: "/admin/audit"
                             label: "سجل التدقيق"
                             permission: "audit:read"
@@ -13029,6 +12448,10 @@ paths:
                             label: "المناطق والأحياء"
                             permission: "settings:manage"
                             icon: map
+                          - href: "/admin/settings/faq"
+                            label: "الأسئلة المعتمدة"
+                            permission: "faq:manage"
+                            icon: help
                     partner:
                       - label: "بوابة المؤسسات"
                         items:
@@ -13044,6 +12467,10 @@ paths:
                             label: "عروض دعمنا"
                             permission: "offers:read"
                             icon: file
+                          - href: "/partner/opportunities"
+                            label: "فرصنا"
+                            permission: "opportunities:create"
+                            icon: briefcase
                     me:
                       - label: "بوابة الشباب"
                         items:
@@ -13063,6 +12490,14 @@ paths:
                             label: "أفكاري"
                             permission: "ideas:create"
                             icon: lightbulb
+                          - href: "/me/applications"
+                            label: "طلباتي على الفرص"
+                            permission: "opportunities:apply"
+                            icon: briefcase
+                          - href: "/me/profile"
+                            label: "ملفي ومهاراتي"
+                            permission: "profiles:update"
+                            icon: user
                           - href: "/me/notifications"
                             label: "الإشعارات"
                             permission: null
@@ -13217,58 +12652,7 @@ paths:
                         items: {}
                       initiatives:
                         type: array
-                        items:
-                          type: object
-                          properties:
-                            id:
-                              type: string
-                            slug:
-                              type: string
-                            title:
-                              type: string
-                            summary:
-                              nullable: true
-                            committee:
-                              type: object
-                              properties:
-                                nameAr:
-                                  type: string
-                              required:
-                                - nameAr
-                            needs:
-                              type: array
-                              items:
-                                type: object
-                                properties:
-                                  id:
-                                    type: string
-                                  type:
-                                    type: string
-                                  description:
-                                    type: string
-                                  quantity:
-                                    nullable: true
-                                  unit:
-                                    nullable: true
-                                  amount:
-                                    type: string
-                                  status:
-                                    type: string
-                                required:
-                                  - id
-                                  - type
-                                  - description
-                                  - quantity
-                                  - unit
-                                  - amount
-                                  - status
-                          required:
-                            - id
-                            - slug
-                            - title
-                            - summary
-                            - committee
-                            - needs
+                        items: {}
                     required:
                       - orgs
                       - initiatives
@@ -13277,35 +12661,7 @@ paths:
               example:
                 data:
                   orgs: []
-                  initiatives:
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      slug: m-2026-0011b867
-                      title: "مبادرة صيف الشباب"
-                      summary: null
-                      committee:
-                        nameAr: "لجنة الأنشطة والمبادرات"
-                      needs:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          type: FUNDING
-                          description: "تمويل أدوات الورش"
-                          quantity: null
-                          unit: null
-                          amount: "2000.5"
-                          status: OPEN
-                    - id: "00000000-K7QM-3XWD-8000-000000000000"
-                      slug: m-2026-b1cb9cc3
-                      title: "دوري الأحياء الرمضاني"
-                      summary: null
-                      committee:
-                        nameAr: "اللجنة الرياضية والفنية"
-                      needs:
-                        - id: "00000000-K7QM-3XWD-8000-000000000000"
-                          type: EQUIPMENT
-                          description: "كرات وشباك"
-                          quantity: null
-                          unit: null
-                          amount: null
-                          status: OPEN
+                  initiatives: []
         "401":
           description: "بلا رمز صالح — UNAUTHENTICATED"
           content:
@@ -13556,7 +12912,7 @@ paths:
                   committee:
                     nameAr: "اللجنة القانونية"
                     mandate: null
-                  resolved: 1
+                  resolved: 0
                   ideas: []
         "403":
           description: "لا تملك الصلاحية — FORBIDDEN"
@@ -13649,6 +13005,9 @@ paths:
                   - slug: logistical-support
                     nameAr: "لجنة الدعم اللوجستي"
                     mandate: null
+                  - slug: training-development
+                    nameAr: "لجنة التدريب والتطوير"
+                    mandate: "تنظيم الورش التدريبية، المحاضرات التثقيفية، والدورات التأهيلية لبناء وتطوير قدرات الشباب والكوادر."
         "403":
           description: "لا تملك الصلاحية — FORBIDDEN"
           content:
@@ -14425,6 +13784,8 @@ paths:
                       nameAr: "اللجنة الصحية"
                     - slug: logistical-support
                       nameAr: "لجنة الدعم اللوجستي"
+                    - slug: training-development
+                      nameAr: "لجنة التدريب والتطوير"
                   areas:
                     - id: "00000000-K7QM-3XWD-8000-000000000000"
                       nameAr: "حي 0000 الغربي"
@@ -14724,19 +14085,7 @@ paths:
               example:
                 data:
                   - id: "00000000-K7QM-3XWD-8000-000000000000"
-                    slug: m-2026-556d8ab2
-                    title: "مبادرة صيف الشباب"
-                    summary: null
-                    status: PUBLISHED
-                    progressPct: 0
-                    committee:
-                      nameAr: "لجنة الأنشطة والمبادرات"
-                    _count:
-                      needs: 0
-                      partners: 1
-                    secured: {}
-                  - id: "00000000-K7QM-3XWD-8000-000000000000"
-                    slug: m-2026-0011b867
+                    slug: m-2026-f20c86c2
                     title: "مبادرة صيف الشباب"
                     summary: null
                     status: PUBLISHED
@@ -14748,7 +14097,7 @@ paths:
                       partners: 0
                     secured: {}
                   - id: "00000000-K7QM-3XWD-8000-000000000000"
-                    slug: m-2026-b1cb9cc3
+                    slug: m-2026-b79eac7a
                     title: "دوري الأحياء الرمضاني"
                     summary: null
                     status: PUBLISHED
@@ -14806,66 +14155,11 @@ paths:
                 properties:
                   data:
                     type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                        type:
-                          type: string
-                        description:
-                          type: string
-                        quantity:
-                          nullable: true
-                        unit:
-                          nullable: true
-                        amount:
-                          nullable: true
-                        status:
-                          type: string
-                        initiative:
-                          type: object
-                          properties:
-                            slug:
-                              type: string
-                            title:
-                              type: string
-                          required:
-                            - slug
-                            - title
-                      required:
-                        - id
-                        - type
-                        - description
-                        - quantity
-                        - unit
-                        - amount
-                        - status
-                        - initiative
+                    items: {}
                 required:
                   - data
               example:
-                data:
-                  - id: "00000000-K7QM-3XWD-8000-000000000000"
-                    type: EQUIPMENT
-                    description: "كرات وشباك"
-                    quantity: null
-                    unit: null
-                    amount: null
-                    status: OPEN
-                    initiative:
-                      slug: m-2026-b1cb9cc3
-                      title: "دوري الأحياء الرمضاني"
-                  - id: "00000000-K7QM-3XWD-8000-000000000000"
-                    type: FUNDING
-                    description: "تمويل أدوات الورش"
-                    quantity: null
-                    unit: null
-                    amount: "2000.5"
-                    status: OPEN
-                    initiative:
-                      slug: m-2026-0011b867
-                      title: "مبادرة صيف الشباب"
+                data: []
         "403":
           description: "لا تملك الصلاحية — FORBIDDEN"
           content:

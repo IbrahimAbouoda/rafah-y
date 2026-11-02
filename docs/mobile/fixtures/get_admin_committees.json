@@ -30,7 +30,7 @@
         "mandate": null,
         "_count": {
           "complaints": 0,
-          "tasks": 1
+          "tasks": 0
         }
       },
       {
@@ -49,7 +49,7 @@
         "nameAr": "اللجنة القانونية",
         "mandate": null,
         "_count": {
-          "complaints": 2,
+          "complaints": 0,
           "tasks": 0
         }
       },
@@ -80,7 +80,7 @@
         "mandate": null,
         "_count": {
           "complaints": 0,
-          "tasks": 1
+          "tasks": 0
         }
       },
       {
@@ -88,6 +88,16 @@
         "slug": "logistical-support",
         "nameAr": "لجنة الدعم اللوجستي",
         "mandate": null,
+        "_count": {
+          "complaints": 0,
+          "tasks": 0
+        }
+      },
+      {
+        "id": "00000000-K7QM-3XWD-8000-000000000000",
+        "slug": "training-development",
+        "nameAr": "لجنة التدريب والتطوير",
+        "mandate": "تنظيم الورش التدريبية، المحاضرات التثقيفية، والدورات التأهيلية لبناء وتطوير قدرات الشباب والكوادر.",
         "_count": {
           "complaints": 0,
           "tasks": 0

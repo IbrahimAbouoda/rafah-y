@@ -20,7 +20,7 @@ max_rows = 1000
 # `postgres` are reachable through the Data API roles (`anon`, `authenticated`, `service_role`)
 # without explicit GRANTs, matching the cloud default. Set to `false` to require explicit GRANTs
 # instead. Left unset, a fresh project falls back to `true`.
-# D32: لا جدول جديد يُكشف لـ anon/authenticated تلقائيًا — الصلاحيات في التطبيق (can())، والمفتاح العلني لا يقرأ شيئًا.
+# D45: لا جدول جديد يُكشف لـ anon/authenticated تلقائيًا — الصلاحيات في التطبيق (can())، والمفتاح العلني لا يقرأ شيئًا.
 auto_expose_new_tables = false
 
 [api.tls]

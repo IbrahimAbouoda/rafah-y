@@ -6,9 +6,11 @@ import 'dotenv/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../lib/generated/prisma/client';
 import { formatAccessCode, generateAccessCode, hashAccessCode } from '../lib/complaints/access-code';
+import { DEMO_ACCOUNT_EMAIL } from '../lib/config';
 import { seedRbac, PERMISSIONS, ROLES } from './rbac.seed';
+import { BASE_FAQ, seedFaq } from './faq.seed';
 
-// PRD §4.3
+// PRD §4.3 — الترتيب هو sortOrder. العاشرة بقرار D43 (2026-09-30).
 export const INITIAL_COMMITTEES = [
   { nameAr: 'لجنة التكنولوجيا والأنظمة الرقمية', slug: 'technology-digital-systems' },
   { nameAr: 'لجنة الأنشطة والمبادرات', slug: 'activities-initiatives' },
@@ -19,7 +21,44 @@ export const INITIAL_COMMITTEES = [
   { nameAr: 'لجنة العلاقات العامة والإعلام', slug: 'public-relations-media' },
   { nameAr: 'اللجنة الصحية', slug: 'health-affairs' },
   { nameAr: 'لجنة الدعم اللوجستي', slug: 'logistical-support' },
+  {
+    nameAr: 'لجنة التدريب والتطوير',
+    slug: 'training-development',
+    mandate: 'تنظيم الورش التدريبية، المحاضرات التثقيفية، والدورات التأهيلية لبناء وتطوير قدرات الشباب والكوادر.',
+  },
 ] as const;
+
+// D32: قائمة المهارات المرجعية — في الإنتاج أيضًا (لا مسار لإدارتها في §11.2 بعد).
+// عامة لا تخص أحدًا، يعدّلها المجلس لاحقًا بقرار موثّق.
+export const BASE_SKILLS = [
+  { nameAr: 'التصميم الجرافيكي', category: 'مهارات رقمية' },
+  { nameAr: 'البرمجة وتطوير الويب', category: 'مهارات رقمية' },
+  { nameAr: 'التسويق الرقمي وإدارة المنصات', category: 'مهارات رقمية' },
+  { nameAr: 'التصوير والمونتاج', category: 'مهارات رقمية' },
+  { nameAr: 'الحاسوب والبرامج المكتبية', category: 'مهارات رقمية' },
+  { nameAr: 'إدخال البيانات وتحليلها', category: 'مهارات رقمية' },
+  { nameAr: 'اللغة الإنجليزية', category: 'لغات' },
+  { nameAr: 'الترجمة', category: 'لغات' },
+  { nameAr: 'إدارة المشاريع', category: 'مهارات مهنية' },
+  { nameAr: 'كتابة المقترحات والتقارير', category: 'مهارات مهنية' },
+  { nameAr: 'المحاسبة الأساسية', category: 'مهارات مهنية' },
+  { nameAr: 'ريادة الأعمال', category: 'مهارات مهنية' },
+  { nameAr: 'خدمة العملاء', category: 'مهارات مهنية' },
+  { nameAr: 'الإسعافات الأولية', category: 'مهارات مجتمعية' },
+  { nameAr: 'الدعم النفسي الاجتماعي', category: 'مهارات مجتمعية' },
+  { nameAr: 'التيسير والتدريب', category: 'مهارات مجتمعية' },
+  { nameAr: 'تنظيم الفعاليات', category: 'مهارات مجتمعية' },
+  { nameAr: 'العمل مع الأطفال', category: 'مهارات مجتمعية' },
+  { nameAr: 'الصيانة الكهربائية', category: 'مهارات حِرفية' },
+  { nameAr: 'الطاقة الشمسية', category: 'مهارات حِرفية' },
+  { nameAr: 'الخياطة والتطريز', category: 'مهارات حِرفية' },
+  { nameAr: 'الزراعة المنزلية', category: 'مهارات حِرفية' },
+] as const;
+
+export async function seedSkills(db: PrismaClient) {
+  // لا نغيّر مهارة موجودة: قد يكون المجلس عدّلها
+  for (const s of BASE_SKILLS) await db.skill.upsert({ where: { nameAr: s.nameAr }, create: s, update: {} });
+}
 
 export const DEV_TERM_NAME = 'دورة تجريبية — للتطوير فقط';
 
@@ -115,7 +154,7 @@ export async function seedDemoComplaints(db: PrismaClient): Promise<{ reference:
 }
 
 // صاحب الأفكار التجريبية: حساب وهمي معطّل لا يدخل (isActive = false) — يُحذف مع بيانات isDemo في Sprint 6 (AC-20)
-const DEMO_SUBMITTER = { email: 'demo-ideas@example.invalid', fullName: 'حساب عرض تجريبي' };
+const DEMO_SUBMITTER = { email: DEMO_ACCOUNT_EMAIL, fullName: 'حساب عرض تجريبي' };
 
 const DEMO_IDEAS = [
   {
@@ -224,6 +263,60 @@ export async function seedDemoInitiatives(db: PrismaClient): Promise<string | nu
   return initiative.slug;
 }
 
+/** فرصة عرض منشورة ونشاط عرض منشور — لتجربة /opportunities و /activities. تُنشأ مرة واحدة. */
+export async function seedDemoOpportunities(db: PrismaClient): Promise<boolean> {
+  if ((await db.opportunity.count({ where: { isDemo: true } })) > 0) return false;
+  const creator = await db.user.upsert({
+    where: { email: DEMO_SUBMITTER.email },
+    create: { ...DEMO_SUBMITTER, authId: crypto.randomUUID(), isActive: false },
+    update: {},
+  });
+  const org =
+    (await db.organization.findFirst({ where: { isDemo: true }, select: { id: true } })) ??
+    (await db.organization.create({
+      data: { name: 'مؤسسة عرض تجريبية', type: 'LOCAL_NGO', sectors: ['تمكين الشباب'], stage: 'CONTACTED', isDemo: true },
+      select: { id: true },
+    }));
+  const skills = await db.skill.findMany({
+    where: { nameAr: { in: ['التصميم الجرافيكي', 'التسويق الرقمي وإدارة المنصات'] } },
+    select: { id: true },
+  });
+  const month = 30 * 24 * 3600_000;
+  await db.opportunity.create({
+    data: {
+      title: 'عرض: تدريب مدفوع في التصميم الرقمي',
+      description: 'فرصة عرض تجريبية: تدريب عملي لثلاثة أشهر في تصميم المحتوى الرقمي لمؤسسة محلية، مع مكافأة شهرية رمزية.',
+      type: 'TRAINING',
+      applyMode: 'INTERNAL',
+      seats: 5,
+      deadline: new Date(Date.now() + month),
+      status: 'PUBLISHED',
+      organizationId: org.id,
+      createdById: creator.id,
+      publishedAt: new Date(),
+      isDemo: true,
+      skills: { create: skills.map((s) => ({ skillId: s.id })) },
+    },
+  });
+  const committee = await db.committee.findUnique({ where: { slug: 'technology-digital-systems' }, select: { id: true } });
+  await db.activity.create({
+    data: {
+      title: 'عرض: ورشة أساسيات الأمان الرقمي',
+      description: 'نشاط عرض تجريبي: ورشة ساعتين عن كلمات المرور وحماية الحسابات من الاحتيال.',
+      kind: 'WORKSHOP',
+      committeeId: committee?.id ?? null,
+      startsAt: new Date(Date.now() + 7 * 24 * 3600_000),
+      location: 'قاعة تجريبية',
+      seats: 20,
+      registrationOpen: true,
+      status: 'PUBLISHED',
+      createdById: creator.id,
+      isDemo: true,
+    },
+  });
+  return true;
+}
+
 async function main() {
   const url = process.env.DIRECT_URL ?? process.env.DATABASE_URL;
   if (!url) throw new Error('Set DIRECT_URL (or DATABASE_URL) before seeding');
@@ -231,25 +324,30 @@ async function main() {
   try {
     await seedRbac(db);
     await seedCommittees(db);
+    await seedSkills(db);
+    await seedFaq(db);
     const dev = process.env.NODE_ENV !== 'production';
     let demo: { reference: string; code: string }[] = [];
     let ideas: string[] = [];
     let initiative: string | null = null;
+    let opportunities = false;
     if (dev) {
       await seedDevTerm(db);
       await seedDevReference(db);
       demo = await seedDemoComplaints(db);
       ideas = await seedDemoIdeas(db);
       initiative = await seedDemoInitiatives(db);
+      opportunities = await seedDemoOpportunities(db);
     }
 
     const grants = PERMISSIONS.reduce((n, p) => n + Object.keys(p.grants).length, 0);
     console.log(`✓ ${ROLES.length} أدوار · ${PERMISSIONS.length} صلاحية · ${grants} منحة`);
-    console.log(`✓ ${INITIAL_COMMITTEES.length} لجان`);
+    console.log(`✓ ${INITIAL_COMMITTEES.length} لجان · ${BASE_SKILLS.length} مهارة · ${BASE_FAQ.length} سؤالًا شائعًا (مبدئية — Q11)`);
     if (dev) console.log(`✓ تطوير: ${DEV_CATEGORIES.length} تصنيفات · ${DEV_AREAS.length} مناطق تجريبية`);
     for (const d of demo) console.log(`  شكوى عرض ${d.reference} · رمز ${d.code}`);
     if (ideas.length) console.log(`  أفكار عرض: ${ideas.join(' · ')}`);
     if (initiative) console.log(`  مبادرة عرض: /initiatives/${initiative}`);
+    if (opportunities) console.log('  فرصة ونشاط عرض: /opportunities · /activities');
   } finally {
     await db.$disconnect();
   }

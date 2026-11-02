@@ -19,3 +19,8 @@ export async function myNotifications(user: SessionUser, range: { skip: number; 
   ]);
   return { items, total, unread };
 }
+
+/** تفضيلات البريد المحفوظة (§8.3) — تفضيلاته فقط؛ الغائب يعني مفعّلًا */
+export async function myEmailPreferences(user: SessionUser) {
+  return db.notificationPreference.findMany({ where: { userId: user.id, channel: 'EMAIL' }, select: { type: true, enabled: true } });
+}

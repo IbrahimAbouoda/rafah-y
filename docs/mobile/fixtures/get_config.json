@@ -104,6 +104,11 @@
           "id": "00000000-K7QM-3XWD-8000-000000000000",
           "slug": "logistical-support",
           "nameAr": "لجنة الدعم اللوجستي"
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "slug": "training-development",
+          "nameAr": "لجنة التدريب والتطوير"
         }
       ]
     }

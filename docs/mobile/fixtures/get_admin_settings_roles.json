@@ -32,10 +32,14 @@
             {
               "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
               "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
             }
           ],
           "_count": {
-            "permissions": 6
+            "permissions": 7
           }
         },
         {
@@ -238,10 +242,14 @@
             {
               "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
               "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
             }
           ],
           "_count": {
-            "permissions": 49
+            "permissions": 50
           }
         },
         {
@@ -522,10 +530,14 @@
             {
               "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
               "scope": "ALL"
+            },
+            {
+              "permissionId": "00000000-K7QM-3XWD-8000-000000000000",
+              "scope": "ALL"
             }
           ],
           "_count": {
-            "permissions": 32
+            "permissions": 33
           }
         },
         {
@@ -1230,6 +1242,12 @@
           "id": "00000000-K7QM-3XWD-8000-000000000000",
           "key": "profiles:update",
           "descriptionAr": "تعديل الملف الشخصي والمهارات والموافقات",
+          "isPhase2": false
+        },
+        {
+          "id": "00000000-K7QM-3XWD-8000-000000000000",
+          "key": "reports:create",
+          "descriptionAr": "توليد تقرير (لقطة مؤشرات لفترة)",
           "isPhase2": false
         },
         {

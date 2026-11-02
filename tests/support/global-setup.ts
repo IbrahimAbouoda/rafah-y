@@ -5,8 +5,9 @@ import { PGlite } from '@electric-sql/pglite';
 import { PrismaPGlite } from 'pglite-prisma-adapter';
 import type { TestProject } from 'vitest/node';
 import { PrismaClient } from '../../lib/generated/prisma/client';
-import { seedCommittees, seedDevReference, seedDevTerm } from '../../prisma/seed';
+import { seedCommittees, seedDevReference, seedDevTerm, seedSkills } from '../../prisma/seed';
 import { seedRbac } from '../../prisma/rbac.seed';
+import { seedFaq } from '../../prisma/faq.seed';
 
 declare module 'vitest' {
   export interface ProvidedContext {
@@ -25,10 +26,10 @@ export async function applyMigrations(pg: PGlite) {
 }
 
 /**
- * دورا Data API في Supabase بامتيازاتهما الافتراضية (كل جدول جديد في public مكشوف لهما) —
- * لتثبت migration الإغلاق (D32) أنها تسحب ما يمنحه Supabase فعلًا، لا ما لم يُمنح أصلًا.
+ * أدوار Supabase ومنحها الافتراضية كما في المشروع الحقيقي، قبل الـ migrations — فيختبر
+ * tests/integration/data-api-lockdown.test.ts أن migration الإغلاق (C-1) يسحبها فعلًا، لا أنها لم تُمنح أصلًا.
  */
-export async function supabaseApiRoles(pg: PGlite) {
+export async function simulateSupabaseRoles(pg: PGlite) {
   await pg.exec(`
     CREATE ROLE anon NOLOGIN;
     CREATE ROLE authenticated NOLOGIN;
@@ -42,12 +43,14 @@ export async function supabaseApiRoles(pg: PGlite) {
 export default async function setup(project: TestProject) {
   const dataDir = await mkdtemp(path.join(tmpdir(), 'rafah-pglite-'));
   const pg = new PGlite(dataDir);
-  await supabaseApiRoles(pg);
+  await simulateSupabaseRoles(pg);
   await applyMigrations(pg);
 
   const db = new PrismaClient({ adapter: new PrismaPGlite(pg) });
   await seedRbac(db);
   await seedCommittees(db);
+  await seedSkills(db);
+  await seedFaq(db);
   await seedDevTerm(db);
   await seedDevReference(db);
   await db.$disconnect();

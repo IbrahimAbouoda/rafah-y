@@ -80,6 +80,10 @@
         {
           "slug": "logistical-support",
           "nameAr": "لجنة الدعم اللوجستي"
+        },
+        {
+          "slug": "training-development",
+          "nameAr": "لجنة التدريب والتطوير"
         }
       ],
       "areas": [

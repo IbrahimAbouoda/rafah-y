@@ -11,14 +11,18 @@
           "currency": "ILS",
           "occurredAt": "2026-01-01T09:00:00.000Z",
           "description": null,
-          "approvedAt": "2026-01-01T09:00:00.000Z",
+          "counterparty": null,
+          "category": null,
+          "documentNumber": null,
+          "initiativeId": null,
+          "organizationId": null,
+          "offerId": null,
+          "approvedAt": null,
           "recordedById": "00000000-K7QM-3XWD-8000-000000000000",
           "recordedBy": {
             "fullName": "مستخدم اختبار 0000"
           },
-          "approvedBy": {
-            "fullName": "مستخدم اختبار 0000"
-          },
+          "approvedBy": null,
           "initiative": null,
           "organization": null
         }
@@ -37,25 +41,27 @@
           }
         }
       ],
-      "initiatives": [
-        {
-          "id": "00000000-K7QM-3XWD-8000-000000000000",
-          "title": "دوري الأحياء الرمضاني"
+      "initiatives": [],
+      "organizations": [],
+      "secured": {},
+      "totals": {
+        "ILS": {
+          "incoming": "0.00",
+          "outgoing": "0.00",
+          "remaining": "0.00",
+          "pendingIncoming": "100.00",
+          "pendingOutgoing": "0.00"
         },
-        {
-          "id": "00000000-K7QM-3XWD-8000-000000000000",
-          "title": "مبادرة صيف الشباب"
-        },
-        {
-          "id": "00000000-K7QM-3XWD-8000-000000000000",
-          "title": "مبادرة صيف الشباب"
+        "USD": {
+          "incoming": "0.00",
+          "outgoing": "0.00",
+          "remaining": "0.00",
+          "pendingIncoming": "0.00",
+          "pendingOutgoing": "0.00"
         }
-      ],
-      "secured": {
-        "ILS": "100.00"
       },
       "can": {
-        "record": true,
+        "record": false,
         "approve": true
       }
     }

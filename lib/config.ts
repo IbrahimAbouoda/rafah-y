@@ -11,18 +11,22 @@ export const isProduction = process.env.NODE_ENV === 'production';
 /** لجنة المؤسسات والشراكات: تظهر مسودات Concept Note في مهامها (AC-12) */
 export const PARTNERSHIPS_COMMITTEE_SLUG = 'organizations-partnerships';
 
+/** حساب العرض المعطّل صاحب بيانات العرض في البذرة — يُحذف مع بيانات isDemo (AC-20؛ User بلا isDemo) */
+export const DEMO_ACCOUNT_EMAIL = 'demo-ideas@example.invalid';
+
 /** الدور الذي يُمنح لممثل مؤسسة عند ربطه بها (D26) */
 export const PARTNER_ROLE_KEY = 'partner';
 
 /** العملات المسموحة (D13 · قيد funding_currency_allowed) */
 export const CURRENCIES = ['ILS', 'USD'] as const;
 
-/** البريد الرسمي للمجلس — مرسِل كل الإشعارات والقوالب (PRD §19.3 D19، مؤقت حتى النطاق الدائم Q8) */
 /** اسم المنصة وشعارها — يقرؤهما الويب والجوّال (/api/mobile/v1/config) من هنا فقط */
 export const APP_NAME_AR = 'نبض رفح';
 export const APP_TAGLINE_AR = 'صوت الشباب... فكرة تتحول إلى أثر';
 
+/** البريد الرسمي للمجلس — مرسِل كل الإشعارات والقوالب (PRD §19.3 D19، مؤقت حتى النطاق الدائم Q8) */
 export const COUNCIL_EMAIL = 'info.rafahyouth@gmail.com';
+/** الاسم الرسمي كما في الشعار (public/logo.png) */
 export const COUNCIL_NAME_AR = 'المجلس الشبابي البلدي - رفح';
 export const COUNCIL_NAME_EN = 'Municipal Youth Council - Rafah';
 export const COUNCIL_SENDER_NAME = `نبض رفح — ${COUNCIL_NAME_AR}`;

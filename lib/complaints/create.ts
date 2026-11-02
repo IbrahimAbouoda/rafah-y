@@ -4,7 +4,7 @@ import { encryptField } from '@/lib/crypto';
 import { db } from '@/lib/db';
 import { conflict, invalid, rateLimited } from '@/lib/errors';
 import { Prisma } from '@/lib/generated/prisma/client';
-import { dispatchEmails, queueNotifications } from '@/lib/notify';
+import { sendEmailsAfterResponse, queueNotifications } from '@/lib/notify';
 import { limit } from '@/lib/rate-limit';
 import type { SessionUser } from '@/lib/rbac';
 import { nextRef } from '@/lib/sequence';
@@ -147,6 +147,6 @@ export async function submitComplaint(data: SubmitComplaintInput, origin: Origin
     throw e;
   }
 
-  await dispatchEmails(db, result.emailIds);
+  sendEmailsAfterResponse(db, result.emailIds);
   return { id: result.id, reference: result.reference, accessCode: formatAccessCode(code), duplicate: false };
 }

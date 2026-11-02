@@ -3,7 +3,12 @@
 /** حاوية Supabase Storage الخاصة لمرفقات الشكاوى */
 export const COMPLAINT_BUCKET = 'complaint-attachments';
 
-export type AllowedMime = 'image/jpeg' | 'image/png' | 'image/webp' | 'application/pdf';
+// §6.5: القائمة البيضاء والحدود — هنا لا في lib/validation كي لا يحمل نموذج الشكوى مخططات zod إلى المتصفح
+export const UPLOAD_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'] as const;
+export const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+export const MAX_FILES_PER_RECORD = 5;
+
+export type AllowedMime = (typeof UPLOAD_MIME_TYPES)[number];
 
 const startsWith = (b: Uint8Array, sig: number[], offset = 0) => sig.every((byte, i) => b[offset + i] === byte);
 const ascii = (s: string) => [...s].map((c) => c.charCodeAt(0));

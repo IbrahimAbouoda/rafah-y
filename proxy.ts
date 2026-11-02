@@ -76,7 +76,7 @@ export async function proxy(request: NextRequest) {
   return response;
 }
 
-// api/mobile مستثنى: الجوّال يحمل Bearer لا كوكي، فلا جلسة تُجدَّد ولا CSP لاستجابة JSON (D31)
+// api/mobile مستثنى: الجوّال يحمل Bearer لا كوكي، فلا جلسة تُجدَّد ولا CSP لاستجابة JSON (D44)
 export const config = {
   matcher: [
     {

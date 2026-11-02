@@ -3,6 +3,9 @@ import Link from 'next/link';
 import { complaintList } from '@/lib/complaints/queries';
 import { STATUS_LABELS } from '@/lib/complaints/workflow';
 import { guardPage } from '@/lib/page-guard';
+import { can } from '@/lib/rbac';
+import { exportComplaintsAction } from '@/server/actions/complaints/export';
+import { DownloadButton } from '@/components/shared/download-button';
 import { formatDate } from '@/lib/utils';
 import { COMPLAINT_STATUSES } from '@/lib/validation/complaints';
 import { DataTable } from '@/components/shared/data-table';
@@ -44,7 +47,15 @@ export default async function ComplaintsPage({ searchParams }: { searchParams: P
 
   return (
     <>
-      <PageHeader title="الشكاوى" description="كل الشكاوى التي يحق لك رؤيتها بحسب دورك. بيانات التواصل لا تظهر هنا." />
+      <PageHeader title="الشكاوى" description="كل الشكاوى التي يحق لك رؤيتها بحسب دورك. بيانات التواصل لا تظهر هنا.">
+        {can(user, 'complaints:export') ? (
+          <DownloadButton
+            action={exportComplaintsAction}
+            fields={{ status, committee: params.committee, q }}
+            label={filtered ? 'تصدير النتائج (XLSX)' : 'تصدير السجل (XLSX)'}
+          />
+        ) : null}
+      </PageHeader>
 
       <Card className="mb-4 p-3">
         <form action="/admin/complaints" className="grid gap-3 sm:grid-cols-[1fr_1fr_1.4fr_auto] sm:items-end" role="search">

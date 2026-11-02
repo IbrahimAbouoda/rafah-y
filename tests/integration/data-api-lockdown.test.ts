@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { db } from '@/lib/db';
 
-// D32 — Data API مغلق: دورا anon و authenticated (مفتاح Supabase العلني) لا يصلان أي جدول ولا دالة في public.
-// global-setup يمنحهما ما يمنحه Supabase افتراضيًا قبل الـ migrations، فالاختبار يثبت السحب لا الغياب.
+// C-1 (docs/code-and-security-audit.md) · D45: لا يُفتح أي جدول لواجهة Supabase Data API — مفتاح anon علني (الويب والجوّال).
+// قاعدة الاختبار تبدأ بأدوار Supabase ومنحها الافتراضية (tests/support/global-setup.ts)، ثم الـ migrations —
+// فيفشل هذا الاختبار إن حُذف migration الإغلاق، أو أُضيف جدول بلا RLS، أو أُعيدت منحة لـ anon.
 
 async function as<T>(role: 'anon' | 'authenticated', sql: string): Promise<T> {
   return db.$transaction(async (tx) => {
@@ -11,21 +12,58 @@ async function as<T>(role: 'anon' | 'authenticated', sql: string): Promise<T> {
   });
 }
 
-describe('إغلاق Data API — D32', () => {
-  for (const role of ['anon', 'authenticated'] as const) {
-    it(`${role}: لا قراءة للجداول الحساسة`, async () => {
-      for (const table of ['users', 'complaints', 'complaint_contacts', 'audit_logs', 'funding_records', 'role_assignments']) {
-        await expect(as(role, `SELECT 1 FROM "${table}" LIMIT 1`)).rejects.toThrow(/permission denied/);
-      }
-    });
+type Row = { name: string; rls: boolean; s: boolean; i: boolean; u: boolean; d: boolean };
 
-    it(`${role}: لا كتابة ولا توليد رقم مرجعي`, async () => {
-      await expect(as(role, `INSERT INTO "areas" ("id", "nameAr", "updatedAt") VALUES (gen_random_uuid(), 'منطقة دخيلة', now())`)).rejects.toThrow(
-        /permission denied/,
-      );
-      await expect(as(role, `SELECT next_ref('CMP-2026')`)).rejects.toThrow(/permission denied/);
-    });
-  }
+async function tablePrivileges(role: 'anon' | 'authenticated'): Promise<Row[]> {
+  return db.$queryRawUnsafe<Row[]>(
+    `SELECT c.relname AS name, c.relrowsecurity AS rls,
+            has_table_privilege($1, c.oid, 'SELECT') AS s, has_table_privilege($1, c.oid, 'INSERT') AS i,
+            has_table_privilege($1, c.oid, 'UPDATE') AS u, has_table_privilege($1, c.oid, 'DELETE') AS d
+       FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+      WHERE n.nspname = 'public' AND c.relkind = 'r'
+      ORDER BY 1`,
+    role,
+  );
+}
+
+describe('إغلاق Data API — C-1', () => {
+  it('كل جداول public عليها RLS', async () => {
+    const rows = await tablePrivileges('anon');
+    expect(rows.length).toBeGreaterThan(50);
+    expect(rows.filter((r) => !r.rls).map((r) => r.name)).toEqual([]);
+  });
+
+  it.each(['anon', 'authenticated'] as const)('%s بلا أي صلاحية على أي جدول', async (role) => {
+    const open = (await tablePrivileges(role)).filter((r) => r.s || r.i || r.u || r.d).map((r) => r.name);
+    expect(open).toEqual([]);
+  });
+
+  it('الدوال (next_ref وغيرها) غير قابلة للتنفيذ من anon', async () => {
+    const rows = await db.$queryRawUnsafe<{ name: string }[]>(
+      `SELECT p.proname AS name FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+        WHERE n.nspname = 'public' AND has_function_privilege('anon', p.oid, 'EXECUTE')`,
+    );
+    expect(rows.map((r) => r.name)).toEqual([]);
+  });
+
+  it('التطبيق (مالك الجداول) يقرأ ويكتب كما كان', async () => {
+    const before = await db.skill.count();
+    const s = await db.skill.create({ data: { nameAr: `مهارة فحص الإغلاق ${Date.now()}` } });
+    expect(await db.skill.count()).toBe(before + 1);
+    await db.skill.delete({ where: { id: s.id } });
+    const [ref] = await db.$queryRaw<{ ref: string }[]>`SELECT next_ref('LOCK-TEST') AS ref`;
+    expect(ref?.ref).toMatch(/^RF-LOCK-TEST-0+1$/);
+  });
+
+  it.each(['anon', 'authenticated'] as const)('%s: الطلب الفعلي مرفوض — قراءة وكتابة ورقم مرجعي', async (role) => {
+    for (const table of ['users', 'complaints', 'complaint_contacts', 'audit_logs', 'funding_records', 'role_assignments']) {
+      await expect(as(role, `SELECT 1 FROM "${table}" LIMIT 1`)).rejects.toThrow(/permission denied/);
+    }
+    await expect(
+      as(role, `INSERT INTO "areas" ("id", "nameAr", "updatedAt") VALUES (gen_random_uuid(), 'منطقة دخيلة', now())`),
+    ).rejects.toThrow(/permission denied/);
+    await expect(as(role, `SELECT next_ref('CMP-2026')`)).rejects.toThrow(/permission denied/);
+  });
 
   it('الجداول الجديدة بعد الإغلاق لا تُكشف تلقائيًا', async () => {
     await db.$executeRawUnsafe('CREATE TABLE IF NOT EXISTS "lockdown_probe" ("id" int)');
@@ -34,14 +72,5 @@ describe('إغلاق Data API — D32', () => {
     } finally {
       await db.$executeRawUnsafe('DROP TABLE "lockdown_probe"');
     }
-  });
-
-  it('RLS مفعّل على كل جدول، والمالك (اتصال التطبيق) يعمل كالمعتاد', async () => {
-    const off = await db.$queryRawUnsafe<{ tablename: string }[]>(
-      `SELECT c.relname AS tablename FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
-       WHERE n.nspname = 'public' AND c.relkind = 'r' AND NOT c.relrowsecurity`,
-    );
-    expect(off).toEqual([]);
-    expect(await db.committee.count()).toBeGreaterThan(0);
   });
 });

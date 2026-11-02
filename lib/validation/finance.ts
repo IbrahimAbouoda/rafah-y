@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { optionalDate } from './common';
 
-// فلتر التقرير الإداري والمالي — /admin/reports?from&to&pending
+// فلتر التقرير الإداري والمالي — /admin/reports?view=financial&from&to&pending
 export const ReportFilterSchema = z
   .object({
     from: optionalDate('تاريخ بداية الفترة غير صحيح.'),

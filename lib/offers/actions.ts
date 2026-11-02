@@ -6,7 +6,7 @@ import { writeAudit } from '@/lib/audit';
 import { db } from '@/lib/db';
 import { conflict, invalid, notFound } from '@/lib/errors';
 import { coveredStatus, OFFERABLE_INITIATIVE_STATUSES, OPEN_NEED_STATUSES } from '@/lib/initiatives/workflow';
-import { allScopeHoldersOf, dispatchEmails, queueNotifications } from '@/lib/notify';
+import { allScopeHoldersOf, queueNotifications, sendEmailsAfterResponse } from '@/lib/notify';
 import { organizationMemberIds } from '@/lib/organizations';
 import { DecideOfferSchema, SubmitOfferSchema } from '@/lib/validation/initiatives';
 
@@ -70,7 +70,7 @@ export async function submitOffer(user: SessionUser, input: unknown): Promise<st
       },
     ]);
   });
-  await dispatchEmails(db, emailIds);
+  sendEmailsAfterResponse(db, emailIds);
   revalidateOffers(initiative.slug);
   return 'وصل عرضك. يصلك إشعار بقرار المجلس.';
 }
@@ -146,7 +146,7 @@ export async function decideOffer(user: SessionUser, input: unknown): Promise<st
       },
     ]);
   });
-  await dispatchEmails(db, emailIds);
+  sendEmailsAfterResponse(db, emailIds);
   revalidateOffers(offer.initiative.slug);
   revalidatePath(`/admin/initiatives/${offer.initiativeId}`);
   return accepted

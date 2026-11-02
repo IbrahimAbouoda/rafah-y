@@ -3,7 +3,7 @@ import { landingPath, meNavFor, navFor, partnerNavFor } from '@/lib/nav';
 import { serializeGrants } from '@/lib/rbac';
 import { unreadCount } from '@/lib/shell';
 
-// الجلسة: المستخدم وأدواره ومنحه (لـ can() في التطبيق — إخفاء بصري فقط)، والتنقل كما يبنيه الويب (D34)
+// الجلسة: المستخدم وأدواره ومنحه (لـ can() في التطبيق — إخفاء بصري فقط)، والتنقل كما يبنيه الويب (D47)
 export const GET = apiRoute({ auth: 'required' }, async ({ user }) => ({
   data: {
     user: { id: user.id, fullName: user.fullName, email: user.email, phone: user.phone },

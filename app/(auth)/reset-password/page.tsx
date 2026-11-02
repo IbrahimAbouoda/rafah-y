@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getCurrentUser } from '@/lib/auth';
+import { recoveryActive } from '@/lib/rate-limit';
 import { Alert, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/surface';
 import { NewPasswordForm, RequestResetForm } from './forms';
 
@@ -23,7 +24,7 @@ export default async function ResetPasswordPage({
           <CardDescription>بعد الحفظ تُغلق جلساتك على الأجهزة الأخرى.</CardDescription>
         </CardHeader>
         <CardContent>
-          <NewPasswordForm />
+          <NewPasswordForm requireCurrent={!(await recoveryActive(user.id))} />
         </CardContent>
       </Card>
     );

@@ -27,7 +27,7 @@ export default async function CommitteeDashboard({ params }: { params: Promise<{
   const dashboard = await committeeDashboard(user, slug);
   // لجنة غيره = غير موجودة، فلا يكشف التخمين وجودها (معيار Sprint 2)
   if (!dashboard) notFound();
-  const { committee, complaints, openCount, overdue, tasksInReview, openTasks, ideas, members } = dashboard;
+  const { committee, complaints, openCount, overdue, tasksInReview, openTasks, ideas, members, activities } = dashboard;
   const { readTasks } = dashboard.can;
   const today = new Date(new Date().setHours(0, 0, 0, 0));
 
@@ -125,25 +125,52 @@ export default async function CommitteeDashboard({ params }: { params: Promise<{
           ) : null}
         </div>
 
-        <Card className="h-fit">
-          <CardHeader>
-            <CardTitle>الأعضاء في الدورة الحالية</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {members.length === 0 ? (
-              <p className="text-sm text-muted-foreground">لا أعضاء معيّنين بعد. يعيّنهم رئيس المجلس من «المستخدمون والأدوار».</p>
-            ) : (
-              <ul className="flex flex-col gap-2 text-sm">
-                {members.map((m) => (
-                  <li key={m.id} className="flex flex-col">
-                    <span>{m.fullName}</span>
-                    <span className="text-xs text-muted-foreground">{m.roles.join('، ')}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
+        <div className="flex flex-col gap-4">
+          {activities ? (
+            <Card className="h-fit">
+              <CardHeader>
+                <CardTitle>أنشطة اللجنة والحضور</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {activities.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">لا أنشطة منشورة للجنة بعد. ينشرها رئيس اللجنة من «الأنشطة».</p>
+                ) : (
+                  <ul className="flex flex-col gap-2 text-sm">
+                    {activities.map((a) => (
+                      <li key={a.id} className="flex flex-col gap-0.5">
+                        <Link href={`/admin/activities/${a.id}/attendance`} className="text-brand hover:underline">
+                          {a.title}
+                        </Link>
+                        <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                          {formatDate(a.startsAt)} <StatusBadge kind="activity" status={a.status} />
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+          ) : null}
+          <Card className="h-fit">
+            <CardHeader>
+              <CardTitle>الأعضاء في الدورة الحالية</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {members.length === 0 ? (
+                <p className="text-sm text-muted-foreground">لا أعضاء معيّنين بعد. يعيّنهم رئيس المجلس من «المستخدمون والأدوار».</p>
+              ) : (
+                <ul className="flex flex-col gap-2 text-sm">
+                  {members.map((m) => (
+                    <li key={m.id} className="flex flex-col">
+                      <span>{m.fullName}</span>
+                      <span className="text-xs text-muted-foreground">{m.roles.join('، ')}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </>
   );

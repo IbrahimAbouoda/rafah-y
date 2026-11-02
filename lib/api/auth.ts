@@ -4,7 +4,7 @@ import { sessionFromAuthUser } from '@/lib/auth';
 import type { SessionUser } from '@/lib/rbac';
 import { supabaseEnv } from '@/lib/supabase/server';
 
-// الجوّال لا يحمل كوكي: يرسل رمز وصول Supabase في Authorization: Bearer (D31 · D33).
+// الجوّال لا يحمل كوكي: يرسل رمز وصول Supabase في Authorization: Bearer (D44 · D46).
 // الخادم يتحقق منه عند Supabase ثم يمرّ بالمسار نفسه للويب: provisionUser ← loadSessionUser.
 
 export function bearerToken(req: Request): string | null {

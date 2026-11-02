@@ -72,6 +72,13 @@ describe('createUploadUrl · confirmUpload', () => {
     expect(file.uploadedById).toBeNull();
   });
 
+  it('تأكيد الرفع محدود لكل IP مثل /track: تخمين الرمز عبره يتوقف بعد 10 محاولات', async () => {
+    const c = await newComplaint();
+    const guess = { reference: c.reference, accessCode: 'AAAA-AAAA', fileId: randomUUID() };
+    for (let i = 0; i < 10; i++) expect(await confirmUploadAction(guess)).toMatchObject({ ok: false, message: expect.stringMatching(/لم نجد شكوى/) });
+    expect(await confirmUploadAction(guess)).toMatchObject({ ok: false, message: expect.stringMatching(/محاولات كثيرة/) });
+  });
+
   it('رمز خاطئ: نفس رسالة التتبّع، ولا سجل ملف', async () => {
     const c = await newComplaint();
     const before = await db.fileObject.count();

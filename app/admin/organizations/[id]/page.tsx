@@ -33,7 +33,7 @@ export default async function OrganizationPage({ params }: { params: Promise<{ i
       <PageHeader title={org.name} description={`${ORG_TYPE_LABELS[org.type]}${org.country ? ` · ${org.country}` : ''}${org.sectors.length ? ` · ${org.sectors.join('، ')}` : ''}`}>
         <span className="rounded-full bg-muted px-2.5 py-1 text-sm">{STAGE_LABELS[org.stage]}</span>
       </PageHeader>
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="flex flex-col gap-4">
           <Card>
             <CardHeader>
@@ -158,9 +158,11 @@ export default async function OrganizationPage({ params }: { params: Promise<{ i
                           {m.user.fullName}
                           {m.isAdmin ? <span className="ms-1 text-xs text-muted-foreground">(مسؤول)</span> : null}
                         </span>
-                        <span className="text-xs text-muted-foreground" dir="ltr">
-                          {m.user.email}
-                        </span>
+                        {m.user.email ? (
+                          <span className="text-xs text-muted-foreground" dir="ltr">
+                            {m.user.email}
+                          </span>
+                        ) : null}
                       </span>
                       {manage ? (
                         <ActionButtons

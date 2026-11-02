@@ -16,7 +16,7 @@ describe('GET /config', () => {
     expect(res.status).toBe(200);
     expect(res.data.appNameAr).toBeTruthy();
     expect(res.data.currencies).toEqual(['ILS', 'USD']);
-    expect(res.data.committees.length).toBe(9);
+    expect(res.data.committees.length).toBe(10); // D43: اللجنة العاشرة
     expect(res.headers.get('cache-control')).toBe('no-store');
   });
 });

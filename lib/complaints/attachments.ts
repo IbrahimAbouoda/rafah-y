@@ -74,8 +74,10 @@ export async function createUploadUrl(input: unknown, ip: string): Promise<{ mes
  * بعد وصول الملف إلى التخزين: يُقرأ من التخزين نفسه ويُتحقق من حجمه ونوعه ببصمته وتجزئته،
  * لا مما صرّح به العميل. الملف المخالف يُحذف من التخزين ويُعلَّم FAILED.
  */
-export async function confirmUpload(input: unknown): Promise<{ message: string; data: { fileId: string } }> {
+export async function confirmUpload(input: unknown, ip: string): Promise<{ message: string; data: { fileId: string } }> {
   {
+    const gate = await limit('uploadConfirm', ip);
+    if (!gate.allowed) throw rateLimited(gate.retryAfterSec);
     const data = ConfirmUploadSchema.parse(input);
     const complaint = await ownedComplaint(data.reference, data.accessCode);
     const file = await db.fileObject.findFirst({

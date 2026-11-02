@@ -5,17 +5,19 @@
 
 /*
  * Design tokens — PRD §12. ألوان العلامة منفصلة عن ألوان الحالة.
- * افتراض: الدرجات المشتقة (الفاتحة والداكنة) محسوبة هنا؛ النموذج التفاعلي المرجعي غير متاح في المستودع.
+ * العلامة من شعار «المجلس الشبابي البلدي - رفح» (D40): أزرق أساسي، أخضر ثانوي، أحمر للتنبيه.
+ * درجات الوضع الداكن مفتّحة هنا لتُقرأ على الخلفية الداكنة؛ الدرجات الرسمية الثابتة في council-* أدناه.
  */
 :root {
   --brand: #0b568f; /* أزرق المجلس — أساسي */
   --brand-foreground: #ffffff;
-  --brand-soft: #e4eff8;
+  --brand-soft: #e7f0f7;
   --accent: #3e8e28; /* أخضر المجلس — ثانوي */
   --accent-foreground: #ffffff;
-  --accent-soft: #e9f5e5;
-  --accent-strong: #2c6a1b; /* نص أخضر على خلفية فاتحة: #3e8e28 دون تباين AA للنص الصغير */
-  --alert: #c81d25; /* أحمر المجلس — بارز */
+  /* تعبئة خضراء تحمل نصًا: أبيض على --accent = 4.11 (دون AA)، فالأخضر الداكن الرسمي (D40) = 6.94 */
+  --accent-solid: #2c661d;
+  --accent-solid-foreground: #ffffff;
+  --alert: #c81d25; /* أحمر المجلس — للتنبيه */
   --alert-foreground: #ffffff;
 
   --success: #1f7a3d;
@@ -26,25 +28,29 @@
   --info-soft: #e6f0fa;
   --danger: #b42318;
   --danger-soft: #fdecea;
+  --danger-foreground: #ffffff;
 
-  --background: #fbfaf7;
+  /* محايدات slate: خلفية فاتحة مريحة ونص ثانوي slate-600 (تباين ≥ 4.5:1) */
+  --background: #f8fafc;
   --surface: #ffffff;
-  --foreground: #1b1f1d;
-  --muted: #f1efe9;
-  --muted-foreground: #5d6560;
-  --border: #e2ded4;
+  --foreground: #0f172a;
+  --muted: #f1f5f9;
+  --muted-foreground: #475569;
+  --border: #e2e8f0;
+  /* حدود الحقول: ≥ 3:1 مقابل background و surface و muted (WCAG 1.4.11). --border زخرفي ولا يلزمه ذلك */
+  --input: #7c8799;
   --ring: #0b568f;
 }
 
 .dark {
-  --brand: #5aa9e0;
-  --brand-foreground: #06192a;
-  --brand-soft: #10293f;
-  --accent: #76c25e;
-  --accent-foreground: #0c2005;
-  --accent-soft: #16301a;
-  --accent-strong: #8fd478;
-  --alert: #ef6a70;
+  --brand: #6fb3e8;
+  --brand-foreground: #04213a;
+  --brand-soft: #0f2a40;
+  --accent: #6cc04f;
+  --accent-foreground: #0d2107;
+  --accent-solid: #6cc04f;
+  --accent-solid-foreground: #0d2107;
+  --alert: #f0676e;
   --alert-foreground: #2a0507;
 
   --success: #5cc27f;
@@ -55,14 +61,16 @@
   --info-soft: #102538;
   --danger: #f07b70;
   --danger-soft: #3a1512;
+  --danger-foreground: #2a0507;
 
-  --background: #0f1412;
-  --surface: #161d1a;
-  --foreground: #e8ece9;
-  --muted: #1f2824;
-  --muted-foreground: #a0aba5;
-  --border: #2b3631;
-  --ring: #5aa9e0;
+  --background: #0b1120;
+  --surface: #111a2e;
+  --foreground: #e2e8f0;
+  --muted: #1a2438;
+  --muted-foreground: #a4b0c3;
+  --border: #26324a;
+  --input: #64748b;
+  --ring: #6fb3e8;
 }
 
 @theme inline {
@@ -71,11 +79,8 @@
   --color-brand-soft: var(--brand-soft);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
-  --color-accent-soft: var(--accent-soft);
-  --color-accent-strong: var(--accent-strong);
-  --color-council-blue: var(--brand);
-  --color-council-green: var(--accent);
-  --color-council-red: var(--alert);
+  --color-accent-solid: var(--accent-solid);
+  --color-accent-solid-foreground: var(--accent-solid-foreground);
   --color-alert: var(--alert);
   --color-alert-foreground: var(--alert-foreground);
   --color-success: var(--success);
@@ -86,14 +91,45 @@
   --color-info-soft: var(--info-soft);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
+  --color-danger-foreground: var(--danger-foreground);
   --color-background: var(--background);
   --color-surface: var(--surface);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
+  --color-input: var(--input);
   --color-ring: var(--ring);
+
+  /* ألوان الشعار الرسمية — ثابتة في الوضعين (bg-council-blue · text-council-green-dark …) */
+  --color-council-blue: #0b568f;
+  --color-council-blue-light: #136eb3;
+  --color-council-blue-dark: #073b63;
+  --color-council-green: #3e8e28;
+  --color-council-green-light: #4ead33;
+  --color-council-green-dark: #2c661d;
+  --color-council-red: #c81d25;
+  --color-council-red-light: #e02d36;
+  --color-council-red-dark: #931218;
+
   --font-sans: var(--font-arabic), system-ui, sans-serif;
+}
+
+/* الحركة — CSS فقط، وتُستعمل عبر motion-safe: فتتوقف لمن طلب تقليل الحركة */
+@theme {
+  --animate-page-in: page-in 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes page-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    /* none لا translateY(0): لا يبقى transform يحبس العناصر الثابتة داخل الصفحة */
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
 }
 
 @layer base {
@@ -106,10 +142,25 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
+  /* تسلسل الأوزان: IBM Plex Sans Arabic أثقل أوزانه 700، فالعناوين الرئيسية والفرعية 700 */
+  h1,
+  h2 {
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  h3,
+  h4 {
+    font-weight: 600;
+  }
   :focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
   }
+}
+
+/* القائمة الجانبية على الجوال (<dialog>) تمنع تمرير الصفحة خلفها */
+html:has(dialog[open]) {
+  overflow: hidden;
 }
 
 /* الأيقونات الاتجاهية تنعكس في RTL (PRD §12) */

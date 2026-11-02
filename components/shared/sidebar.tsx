@@ -4,7 +4,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Bell,
+  BriefcaseBusiness,
   Building2,
+  CircleUserRound,
+  Sparkles,
+  ChartLine,
+  LifeBuoy,
   Handshake,
   Rocket,
   Wallet,
@@ -47,6 +52,11 @@ const ICONS: Record<NavIcon, LucideIcon> = {
   building: Building2,
   wallet: Wallet,
   handshake: Handshake,
+  briefcase: BriefcaseBusiness,
+  sparkles: Sparkles,
+  chart: ChartLine,
+  help: LifeBuoy,
+  user: CircleUserRound,
 };
 
 /** عناصر مبنية من الصلاحيات على الخادم. على الجوّال: شريط تبويبات أفقي قابل للتمرير (PRD §12). */

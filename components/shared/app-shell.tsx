@@ -4,9 +4,13 @@ import { logoutAction } from '@/server/actions/auth';
 import type { NavGroup } from '@/lib/nav';
 import type { SerializedGrants, SessionUser } from '@/lib/rbac';
 import { Button } from '@/components/ui/button';
+import { BrandMark } from './brand-mark';
 import { FlashProvider } from './flash';
 import { PermissionsProvider } from './permission-gate';
+import { PulseDot } from './pulse-dot';
 import { Sidebar } from './sidebar';
+import { SiteFooter } from './site-footer';
+import { StickyHeader } from './sticky-header';
 import { ThemeToggle } from './theme-toggle';
 
 type Term = { name: string } | null;
@@ -50,11 +54,10 @@ export function AppShell({
   const home = nav[0]?.items[0]?.href ?? '/login';
   return (
     <PermissionsProvider userId={user.id} grants={grants}>
-      <header className="sticky top-0 z-20 border-b bg-surface/95 backdrop-blur">
+      <StickyHeader>
         <div className="flex h-14 items-center gap-3 px-4">
-          <Link href={home} className="flex items-baseline gap-2">
-            <span className="text-lg font-bold text-brand">نبض رفح</span>
-            <span className="hidden text-xs text-muted-foreground sm:inline">المجلس الشبابي البلدي - رفح</span>
+          <Link href={home} className="min-w-0 shrink-0">
+            <BrandMark />
           </Link>
           <div className="ms-auto flex items-center gap-1">
             <div className="hidden text-end leading-tight sm:block">
@@ -79,8 +82,11 @@ export function AppShell({
               >
                 <Bell aria-hidden />
                 {unreadCount ? (
-                  <span className="absolute -end-0.5 -top-0.5 min-w-5 rounded-full bg-alert px-1 text-center text-[11px] leading-5 font-semibold text-alert-foreground">
-                    {unreadCount > 99 ? '99+' : unreadCount}
+                  <span className="absolute -end-0.5 -top-0.5">
+                    <PulseDot className="absolute inset-0 size-full" />
+                    <span className="relative block min-w-5 rounded-full bg-alert px-1 text-center text-[11px] leading-5 font-semibold text-alert-foreground">
+                      {unreadCount > 99 ? '99+' : unreadCount}
+                    </span>
                   </span>
                 ) : null}
               </Link>
@@ -93,13 +99,15 @@ export function AppShell({
             </form>
           </div>
         </div>
-      </header>
+      </StickyHeader>
       <div className="flex flex-col lg:flex-row">
         <Sidebar groups={nav} />
-        <main className="min-w-0 flex-1 p-4 sm:p-6">
+        {/* ارتفاع الشاشة ناقص الترويسة (h-14): التذييل تحت الطيّة فلا يقفز حين يُبث المحتوى (CLS · §1.4) */}
+        <main className="min-h-[calc(100dvh-3.5rem)] min-w-0 flex-1 p-4 sm:p-6">
           <FlashProvider>{children}</FlashProvider>
         </main>
       </div>
+      <SiteFooter />
     </PermissionsProvider>
   );
 }

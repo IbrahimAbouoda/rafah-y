@@ -115,5 +115,10 @@ export const LoginSchema = z
 export const ResetRequestSchema = z.object({ email });
 
 export const NewPasswordSchema = z
-  .object({ password: passwordSchema, confirm: z.string() })
+  .object({
+    // M-4: مطلوبة خارج نافذة الاستعادة؛ الخادم يقرّر، والحقل فارغ = غير مُرسل
+    currentPassword: z.preprocess((v) => (v === '' ? undefined : v), z.string().max(200).optional()),
+    password: passwordSchema,
+    confirm: z.string(),
+  })
   .refine((v) => v.password === v.confirm, { path: ['confirm'], message: 'كلمتا المرور غير متطابقتين. أعد كتابة التأكيد.' });

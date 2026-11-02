@@ -58,7 +58,7 @@ async function InitiativesTab({ user }: { user: SessionUser }) {
   const committees = create?.committees ?? [];
   const ideas = create?.ideas ?? [];
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
       <DataTable
         rows={rows}
         rowKey={(r) => r.id}
@@ -129,7 +129,7 @@ async function InitiativesTab({ user }: { user: SessionUser }) {
 async function DemandTab({ user }: { user: SessionUser }) {
   const { polls, initiatives } = await demandAdmin(user);
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div className="flex flex-col gap-3">
         {polls.length === 0 ? (
           <Card>

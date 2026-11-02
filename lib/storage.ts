@@ -1,7 +1,7 @@
 import 'server-only';
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { COMPLAINT_BUCKET } from '@/lib/files';
-import { MAX_UPLOAD_BYTES, UPLOAD_MIME_TYPES } from '@/lib/validation/complaints';
+import { MAX_UPLOAD_BYTES, UPLOAD_MIME_TYPES } from '@/lib/files';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 export { COMPLAINT_BUCKET };
 
@@ -10,17 +10,8 @@ export { COMPLAINT_BUCKET };
 
 const DOWNLOAD_TTL_SEC = 60;
 
-const globalForStorage = globalThis as unknown as { storageAdmin?: SupabaseClient; bucketReady?: Promise<void> };
-
-function admin(): SupabaseClient {
-  if (!globalForStorage.storageAdmin) {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!url || !key) throw new Error('NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required for storage');
-    globalForStorage.storageAdmin = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
-  }
-  return globalForStorage.storageAdmin;
-}
+const globalForStorage = globalThis as unknown as { bucketReady?: Promise<void> };
+const admin = supabaseAdmin;
 
 /** ينشئ الحاوية الخاصة إن لم توجد — بنفس القيود المفروضة في التطبيق (دفاع ثانٍ في Storage نفسه). */
 function ensureBucket(): Promise<void> {
