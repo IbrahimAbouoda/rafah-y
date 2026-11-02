@@ -1,0 +1,177 @@
+/* نموذج التقرير الإداري والمالي: وثيقة مطبوعة بألوان النموذج، لا تتبع الوضع الداكن. القياسات بالنقطة من النموذج. */
+@page {
+  size: 595.32pt 841.92pt;
+  margin: 0;
+}
+
+.rp-root {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 595.32pt;
+  font-family: Arial, 'IBM Plex Sans Arabic', sans-serif;
+  font-size: 10pt;
+  color: #000;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.rp-page {
+  position: relative;
+  width: 595.32pt;
+  height: 841.92pt;
+  overflow: hidden;
+  background: #fff url('/report-letterhead.jpg') no-repeat 0 1.85pt / 594.25pt 839.33pt;
+  break-after: page;
+}
+.rp-page:last-child {
+  break-after: auto;
+}
+
+.rp-body {
+  position: absolute;
+  inset-inline: 33.7pt 41.2pt;
+  top: 122pt;
+}
+.rp-body.rp-first {
+  top: 129pt;
+}
+
+.rp-title {
+  margin: 0;
+  color: #1f4e79;
+  font-size: 22pt;
+  font-weight: 700;
+  line-height: 26pt;
+  text-align: center;
+}
+.rp-rule {
+  height: 1.44pt;
+  margin-block: 21.5pt 13.5pt;
+  background: #2e75b6;
+}
+.rp-bar {
+  height: 16pt;
+  padding-inline-start: 9pt;
+  background: #1f4e79;
+  color: #fff;
+  font-size: 14pt;
+  font-weight: 700;
+  line-height: 16pt;
+}
+.rp-sub {
+  margin-block: 10pt 6pt;
+  padding-block-end: 2pt;
+  padding-inline-start: 1.5pt;
+  border-bottom: 0.72pt solid #2e75b6;
+  color: #2e75b6;
+  font-size: 12pt;
+  font-weight: 700;
+  line-height: 14pt;
+}
+.rp-body > .rp-sub:first-child {
+  margin-block-start: 0;
+}
+.rp-gap {
+  margin-block-start: 8pt;
+}
+.rp-gap-lg {
+  margin-block-start: 18pt;
+}
+
+.rp-table {
+  margin-inline-start: 2pt;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.rp-table th,
+.rp-table td {
+  overflow: hidden;
+  padding: 1pt 4.6pt;
+  border: 0.48pt solid #a6bdd7;
+  line-height: 1.12;
+  text-align: start;
+  vertical-align: middle;
+}
+.rp-table tr {
+  height: 21pt;
+}
+.rp-table th {
+  background: #2e75b6;
+  color: #fff;
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+}
+.rp-table tr.rp-head-tall {
+  height: 32pt;
+}
+.rp-table tr.rp-tall {
+  height: 63pt;
+}
+.rp-table tr.rp-tint td {
+  background: #f2f7fc;
+}
+.rp-table tr.rp-total td {
+  background: #deeaf6;
+}
+.rp-table td.rp-label {
+  background: #deeaf6;
+  font-weight: 700;
+}
+.rp-table td.rp-small {
+  padding: 0 3pt;
+  font-size: 8pt;
+  line-height: 1.1;
+}
+.rp-clamp {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.rp-lead {
+  margin-block-start: 6pt;
+  font-size: 12pt;
+  line-height: 15pt;
+}
+.rp-list {
+  margin-block-start: 4pt;
+  padding-inline-start: 27pt;
+  font-size: 12pt;
+  line-height: 16.8pt;
+  list-style: disc;
+}
+.rp-list-sm {
+  font-size: 10pt;
+  line-height: 14.5pt;
+}
+.rp-numbered {
+  list-style: arabic-indic;
+}
+.rp-declaration {
+  margin-block: 8pt 10pt;
+  font-size: 11pt;
+  font-weight: 700;
+}
+
+/* الطباعة: التقرير وحده بلا هيكل اللوحة ولا نموذج الفلترة */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .rp-root,
+  .rp-root * {
+    visibility: visible;
+  }
+  .rp-scroll {
+    overflow: visible;
+  }
+  .rp-root {
+    position: absolute;
+    top: 0;
+    inset-inline-start: 0;
+    gap: 0;
+  }
+}

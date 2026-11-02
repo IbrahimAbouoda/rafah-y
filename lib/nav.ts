@@ -58,6 +58,8 @@ export const ADMIN_NAV: NavGroup[] = [
       { href: '/admin/organizations', label: 'المؤسسات', permission: 'organizations:read', beyondOwn: true, icon: 'building' },
       { href: '/admin/finance', label: 'السجل المالي', permission: 'finance:read', icon: 'wallet' },
       { href: '/admin/audit', label: 'سجل التدقيق', permission: 'audit:read', beyondOwn: true, icon: 'history' },
+      // التقرير الحالي مالي، فالعنصر لمن يقرأ السجل المالي (كل من يملكها يملك reports:read)؛ يتّسع مع Sprint 5
+      { href: '/admin/reports', label: 'التقارير', permission: 'finance:read', icon: 'file' },
     ],
   },
   {

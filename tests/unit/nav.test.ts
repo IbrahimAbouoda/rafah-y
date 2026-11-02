@@ -58,7 +58,7 @@ describe('بوابة الشباب ولوحة المجلس — من الصلاح�
 
   it('مراقب البلدية: الشكاوى قراءةً بنطاق الكل، بلا تدقيق (§3.4)', () => {
     const observer = asUser([{ key: 'municipality_observer' }]);
-    expect(hrefs(navFor(observer))).toEqual(['/admin', '/admin/complaints', '/admin/committees', '/admin/tasks', '/admin/organizations', '/admin/finance']);
+    expect(hrefs(navFor(observer))).toEqual(['/admin', '/admin/complaints', '/admin/committees', '/admin/tasks', '/admin/organizations', '/admin/finance', '/admin/reports']);
     expect(scopeFilter(observer, 'complaints:read')).toEqual({ all: true });
     expect(canBeyondOwn(observer, 'complaints:read_contact')).toBe(false);
   });
