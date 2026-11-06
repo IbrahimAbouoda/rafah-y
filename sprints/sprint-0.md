@@ -104,7 +104,7 @@
 | Vitest: 52 وحدة + 40 تكامل على PostgreSQL (PGlite) — خضراء | ✅ |
 | `npm run check` · `next build` | ✅ |
 | E2E (`tests/e2e/sprint0.spec.ts`) — 4/4 خضراء على Supabase محلي. الإعداد: `workers: 1` ومهل أطول (خادم التطوير يترجم عند الطلب)، والتحقق من `actorRoles` بـ `toContain` لأن كل حساب يحمل `youth` | ✅ |
-| النشر التجريبي | ⏳ بانتظار قرار الاستضافة (Q14) |
+| النشر التجريبي | ✅ Vercel + Supabase سحابي (2026-11-03) — https://rafah-pulse.vercel.app · اعتماد الاستضافة رسميًا ما زال ضمن Q14 (sprint-6) |
 
 ## Dependencies تقنية مُدخلة من خارج السبرنت
 

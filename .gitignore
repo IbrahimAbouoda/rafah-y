@@ -20,3 +20,7 @@ exports/
 
 # نسخ احتياطية — فيها بيانات شخصية، لا تُرفع أبدًا (docs/ops/backup-and-restore.md)
 backups/
+
+.vercel
+.env*
+!.env.example
